@@ -47,9 +47,10 @@ class Web3Service {
         return this.certificateContract!.methods.amountCertificates().call() as Promise<any>;
     }
 
-    async createCertificate(certificate:CertificateDto) {
+    async createCertificate(certificate: CertificateDto) {
         // Hacer el correcto manejo de errores.
-        const transaction = this.certificateContract!.methods.createCertificate(profession, name, studentId);
+        const transaction = this.certificateContract!.methods.createCertificate(certificate.name, certificate.student.fullname, certificate.student.id);
+        // Todo: crear la trasaccion firmada y luego mandarla.
         const senderWalletAddress = this.accounts[0];
         const gas = await transaction.estimateGas({ from: senderWalletAddress });
         return transaction.send({ from: senderWalletAddress, gas: gas }) as Promise<any>;
