@@ -1,0 +1,72 @@
+import { Request, Response } from "express";
+import { getErrorMessage } from "../utils/manageError";
+import { UserService } from "../services/user/userService";
+import { CertificateDto } from "dto/certificateDto";
+import { CertificateService } from "services/certificates/certificatesService";
+import { Certificate } from "crypto";
+import { StudentService } from "services/student/studentService";
+
+export const certificateController = {
+    async create(req: Request, res: Response) {
+        try {
+            this.validateFields(req.body);
+            const newCertificate = await CertificateService.createCertificate(req.body as CertificateDto);
+            res.status(200).json(newCertificate);
+        } catch (error) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(409).json(getErrorMessage(error));
+        }
+    },
+    async delete(req: Request, res: Response) {
+        try {
+            const user = await UserService.getUserLogged({ user: req.body.user, password: req.body.password });
+            console.log(user);
+            res.status(200).json(user);
+        } catch (error) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(409).json(getErrorMessage(error));
+        }
+    },
+    async getAll(req: Request, res: Response) {
+        try {
+            const certificates= await CertificateService.getAllCertificates();
+            res.status(200).json(certificates);
+        } catch (error) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(409).json(getErrorMessage(error));
+        }
+    },
+async getByDocNumber(req: Request, res: Response) {
+        try {
+            const studentDocNumber = req.params.docNumber;
+            const student = await StudentService.getStudentByDocNumber(studentDocNumber);
+            const certificates = await CertificateService.getCertificatesByStudentId(Number(student));
+            const user = await UserService.getUserLogged({ user: req.body.user, password: req.body.password });
+            console.log(user);
+            res.status(200).json(user);
+        } catch (error) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(409).json(getErrorMessage(error));
+        }
+    },
+
+    validateFields(certificate:CertificateDto){
+        if(!certificate.institutionId){
+            throw new Error('Debe seleccionar una institucion');
+        }
+        if(!certificate.degreeName){
+            throw new Error('Debe ingresar el nombre de la carrera');
+        }
+        if(!certificate.student){
+            throw new Error('Debe ingresar los datos del estudiante');
+        }
+        if(!certificate.student.name){
+            throw new Error('Debe seleccionar una institucion');
+        }
+        if(!certificate.student.docNumber){
+            throw new Error('Debe el numero de documento del estudiante');
+        }
+    }
+
+
+}
