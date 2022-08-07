@@ -1,6 +1,7 @@
 import { CertificateDto } from 'dto/certificateDto';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
+import {TransactionReceipt} from 'web3-core';
 const URL_GANACHE = 'http://127.0.0.1:7545';
 declare let require: any;
 let tokenAbi = require('../../../../blockchain/certificateContract/build/contracts/Certificates.json');
@@ -47,13 +48,29 @@ class Web3Service {
         return this.certificateContract!.methods.amountCertificates().call() as Promise<any>;
     }
 
-    async createCertificate(certificate: CertificateDto) {
+    async createCertificate(certificate: CertificateDto){
+        let receipt = null;
         // Hacer el correcto manejo de errores.
-        const transaction = this.certificateContract!.methods.createCertificate(certificate.name, certificate.student.fullname, certificate.student.id);
+        const transaction = this.certificateContract!.methods.createCertificate(certificate.degreeName, certificate.student.fullname, certificate.student.id);
         // Todo: crear la trasaccion firmada y luego mandarla.
         const senderWalletAddress = this.accounts[0];
         const gas = await transaction.estimateGas({ from: senderWalletAddress });
-        return transaction.send({ from: senderWalletAddress, gas: gas }) as Promise<any>;
+        const data = transaction.encodeABi();
+        // Obtener private key de archivo de configuracion.
+        const privateKey = ''
+        const signed = await this.web3.eth.accounts.signTransaction({
+            data: data,
+            gas: gas,
+        }, privateKey);
+
+        if (signed) {
+            receipt = await this.web3.eth.sendSignedTransaction(signed.rawTransaction!);
+        }else{
+            throw new Error('No se ha podido firmar la transaccion. Revise sus claves.')
+        }
+
+        return receipt;
+        // return transaction.send({ from: senderWalletAddress, gas: gas }) as Promise<any>;
     }
 
 }

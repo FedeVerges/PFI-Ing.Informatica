@@ -42,7 +42,7 @@ export const CertificateService = {
             )
             const certificate = new Certificate(
                 {
-                    name: certificateData.name,
+                    name: certificateData.degreeName,
                     institutionId: certificateData.institutionId,
                     degreeName: certificateData.degreeName,
                     dateCreated: new Date().toISOString(),

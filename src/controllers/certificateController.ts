@@ -5,6 +5,7 @@ import { CertificateDto } from "dto/certificateDto";
 import { CertificateService } from "services/certificates/certificatesService";
 import { StudentService } from "../services/student/studentService";
 import { web3Service } from "../services/web3/web3Service";
+import { TransactionDto } from "dto/transactionDto";
 
 export const certificateController = {
 
@@ -12,8 +13,12 @@ export const certificateController = {
         try {
             this.validateFields(req.body);
             const newCertificate = await web3Service.createCertificate(req.body as CertificateDto);
+            const transactionRes = {
+                receipt: newCertificate,
+                certificate: req.body
+            } as TransactionDto
             // const newCertificate = await CertificateService.createCertificate(req.body as CertificateDto);
-            res.status(200).json(newCertificate);
+            res.status(200).json(transactionRes);
         } catch (error) {
             res.setHeader('Content-Type', 'application/json');
             res.status(409).json(getErrorMessage(error));
@@ -22,9 +27,7 @@ export const certificateController = {
 
     async delete(req: Request, res: Response) {
         try {
-            const user = await UserService.getUserLogged({ user: req.body.user, password: req.body.password });
-            console.log(user);
-            res.status(200).json(user);
+            
         } catch (error) {
             res.setHeader('Content-Type', 'application/json');
             res.status(409).json(getErrorMessage(error));

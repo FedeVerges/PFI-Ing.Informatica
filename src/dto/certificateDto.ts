@@ -1,8 +1,7 @@
 import { StudentDto } from "./studentDto";
 
 export interface CertificateDto {
-    id: number;
-    name: string;
+    id?: number;
     student: StudentDto
     institutionId: string;
     degreeName: string;

@@ -23,13 +23,9 @@ export class App {
     }
 
     middlewares() {
-        const corsOptions = {
-        };
         this.app.use(morgan('dev'));
         this.app.use(express.json());
         this.app.use(cors());
-        console.log(web3Service)
-        web3Service.connect();
         // Agregar conexion con la bd.
     }
 
@@ -50,7 +46,6 @@ export class App {
 
     async setRoutes() {
         this.app.use([authRoutes,certificateRoutes]);
-        
     }
 
 }
