@@ -1,11 +1,11 @@
 import { CertificateDto } from "dto/certificateDto";
-import { Certificate } from "models/certificate";
-import { Person } from "models/person";
-import { Student } from "models/student";
+import { Certificate } from "../../models/certificate";
+import { Student } from "../../models/student";
 
 export const CertificateService = {
     async getCertificatesByStudentId(id:number) {
         try {
+            
 
         } catch (error) {
             throw error;
