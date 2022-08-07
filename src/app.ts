@@ -2,8 +2,8 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import db from "./db/db";
-import authRoutes from './routes/auth';
-import certificateRoutes from './routes/auth';
+import authRoutes from './routes/routes';
+import certificateRoutes from './routes/routes';
 import { web3Service } from "./services/web3/web3Service";
 
 
