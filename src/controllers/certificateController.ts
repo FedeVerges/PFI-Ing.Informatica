@@ -11,12 +11,11 @@ export const certificateController = {
 
     async create(req: Request, res: Response) {
         try {
+            // todo: Funcion para validar permisos.
             validateFields(req.body);
-            const newCertificate = await web3Service.createCertificate(req.body as CertificateDto);
-            const transactionRes = {
-                receipt: newCertificate,
-                certificate: req.body
-            } as TransactionDto
+            // Todo: Crear Dto a partir del req.body y ahi verificar los datos.
+            const transactionRes = await CertificateService.createCertificate(req.body as CertificateDto);
+           
             // const newCertificate = await CertificateService.createCertificate(req.body as CertificateDto);
             res.status(200).json(transactionRes);
         } catch (error) {

@@ -1,7 +1,10 @@
-import { CertificateDto } from 'dto/certificateDto';
+import { CertificateDto } from '../../dto/certificateDto';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { TransactionReceipt, TransactionConfig, Account } from 'web3-core';
+import { AbiInput} from 'web3-utils';
+import { Certificate } from '../../models/certificate';
+import { CertificateEth } from '../../models/blockchain/certificateEth';
 
 
 const URL_GANACHE = 'http://127.0.0.1:7545';
@@ -27,7 +30,7 @@ class Web3Service {
 
     constructor() {
         this.web3 = new Web3(URL_GANACHE);
-        this.web3.setProvider(new Web3.providers.HttpProvider(URL_GANACHE));
+        this.web3.setProvider(new Web3.providers.HttpProvider(URL_INFURA));
         this.certificateContract = this.getCertificateContract();
         this.web3.eth.net.getId().then((id: number) => {
             this.networkId = id
@@ -48,36 +51,74 @@ class Web3Service {
         return this.certificateContract!.methods.amountCertificates().call() as Promise<any>;
     }
 
-    async createCertificate(certificate: CertificateDto) {
+    async createCertificate(certificate: CertificateDto){
         let receipt = null;
+        let blockchainCertificate = null;
         // Importante que la creacion de la cuenta sea local en el metodo. Para evitar que sea expuesta.
         const account:Account = this.web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY_METAMASK!);
         if (account) {
-            const transaction = this.certificateContract!.methods.createCertificate(certificate.degreeName, certificate.student.name, Number(certificate.student.docNumber));
-            // Todo: crear la trasaccion firmada y luego mandarla.
-            // const senderWalletAddress = this.accountAddress;
+            // Creo la transaccion con el metodo a ejecutar del smart-contract con su data
+            // TODO: Crear un certificateETH
+            const transaction = this.certificateContract!.methods.createCertificate(certificate);
+            // Me suscribo al evento.
+            // this.certificateContract?.once()
+            // Calculo el gas estimado de la transaccion.
             const gas = await transaction.estimateGas({ from: account?.address! });
-            // const gasPrice = await this.web3.eth.getGasPrice()
+            // Codifico la transaccion para ser firmada.
             const data = transaction.encodeABI();
+            // Obtengo el numero de transacciones de la cuenta.
             const nonce = await this.web3.eth.getTransactionCount(account?.address!);
 
+            // Creo la configuracion de la transaccion con los datos para ser firmada.
             const options = {
                 to: transaction._parent._address,
                 data: data,
                 nonce: nonce,
                 gas: gas,
                 gasPrice: 55000,
-            };
+            }as TransactionConfig;
+
+            // Firmo la transaccion con la clave privada.
             const signed = await this.web3.eth.accounts.signTransaction(options, account.privateKey!);
             try {
-                receipt = await this.web3.eth.sendSignedTransaction(signed.rawTransaction!);
+                receipt = await this.web3.eth.sendSignedTransaction(signed.rawTransaction!) as TransactionReceipt;
             } catch (e) {
                 throw e;
             }
         }
-        return receipt;
+        if(receipt){
+            blockchainCertificate = this.decodeTransactionLog(receipt)
+        }
+        return [blockchainCertificate,receipt] as const;
     }
 
+    private decodeTransactionLog(receipt:TransactionReceipt):CertificateEth{
+        // Topico del log de la transaccion
+        const topics = receipt?.logs[0].topics;
+        const logCodedData = receipt?.logs[0].data || '';
+        // Inputs del metodo del contrato que seran parseados en el log.
+
+        const abiInputs:AbiInput[] = [
+            {type:'uint256',name:'id'},
+            {type:'Student', name:'student'},
+            {type:'UniversityDegree', name:'UniversityDegree'},
+            {type:'uint256',name:' createdAt'},
+            {type:'uint256',name:' updatedAt'},
+        ]
+        const logData = this.web3.eth.abi.decodeLog(abiInputs, logCodedData,topics!);
+        const cert = this.createEthCertificate(logData);
+
+        return cert;
+    }
+
+    createEthCertificate(logData:{[key: string]: string;}):CertificateEth{
+        const cert:CertificateEth = {
+            id: logData.id ?  Number(logData.id) : 0,
+            createdAt: logData.createdAt ?  Number(logData.createdAt) : 0,
+            updatedAt:logData.updatedAt ?  Number(logData.updatedAt) : 0,
+        }
+        return cert
+    }
 }
 
 export const web3Service = new Web3Service();
