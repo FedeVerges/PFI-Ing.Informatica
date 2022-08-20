@@ -15,7 +15,7 @@ export const certificateController = {
             validateFields(req.body);
             // Todo: Crear Dto a partir del req.body y ahi verificar los datos.
             const transactionRes = await CertificateService.createCertificate(req.body as CertificateDto);
-           
+
             // const newCertificate = await CertificateService.createCertificate(req.body as CertificateDto);
             res.status(200).json(transactionRes);
         } catch (error) {
@@ -46,7 +46,7 @@ export const certificateController = {
         try {
             const studentDocNumber = req.params.docNumber;
             // const student = await StudentService.getStudentByDocNumber(studentDocNumber);
-            
+
             // const certificates = await CertificateService.getCertificatesByStudentId(Number(studentDocNumber));
             const certificates = await web3Service.getCertificatesByStudentId(Number(studentDocNumber));
             res.status(200).json(certificates);
@@ -58,10 +58,22 @@ export const certificateController = {
 }
 
 function validateFields(certificate: CertificateDto) {
-    if (!certificate.institutionId) {
-        throw new Error('Debe seleccionar una institucion');
+    if (!certificate.academicUnit) {
+        throw new Error('Debe seleccionar una facultad');
     }
     if (!certificate.degreeName) {
+        throw new Error('Debe ingresar el nombre del titulo');
+    }
+    if (!certificate.universityName) {
+        throw new Error('Debe seleccionar una facultad');
+    }
+    if (!certificate.degreeName) {
+        throw new Error('Debe seleccionar una facultad');
+    }
+    if (!certificate.degreeProgramCurriculum) {
+        throw new Error('Debe seleccionar una facultad');
+    }
+    if (!certificate.degreeProgramOrdinance) {
         throw new Error('Debe ingresar el nombre de la carrera');
     }
     if (!certificate.student) {

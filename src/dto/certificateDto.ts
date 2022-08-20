@@ -1,7 +1,19 @@
 import { StudentDto } from "./studentDto";
-
 export interface CertificateDto {
     id?: number;
     student: StudentDto;
-    universityDegree:UniversityDegree;
+    universityName: string;
+    academicUnit: string; // Facultad
+    degreeProgramName: string; // Nombre de la carrera
+    degreeProgramCurriculum: string; // Plan de estudios
+    degreeProgramOrdinance: string; // Ordenanza
+    degreeType: string;
+    degreeName?: string;
+    ministerialOrdninance?: string; // Resolucion ministerial.
+    waferNumber?: string; // Resolucion ministerial.
+    volumeNumber?: string; // Resolucion ministerial.
+    recordNumber?: string; // Resolucion ministerial.
+    createdAt: string;
+    updatedAt: string;
+    active?: boolean; // Activo
 }

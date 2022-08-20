@@ -51,7 +51,7 @@ class Web3Service {
         return this.certificateContract!.methods.amountCertificates().call() as Promise<any>;
     }
 
-    async createCertificate(certificate: CertificateDto){
+    async createCertificate(certificate: CertificateEth){
         let receipt = null;
         let blockchainCertificate = null;
         // Importante que la creacion de la cuenta sea local en el metodo. Para evitar que sea expuesta.

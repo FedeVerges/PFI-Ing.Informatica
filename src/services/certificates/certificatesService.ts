@@ -1,8 +1,7 @@
 import { CertificateDto } from "../../dto/certificateDto";
 import { TransactionDto } from "../../dto/transactionDto";
 import { web3Service } from "../../services/web3/web3Service";
-import { Certificate } from "../../models/certificate";
-import { Student } from "../../models/student";
+import { CertificateEth, fromDto } from "../../models/blockchain/certificateEth";
 
 export const CertificateService = {
     async getCertificatesByStudentId(id: number) {
@@ -33,8 +32,9 @@ export const CertificateService = {
         try {
             // VALIDACIONES: IDEMPOTENCIA: 2 Certificados iguales al mismo estudiante. -> Obtener los certificados por estudiante (primero local y luego en blockchain)
 
+            const ethCertificate:CertificateEth = fromDto(certificateData);
             // Realizamos la transaccion.
-            const [newCertificate, receipt] = await web3Service.createCertificate(certificateData as CertificateDto);
+            const [newCertificate, receipt] = await web3Service.createCertificate(ethCertificate);
 
             // Validamos el retorno de la misma corroborando en errores.
 
@@ -85,6 +85,7 @@ export const CertificateService = {
             throw error;
         }
     },
+
     async deleteCertificate(id: number) {
         try {
 
@@ -92,6 +93,5 @@ export const CertificateService = {
             throw error;
         }
     },
-
-
+    
 }
