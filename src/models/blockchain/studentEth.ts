@@ -1,5 +1,5 @@
 export interface StudentEth {
-    id?: number;
+    id: number;
     studentName: string;
     studentLastname: string;
     docNumber: string;

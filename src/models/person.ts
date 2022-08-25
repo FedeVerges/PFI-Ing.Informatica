@@ -38,6 +38,12 @@ export class Person extends Model {
     })
     sex!: string;
 
+    @Column({
+        type: DataType.STRING,
+        allowNull: true,
+    })
+    genderIdentity: string | undefined;
+
     // @HasOne(() => Student)
     // student!: Student
 

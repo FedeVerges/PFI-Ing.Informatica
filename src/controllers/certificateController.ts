@@ -48,7 +48,8 @@ export const certificateController = {
             // const student = await StudentService.getStudentByDocNumber(studentDocNumber);
 
             // const certificates = await CertificateService.getCertificatesByStudentId(Number(studentDocNumber));
-            const certificates = await web3Service.getCertificatesByStudentId(Number(studentDocNumber));
+            const studentId = Number(studentDocNumber);
+            const certificates = await web3Service.getCertificatesByStudentId(studentId);
             res.status(200).json(certificates);
         } catch (error) {
             res.setHeader('Content-Type', 'application/json');

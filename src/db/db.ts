@@ -6,6 +6,7 @@ import { Student } from '../models/student';
 import { CertificateType } from '../models/certificateType';
 import { Institution } from '../models/institute';
 import { Person } from '../models/person';
+import { BlockchainTransaction } from '../models/transaction';
 
 const DATABASE_URL = 'localhost://postgres:5433/SVT_20220706';
 
@@ -19,6 +20,6 @@ const db = new Sequelize(database, user, password, {
     host,
     port,
     dialect: 'postgres',
-    models: [Certificate,User,Student,CertificateType,Institution,Person]
+    models: [Certificate,User,Student,CertificateType,Institution,Person,BlockchainTransaction]
   });
 export default db;

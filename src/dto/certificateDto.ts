@@ -9,11 +9,11 @@ export interface CertificateDto {
     degreeProgramOrdinance: string; // Ordenanza
     degreeType: string;
     degreeName?: string;
-    ministerialOrdninance?: string; // Resolucion ministerial.
+    ministerialOrdinance?: string; // Resolucion ministerial.
     waferNumber?: string; // Resolucion ministerial.
     volumeNumber?: string; // Resolucion ministerial.
     recordNumber?: string; // Resolucion ministerial.
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: string;
+    updatedAt?: string;
     active?: boolean; // Activo
 }

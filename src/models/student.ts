@@ -15,38 +15,34 @@ export class Student extends Model {
     })
     id!: number;
 
-    //    @BelongsTo(() => Person)
-    //     person!: Person;
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    name!: string;
+    universityName!: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    lastName!: string;
+    academicUnit!: string; // Facultad
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    fullName!: string;
+    degreeProgramName!: string; // Nombre de la carrera
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    docNumber!: string;
+    degreeProgramCurriculum!: string; // Plan de estudios
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    degreeName!: string;
+    degreeProgramOrdinance!: string; // Ordenanza
 
-    @HasMany(() => Certificate)
-    certificates: Certificate[] | undefined;
 }

@@ -3,21 +3,24 @@ import { StudentEth } from "./studentEth";
 import { UniversityDegreeEth } from "./universityDegreeEth";
 
 export interface CertificateEth {
-    id?: number;
-    student?: StudentEth;
-    UniversityDegree?: UniversityDegreeEth;
-    degreeName?: string;
-    ministerialOrdninance?: string; // Resolucion ministerial.
-    waferNumber?: string; // Resolucion ministerial.
-    volumeNumber?: string; // Resolucion ministerial.
-    recordNumber?: string; // Resolucion ministerial.
-    createdAt?: number;
-    updatedAt?: number;
-    active?: boolean; // Activo
+    id: number;
+    student: StudentEth;
+    universityDegree: UniversityDegreeEth;
+    degreeName: string;
+    ministerialOrdinance: string; // Resolucion ministerial.
+    waferNumber: string; // Resolucion ministerial.
+    volumeNumber: string; // Resolucion ministerial.
+    recordNumber: string; // Resolucion ministerial.
+    createdAt: number;
+    updatedAt: number;
+    active: boolean; // Activo
 }
 
 export function fromDto(certificate: CertificateDto): CertificateEth {
+    // Validar todos los campos.
+
     const student: StudentEth = {
+        id: Number(certificate.student.docNumber),
         docNumber: certificate.student.docNumber,
         studentName: certificate.student.name,
         studentLastname: certificate.student.lastname,
@@ -33,12 +36,18 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
         degreeProgramOrdinance: certificate.degreeProgramOrdinance,
         degreeType: certificate.degreeType,
     }
-    return {
+    const certificateEth: CertificateEth = {
+        id: 0,
+        degreeName: certificate.degreeName!,
         student: student,
-        UniversityDegree: universityDegree,
-        ministerialOrdninance: certificate.ministerialOrdninance,
-        waferNumber: certificate.waferNumber,
-        volumeNumber: certificate.volumeNumber,
-        recordNumber: certificate.recordNumber,
-    } as CertificateEth
+        universityDegree: universityDegree,
+        ministerialOrdinance: certificate.ministerialOrdinance!,
+        waferNumber: certificate.waferNumber!,
+        volumeNumber: certificate.volumeNumber!,
+        recordNumber: certificate.recordNumber!,
+        active: true,
+        createdAt: 0,
+        updatedAt: 0,
+    }
+    return certificateEth;
 }

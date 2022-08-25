@@ -16,18 +16,59 @@ export class Certificate extends Model {
     })
     id!: number;
 
+    // @Column({
+    //     type: DataType.NUMBER,
+    //     allowNull: false,
+    // })
+    // studentId!: number;
+
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    name!: string;
+    fullname?: string;
 
-    @ForeignKey(() => Institution)
     @Column({
-        type: DataType.INTEGER,
+        type: DataType.STRING,
         allowNull: false,
     })
-    institutionId!: string;
+    docNumber!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    universityName!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    academicUnit!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    degreeProgramName!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    degreeProgramCurriculum!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    degreeProgramOrdinance!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    degreeType!: string;
 
     @Column({
         type: DataType.STRING,
@@ -35,12 +76,26 @@ export class Certificate extends Model {
     })
     degreeName!: string;
 
-    @ForeignKey(() => CertificateType)
     @Column({
-        type: DataType.INTEGER,
+        type: DataType.STRING,
         allowNull: false,
     })
-    certificateTypeId!: number;
+    ministerialOrdinance!: string;
+
+    // @ForeignKey(() => Institution)
+    // @Column({
+    //     type: DataType.INTEGER,
+    //     allowNull: false,
+    // })
+    // institutionId!: string;
+
+
+    // @ForeignKey(() => CertificateType)
+    // @Column({
+    //     type: DataType.INTEGER,
+    //     allowNull: false,
+    // })
+    // certificateTypeId!: number;
 
     @Column({
         type: DataType.DATE,
@@ -72,12 +127,20 @@ export class Certificate extends Model {
     })
     recordNumber!: string;
 
-    @ForeignKey(() => Student)
-    @Column({
-        type: DataType.INTEGER,
-    })
-    studentId!: number;
+    // @ForeignKey(() => Student)
+    // @Column({
+    //     type: DataType.INTEGER,
+    // })
+    // studentId!: number;
 
-    @BelongsTo(() => Student)
-    student: Student | undefined;
+    // @BelongsTo(() => Student)
+    // student: Student | undefined;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    status!: string; // 'ACT', 'BAJ', 'PEN' => Pendiente de transaccion. 
+
+
 }

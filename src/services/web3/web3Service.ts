@@ -1,10 +1,13 @@
 import { CertificateDto } from '../../dto/certificateDto';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
-import { TransactionReceipt, TransactionConfig, Account } from 'web3-core';
+import { TransactionReceipt, TransactionConfig, Account, SignedTransaction } from 'web3-core';
 import { AbiInput} from 'web3-utils';
 import { Certificate } from '../../models/certificate';
-import { CertificateEth } from '../../models/blockchain/certificateEth';
+import { CertificateEth, fromDto } from '../../models/blockchain/certificateEth';
+import { TransactionDto } from '../../dto/transactionDto';
+import { BlockchainTransaction } from '../../models/transaction';
+import { StudentDto } from 'dto/studentDto';
 
 
 const URL_GANACHE = 'http://127.0.0.1:7545';
@@ -51,21 +54,61 @@ class Web3Service {
         return this.certificateContract!.methods.amountCertificates().call() as Promise<any>;
     }
 
-    async createCertificate(certificate: CertificateEth){
+    async sendTransaction(signed: SignedTransaction) {
         let receipt = null;
-        let blockchainCertificate = null;
+        let blockchainCertificate: Partial<CertificateEth> | null = null;
+        
+        // Todo: agregar gestion de eventos. No se va a poder usar ese await.
+        try {
+            receipt = await this.web3.eth.sendSignedTransaction(signed.rawTransaction!) as TransactionReceipt;
+        } catch (e) {
+            throw e;
+        }
+        if (receipt) {
+            blockchainCertificate = this.decodeTransactionLog(receipt)
+        }
+        return [blockchainCertificate, receipt] as const;
+    }
+
+    private decodeTransactionLog(receipt:TransactionReceipt): Partial<CertificateEth>{
+        // Topico del log de la transaccion
+        const topics = receipt?.logs[0].topics;
+        const logCodedData = receipt?.logs[0].data || '';
+        // Inputs del metodo del contrato que seran parseados en el log.
+
+        const abiInputs:AbiInput[] = [
+            {type:'uint256',name:'id'},
+            {type:'uint256',name:' createdAt'},
+            {type:'uint256',name:' updatedAt'},
+        ]
+        const logData = this.web3.eth.abi.decodeLog(abiInputs, logCodedData,topics!);
+        const cert = this.createEthCertificate(logData);
+
+        return cert;
+    }
+
+    createEthCertificate(logData:{[key: string]: string;}): Partial<CertificateEth>{
+        const cert:Partial<CertificateEth> = {
+            id: logData.id ?  Number(logData.id) : 0,
+            createdAt: logData.createdAt ?  Number(logData.createdAt) : 0,
+            updatedAt:logData.updatedAt ?  Number(logData.updatedAt) : 0,
+        }
+        return cert
+    }
+
+    async createSignTransaction(certificate: CertificateEth): Promise<SignedTransaction> {
         // Importante que la creacion de la cuenta sea local en el metodo. Para evitar que sea expuesta.
-        const account:Account = this.web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY_METAMASK!);
+        const account: Account = this.web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY_METAMASK!);
         if (account) {
-            // Creo la transaccion con el metodo a ejecutar del smart-contract con su data
-            // TODO: Crear un certificateETH
+            // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
             const transaction = this.certificateContract!.methods.createCertificate(certificate);
-            // Me suscribo al evento.
-            // this.certificateContract?.once()
+
             // Calculo el gas estimado de la transaccion.
             const gas = await transaction.estimateGas({ from: account?.address! });
+
             // Codifico la transaccion para ser firmada.
             const data = transaction.encodeABI();
+
             // Obtengo el numero de transacciones de la cuenta.
             const nonce = await this.web3.eth.getTransactionCount(account?.address!);
 
@@ -76,48 +119,15 @@ class Web3Service {
                 nonce: nonce,
                 gas: gas,
                 gasPrice: 55000,
-            }as TransactionConfig;
+            } as TransactionConfig;
 
             // Firmo la transaccion con la clave privada.
             const signed = await this.web3.eth.accounts.signTransaction(options, account.privateKey!);
-            try {
-                receipt = await this.web3.eth.sendSignedTransaction(signed.rawTransaction!) as TransactionReceipt;
-            } catch (e) {
-                throw e;
-            }
+            return signed;
+        } else {
+            throw new Error('Ocurrio un error al firmar la transaccion. Revise sus parametros.')
         }
-        if(receipt){
-            blockchainCertificate = this.decodeTransactionLog(receipt)
-        }
-        return [blockchainCertificate,receipt] as const;
-    }
-
-    private decodeTransactionLog(receipt:TransactionReceipt):CertificateEth{
-        // Topico del log de la transaccion
-        const topics = receipt?.logs[0].topics;
-        const logCodedData = receipt?.logs[0].data || '';
-        // Inputs del metodo del contrato que seran parseados en el log.
-
-        const abiInputs:AbiInput[] = [
-            {type:'uint256',name:'id'},
-            {type:'Student', name:'student'},
-            {type:'UniversityDegree', name:'UniversityDegree'},
-            {type:'uint256',name:' createdAt'},
-            {type:'uint256',name:' updatedAt'},
-        ]
-        const logData = this.web3.eth.abi.decodeLog(abiInputs, logCodedData,topics!);
-        const cert = this.createEthCertificate(logData);
-
-        return cert;
-    }
-
-    createEthCertificate(logData:{[key: string]: string;}):CertificateEth{
-        const cert:CertificateEth = {
-            id: logData.id ?  Number(logData.id) : 0,
-            createdAt: logData.createdAt ?  Number(logData.createdAt) : 0,
-            updatedAt:logData.updatedAt ?  Number(logData.updatedAt) : 0,
-        }
-        return cert
+        
     }
 }
 

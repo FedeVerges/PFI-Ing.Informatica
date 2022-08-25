@@ -6,5 +6,5 @@ export interface StudentDto {
     docNumber: string;
     documentType: string;
     sex: string;
-    genderIdentity?: string;
+    genderIdentity?: string | null;
 }
