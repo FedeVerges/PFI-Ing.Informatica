@@ -46,7 +46,7 @@ export class Person extends Model {
     genderIdentity: string | undefined;
 
     @HasMany(() => Student)
-    student!: Student
+    student!: Student[]
 
     @HasOne(() => User)
     user!: User;

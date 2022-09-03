@@ -11,8 +11,9 @@ import {
     BelongsTo, ForeignKey
 } from "sequelize-typescript";
 import bcrypt from 'bcrypt';
-import { UserDto } from "dto/userDto";
+import {UserDto} from "dto/userDto";
 import {Person} from "./person";
+import {Role} from "./role";
 
 @Table({
     timestamps: false,
@@ -57,12 +58,17 @@ export class User extends Model {
     })
     updatedAt!: Date;
 
-    @BelongsTo(()=> Person)
-    person!:Person
+    @BelongsTo(() => Person)
+    person!: Person
 
-    @ForeignKey(()=>Person)
-    personId!:Person
+    @ForeignKey(() => Person)
+    personId!: Person
 
+    @BelongsTo(() => Role)
+    role!: Role
+
+    @ForeignKey(() => Role)
+    RoleId!: Role
 
 
     @BeforeCreate
@@ -78,7 +84,7 @@ export class User extends Model {
     validPassword(password: string) {
         return bcrypt.compareSync(password, this.password);
     }
-    
+
     static toDto(user: User): UserDto {
         return {
             id: user.id,

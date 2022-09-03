@@ -1,8 +1,9 @@
-import { User } from "../../models/user";
-import jwt, { Secret } from 'jsonwebtoken';
+import {User} from "../../models/user";
+import jwt, {Secret} from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { TokenDto } from "dto/tokenDto";
-import { UserDto } from "dto/userDto";
+import {TokenDto} from "dto/tokenDto";
+import {UserDto} from "dto/userDto";
+
 export const SECRET_KEY: Secret = 'HOLIS';
 
 export const UserService = {
@@ -13,17 +14,17 @@ export const UserService = {
             if (!user || !password) {
                 throw new Error('Deben existir usuario y contraseña')
             }
-            const foundUser = await User.findOne({ where: { name: user } });
+            const foundUser = await User.findOne({where: {name: user}});
             if (foundUser && foundUser.id) {
                 // Validar el hash del password.
                 const isMatch = bcrypt.compareSync(userBody.password, foundUser.password);
                 if (isMatch) {
                     // creo el token.
-                    const token = jwt.sign({ _id: String(foundUser.id), name: foundUser.name }, SECRET_KEY, {
+                    const token = jwt.sign({_id: String(foundUser.id), name: foundUser.name}, SECRET_KEY, {
                         expiresIn: '2 days',
                     });
                     const userDto = User.toDto(foundUser);
-                    return { content: userDto, token: token } as TokenDto<UserDto>;
+                    return {content: userDto, token} as TokenDto<UserDto>;
                 } else {
                     throw new Error('El usuario o la contraseña son incorrectos');
                 }
@@ -41,10 +42,16 @@ export const UserService = {
             if (!userName || !password) {
                 throw new Error('Deben existir usuario y contraseña')
             }
-            const newUser = new User({ name: userName, password: password, email: '', createdAt: new Date(), updatedAt: new Date() })
+            // Todo: Hay que crear a la persona tambien.
+            const newUser = new User({
+                name: userName,
+                password,
+                email: '',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            })
             await newUser.save();
             return newUser;
-            // Todo: Hacer un create del usuario.
         } catch (error) {
             throw error;
         }
