@@ -5,5 +5,6 @@ import { CertificateDto } from './certificateDto';
 
 export interface TransactionDto {
     receipt: BlockchainTransaction;
-    certificate:CertificateDto
+    certificate:CertificateDto;
+    status:string;
 }
