@@ -1,5 +1,6 @@
-import { Table, Model, Column, DataType, BelongsTo, ForeignKey, HasOne } from "sequelize-typescript";
-import { Student } from "./student";
+import {Table, Model, Column, DataType, BelongsTo, ForeignKey, HasOne, HasMany} from "sequelize-typescript";
+import {Student} from "./student";
+import {User} from "./user";
 
 @Table({
     timestamps: false,
@@ -44,7 +45,10 @@ export class Person extends Model {
     })
     genderIdentity: string | undefined;
 
-    // @HasOne(() => Student)
-    // student!: Student
+    @HasMany(() => Student)
+    student!: Student
+
+    @HasOne(() => User)
+    user!: User;
 
 }

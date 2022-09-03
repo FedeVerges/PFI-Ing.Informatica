@@ -127,14 +127,14 @@ export class Certificate extends Model {
     })
     recordNumber!: string;
 
-    // @ForeignKey(() => Student)
-    // @Column({
-    //     type: DataType.INTEGER,
-    // })
-    // studentId!: number;
+    @ForeignKey(() => Student)
+    @Column({
+        type: DataType.INTEGER,
+    })
+    studentId!: number;
 
-    // @BelongsTo(() => Student)
-    // student: Student | undefined;
+    @BelongsTo(() => Student)
+    student!: Student;
 
     @Column({
         type: DataType.STRING,

@@ -1,6 +1,18 @@
-import { Table, Model, Column, DataType, CreatedAt, UpdatedAt, DeletedAt, BeforeCreate, BeforeUpdate } from "sequelize-typescript";
+import {
+    Table,
+    Model,
+    Column,
+    DataType,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    BeforeCreate,
+    BeforeUpdate,
+    BelongsTo, ForeignKey
+} from "sequelize-typescript";
 import bcrypt from 'bcrypt';
 import { UserDto } from "dto/userDto";
+import {Person} from "./person";
 
 @Table({
     timestamps: false,
@@ -44,6 +56,14 @@ export class User extends Model {
         allowNull: false,
     })
     updatedAt!: Date;
+
+    @BelongsTo(()=> Person)
+    person!:Person
+
+    @ForeignKey(()=>Person)
+    personId!:Person
+
+
 
     @BeforeCreate
     @BeforeUpdate

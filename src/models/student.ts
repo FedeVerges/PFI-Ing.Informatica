@@ -1,6 +1,6 @@
-import { Table, Model, Column, DataType, ForeignKey, HasMany, HasOne, BelongsTo } from 'sequelize-typescript'
-import { Certificate } from './certificate';
-import { Person } from './person';
+import {Table, Model, Column, DataType, ForeignKey, HasMany, HasOne, BelongsTo} from 'sequelize-typescript'
+import {Certificate} from './certificate';
+import {Person} from './person';
 
 @Table({
     timestamps: false,
@@ -44,5 +44,16 @@ export class Student extends Model {
         allowNull: false,
     })
     degreeProgramOrdinance!: string; // Ordenanza
+
+
+    // RELACIONES
+    @HasMany(() => Certificate)
+    certificates: Certificate[] | undefined;
+
+    @BelongsTo(() => Person)
+    person!: Person
+
+    @ForeignKey(() => Person)
+    personId!: number
 
 }
