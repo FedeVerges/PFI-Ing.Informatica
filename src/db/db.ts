@@ -1,12 +1,14 @@
-
-import { Certificate } from '../models/certificate';
-import { Sequelize } from 'sequelize-typescript'
-import { User } from '../models/user';
-import { Student } from '../models/student';
-import { CertificateType } from '../models/certificateType';
-import { Institution } from '../models/institute';
-import { Person } from '../models/person';
-import { BlockchainTransaction } from '../models/transaction';
+import {Certificate} from '../models/certificate';
+import {Sequelize} from 'sequelize-typescript'
+import {User} from '../models/user';
+import {Student} from '../models/student';
+import {CertificateType} from '../models/certificateType';
+import {Institution} from '../models/institute';
+import {Person} from '../models/person';
+import {BlockchainTransaction} from '../models/transaction';
+import {Role} from "../models/role";
+import {Permission} from "../models/permission";
+import {PermissionHasRole} from "../models/permissionHasRole";
 
 const DATABASE_URL = 'localhost://postgres:5433/SVT_20220706';
 
@@ -20,6 +22,6 @@ const db = new Sequelize(database, user, password, {
     host,
     port,
     dialect: 'postgres',
-    models: [Certificate,User,Student,CertificateType,Institution,Person,BlockchainTransaction]
-  });
+    models: [Certificate, User, Student, CertificateType, Institution, Person, BlockchainTransaction, Role, Permission, PermissionHasRole]
+});
 export default db;

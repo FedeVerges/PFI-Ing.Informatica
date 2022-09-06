@@ -1,7 +1,7 @@
-import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript'
-import { CertificateType } from './certificateType';
-import { Institution } from './institute';
-import { Student } from './student';
+import {Table, Model, Column, DataType, ForeignKey, BelongsTo} from 'sequelize-typescript'
+import {CertificateType} from './certificateType';
+import {Institution} from './institute';
+import {Student} from './student';
 
 @Table({
     timestamps: false,
@@ -16,12 +16,6 @@ export class Certificate extends Model {
     })
     id!: number;
 
-    // @Column({
-    //     type: DataType.NUMBER,
-    //     allowNull: false,
-    // })
-    // studentId!: number;
-
     @Column({
         type: DataType.STRING,
         allowNull: false,
@@ -33,36 +27,6 @@ export class Certificate extends Model {
         allowNull: false,
     })
     docNumber!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    universityName!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    academicUnit!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    degreeProgramName!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    degreeProgramCurriculum!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    degreeProgramOrdinance!: string;
 
     @Column({
         type: DataType.STRING,

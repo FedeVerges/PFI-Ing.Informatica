@@ -1,6 +1,7 @@
 import {Table, Model, Column, DataType, ForeignKey, HasMany, HasOne, BelongsTo} from 'sequelize-typescript'
 import {Certificate} from './certificate';
 import {Person} from './person';
+import {StudentDto} from "../dto/studentDto";
 
 @Table({
     timestamps: false,
@@ -45,15 +46,28 @@ export class Student extends Model {
     })
     degreeProgramOrdinance!: string; // Ordenanza
 
-
     // RELACIONES
     @HasMany(() => Certificate)
     certificates: Certificate[] | undefined;
 
-    @BelongsTo(() => Person)
+    @ForeignKey(() => Person)
+    @Column({
+        type:DataType.INTEGER
+    })
+    personId!: number
+
+    @BelongsTo(() => Person, "personId")
     person!: Person
 
-    @ForeignKey(() => Person)
-    personId!: number
+    toDto(): StudentDto {
+        return {
+            id: this.id,
+            universityName: this.universityName,
+            academicUnit: this.academicUnit,
+            degreeProgramCurriculum: this.degreeProgramCurriculum,
+            degreeProgramName: this.degreeProgramName,
+            degreeProgramOrdinance: this.degreeProgramOrdinance,
+        } as StudentDto;
+    }
 
 }

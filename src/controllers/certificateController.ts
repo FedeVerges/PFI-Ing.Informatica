@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import { getErrorMessage } from "../utils/manageError";
-import { UserService } from "../services/user/userService";
-import { CertificateDto } from "dto/certificateDto";
-import { CertificateService } from "../services/certificates/certificatesService";
-import { StudentService } from "../services/student/studentService";
-import { web3Service } from "../services/web3/web3Service";
-import { TransactionDto } from "dto/transactionDto";
+import {Request, Response} from "express";
+import {getErrorMessage} from "../utils/manageError";
+import {UserService} from "../services/user/userService";
+import {CertificateDto} from "dto/certificateDto";
+import {CertificateService} from "../services/certificates/certificatesService";
+import {StudentService} from "../services/student/studentService";
+import {web3Service} from "../services/web3/web3Service";
+import {TransactionDto} from "dto/transactionDto";
 
 export const certificateController = {
 
@@ -59,31 +59,31 @@ export const certificateController = {
 }
 
 function validateFields(certificate: CertificateDto) {
-    if (!certificate.academicUnit) {
+    if (!certificate.student) {
         throw new Error('Debe seleccionar una facultad');
     }
     if (!certificate.degreeName) {
         throw new Error('Debe ingresar el nombre del titulo');
     }
-    if (!certificate.universityName) {
+    if (!certificate.student.universityName) {
         throw new Error('Debe seleccionar una facultad');
     }
     if (!certificate.degreeName) {
         throw new Error('Debe seleccionar una facultad');
     }
-    if (!certificate.degreeProgramCurriculum) {
+    if (!certificate.student.degreeProgramCurriculum) {
         throw new Error('Debe seleccionar una facultad');
     }
-    if (!certificate.degreeProgramOrdinance) {
+    if (!certificate.student.degreeProgramOrdinance) {
         throw new Error('Debe ingresar el nombre de la carrera');
     }
     if (!certificate.student) {
         throw new Error('Debe ingresar los datos del estudiante');
     }
-    if (!certificate.student.name) {
+    if (!certificate.student.person.name) {
         throw new Error('Debe seleccionar una institucion');
     }
-    if (!certificate.student.docNumber) {
+    if (!certificate.student.person.docNumber) {
         throw new Error('Debe el numero de documento del estudiante');
     }
 }

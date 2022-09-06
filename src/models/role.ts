@@ -38,6 +38,4 @@ export class Role extends Model {
 
     @HasMany(() => User)
     user!: User[]
-
-
 }

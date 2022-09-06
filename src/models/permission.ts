@@ -13,7 +13,7 @@ import {PermissionHasRole} from "./permissionHasRole";
 import {Role} from "./role";
 @Table({
     timestamps: false,
-    tableName: "person"
+    tableName: "permission"
 })
 export class Permission extends Model {
     @Column({

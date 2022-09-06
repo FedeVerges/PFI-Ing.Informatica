@@ -25,7 +25,7 @@ export class Person extends Model {
         type: DataType.STRING,
         allowNull: false,
     })
-    lastName!: string;
+    lastname!: string;
 
     @Column({
         type: DataType.STRING,
@@ -41,14 +41,12 @@ export class Person extends Model {
 
     @Column({
         type: DataType.STRING,
-        allowNull: true,
     })
     genderIdentity: string | undefined;
 
-    @HasMany(() => Student)
-    student!: Student[]
+    @HasMany(() => Student, "personId")
+    students!: Student[]
 
     @HasOne(() => User)
     user!: User;
-
 }

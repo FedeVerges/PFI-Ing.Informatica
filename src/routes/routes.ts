@@ -1,7 +1,7 @@
-import { Router } from "express";
-import { authMiddleware } from "../middlewares/authMiddleware";
-import { authController } from "../controllers/auth.controller";
-import { certificateController } from "../controllers/certificateController";
+import {Router} from "express";
+import {authController} from "../controllers/auth.controller";
+import {certificateController} from "../controllers/certificateController";
+import {studentController} from "../controllers/studentController";
 
 const router = Router();
 
@@ -12,11 +12,18 @@ router.post('/signin', authController.signin);
 
 
 // Titulos
-const certificateUrlBase= '/certificate';
+const certificateUrlBase = '/certificate';
 router.post(`${certificateUrlBase}/new`, certificateController.create,);
 router.post(`${certificateUrlBase}/delete`, certificateController.delete);
 router.get(`${certificateUrlBase}/all`, certificateController.getAll);
 router.get(`${certificateUrlBase}/docNumber/:docNumber`, certificateController.getByDocNumber);
+
+
+// Estudiantes
+const studentUrlBase = '/student';
+router.post(`${studentUrlBase}/new`, studentController.create,);
+router.get(`${studentUrlBase}/all`, studentController.getAll);
+router.get(`${studentUrlBase}/docNumber/:docNumber`, studentController.getByDocNumber);
 
 export default router;
 

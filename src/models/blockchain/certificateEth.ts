@@ -1,6 +1,6 @@
-import { CertificateDto } from "dto/certificateDto";
-import { StudentEth } from "./studentEth";
-import { UniversityDegreeEth } from "./universityDegreeEth";
+import {CertificateDto} from "dto/certificateDto";
+import {StudentEth} from "./studentEth";
+import {UniversityDegreeEth} from "./universityDegreeEth";
 
 export interface CertificateEth {
     id: number;
@@ -20,27 +20,27 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
     // Validar todos los campos.
 
     const student: StudentEth = {
-        id: Number(certificate.student.docNumber),
-        docNumber: certificate.student.docNumber,
-        studentName: certificate.student.name,
-        studentLastname: certificate.student.lastname,
-        documentType: certificate.student.documentType,
-        sex: certificate.student.sex,
-        genderIdentity: certificate.student.genderIdentity || '',
+        id: Number(certificate.student.person.docNumber),
+        docNumber: certificate.student.person.docNumber,
+        studentName: certificate.student.person.name,
+        studentLastname: certificate.student.person.lastname,
+        documentType: certificate.student.person.documentType,
+        sex: certificate.student.person.sex,
+        genderIdentity: certificate.student.person.genderIdentity || '',
     };
     const universityDegree: UniversityDegreeEth = {
-        universityName: certificate.universityName,
-        academicUnit: certificate.academicUnit,
-        degreeProgramName: certificate.degreeProgramName,
-        degreeProgramCurriculum: certificate.degreeProgramCurriculum,
-        degreeProgramOrdinance: certificate.degreeProgramOrdinance,
+        universityName: certificate.student.universityName,
+        academicUnit: certificate.student.academicUnit,
+        degreeProgramName: certificate.student.degreeProgramName,
+        degreeProgramCurriculum: certificate.student.degreeProgramCurriculum,
+        degreeProgramOrdinance: certificate.student.degreeProgramOrdinance,
         degreeType: certificate.degreeType,
     }
     const certificateEth: CertificateEth = {
         id: 0,
         degreeName: certificate.degreeName!,
-        student: student,
-        universityDegree: universityDegree,
+        student,
+        universityDegree,
         ministerialOrdinance: certificate.ministerialOrdinance!,
         waferNumber: certificate.waferNumber!,
         volumeNumber: certificate.volumeNumber!,

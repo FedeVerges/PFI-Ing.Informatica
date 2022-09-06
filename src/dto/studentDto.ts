@@ -1,10 +1,11 @@
+import {PersonDto} from "./personDto";
+
 export interface StudentDto {
     id: number;
-    name: string;
-    lastname: string;
-    fullname?: string;
-    docNumber: string;
-    documentType: string;
-    sex: string;
-    genderIdentity?: string | null;
+    person: PersonDto;
+    universityName: string;
+    academicUnit: string; // Facultad
+    degreeProgramName: string; // Nombre de la carrera
+    degreeProgramCurriculum: string; // Plan de estudios
+    degreeProgramOrdinance: string; // Ordenanza
 }
