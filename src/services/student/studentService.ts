@@ -31,12 +31,7 @@ export const StudentService = {
             throw new Error('El dni es incorrecto');
         }
         const foundStudents = await Student.findAll({ include: { model: Person, where: { docNumber }, required: true } });
-
-        if (foundStudents && foundStudents.length > 0) {
-            return foundStudents;
-        } else {
-            throw new Error('No existe el estudiante');
-        }
+        return foundStudents;
     },
 
     async putStudent(docNumber: string) { },

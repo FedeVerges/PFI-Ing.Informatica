@@ -1,7 +1,8 @@
-import {Table, Model, Column, DataType, ForeignKey, BelongsTo} from 'sequelize-typescript'
-import {CertificateType} from './certificateType';
-import {Institution} from './institute';
-import {Student} from './student';
+import { CertificateDto } from 'dto/certificateDto';
+import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript'
+import { CertificateType } from './certificateType';
+import { Institution } from './institute';
+import { Student } from './student';
 
 @Table({
     timestamps: false,
@@ -106,5 +107,36 @@ export class Certificate extends Model {
     })
     status!: string; // 'ACT', 'BAJ', 'PEN' => Pendiente de transaccion. 
 
-
+    static toDtoList(certificates: Certificate[]): CertificateDto[] {
+        return certificates.map(c => {
+            return {
+                id: c.id,
+                student: Student.toDto(c.student),
+                degreeType: c.degreeType,
+                degreeName: c.degreeName,
+                ministerialOrdinance: c.ministerialOrdinance,
+                waferNumber: c.waferNumber,
+                volumeNumber: c.volumeNumber,
+                recordNumber: c.recordNumber,
+                createdAt: c.createdAt,
+                updatedAt: c.updatedAt,
+                status: c.status,
+            } as CertificateDto
+        })
+    }
+    static toDto(certificate: Certificate): CertificateDto {
+        return {
+            id: certificate.id,
+            student: Student.toDto(certificate.student),
+            degreeType: certificate.degreeType,
+            degreeName: certificate.degreeName,
+            ministerialOrdinance: certificate.ministerialOrdinance,
+            waferNumber: certificate.waferNumber,
+            volumeNumber: certificate.volumeNumber,
+            recordNumber: certificate.recordNumber,
+            createdAt: certificate.createdAt,
+            updatedAt: certificate.updatedAt,
+            status: certificate.status,
+        } as CertificateDto
+    }
 }

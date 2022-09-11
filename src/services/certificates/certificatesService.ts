@@ -1,17 +1,18 @@
-import {CertificateDto} from "../../dto/certificateDto";
-import {TransactionDto} from "../../dto/transactionDto";
-import {web3Service} from "../../services/web3/web3Service";
-import {CertificateEth, fromDto} from "../../models/blockchain/certificateEth";
-import {Certificate} from "../../models/certificate";
-import {BlockchainTransaction} from "../../models/transaction";
-import {TransactionReceipt} from "web3-core";
-import {StudentService} from "../student/studentService";
+import { CertificateDto } from "../../dto/certificateDto";
+import { TransactionDto } from "../../dto/transactionDto";
+import { web3Service } from "../../services/web3/web3Service";
+import { CertificateEth, fromDto } from "../../models/blockchain/certificateEth";
+import { Certificate } from "../../models/certificate";
+import { BlockchainTransaction } from "../../models/transaction";
+import { TransactionReceipt } from "web3-core";
+import { StudentService } from "../student/studentService";
+import { Student } from "../../models/student";
 
 export const CertificateService = {
     async getCertificatesByStudentId(id: number) {
         try {
-
-
+            const certificates = await Certificate.findAll({ include: { model: Student, where: { id }, required: true } })
+            return Certificate.toDtoList(certificates);
         } catch (error) {
             throw error;
         }
