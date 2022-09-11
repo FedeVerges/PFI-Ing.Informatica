@@ -1,7 +1,7 @@
-import {Table, Model, Column, DataType, ForeignKey, HasMany, HasOne, BelongsTo} from 'sequelize-typescript'
-import {Certificate} from './certificate';
-import {Person} from './person';
-import {StudentDto} from "../dto/studentDto";
+import { Table, Model, Column, DataType, ForeignKey, HasMany, HasOne, BelongsTo } from 'sequelize-typescript'
+import { Certificate } from './certificate';
+import { Person } from './person';
+import { StudentDto } from "../dto/studentDto";
 
 @Table({
     timestamps: false,
@@ -52,22 +52,36 @@ export class Student extends Model {
 
     @ForeignKey(() => Person)
     @Column({
-        type:DataType.INTEGER
+        type: DataType.INTEGER
     })
     personId!: number
 
     @BelongsTo(() => Person, "personId")
     person!: Person
 
-    toDto(): StudentDto {
+    static toDto(student: Student): StudentDto {
         return {
-            id: this.id,
-            universityName: this.universityName,
-            academicUnit: this.academicUnit,
-            degreeProgramCurriculum: this.degreeProgramCurriculum,
-            degreeProgramName: this.degreeProgramName,
-            degreeProgramOrdinance: this.degreeProgramOrdinance,
+            id: student.id,
+            universityName: student.universityName,
+            academicUnit: student.academicUnit,
+            degreeProgramCurriculum: student.degreeProgramCurriculum,
+            degreeProgramName: student.degreeProgramName,
+            degreeProgramOrdinance: student.degreeProgramOrdinance,
         } as StudentDto;
+    }
+    static toDtoList(students: Student[]): StudentDto[] {
+        return students.map(s => {
+            return {
+                id: s.id,
+                person: Person.toDto(s.person),
+                universityName: s.universityName,
+                academicUnit: s.academicUnit,
+                degreeProgramCurriculum: s.degreeProgramCurriculum,
+                degreeProgramName: s.degreeProgramName,
+                degreeProgramOrdinance: s.degreeProgramOrdinance,
+            } as StudentDto;
+        })
+
     }
 
 }

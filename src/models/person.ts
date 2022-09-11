@@ -1,6 +1,7 @@
-import {Table, Model, Column, DataType, BelongsTo, ForeignKey, HasOne, HasMany} from "sequelize-typescript";
-import {Student} from "./student";
-import {User} from "./user";
+import { PersonDto } from "dto/personDto";
+import { Table, Model, Column, DataType, BelongsTo, ForeignKey, HasOne, HasMany } from "sequelize-typescript";
+import { Student } from "./student";
+import { User } from "./user";
 
 @Table({
     timestamps: false,
@@ -49,4 +50,16 @@ export class Person extends Model {
 
     @HasOne(() => User)
     user!: User;
+
+    static toDto(p: Person): PersonDto {
+        return {
+            id: p.id,
+            name: p.name,
+            lastname: p.lastname,
+            fullname: `${p.name} ${p.lastname}`,
+            docNumber: p.docNumber,
+            sex: p.sex,
+            genderIdentity: p.genderIdentity,
+        } as PersonDto;
+    }
 }
