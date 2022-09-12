@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+  // 
     {
       "type": "pwa-node",
       "request": "launch",
@@ -13,7 +14,7 @@
         "${workspaceFolder}/**",
         "!**/node_modules/**"
       ],
-      "preLaunchTask": "prepare app to debug",
+      "preLaunchTask": "npm: dev",
       "postDebugTask": "clean app after debug"
     }
   ]
