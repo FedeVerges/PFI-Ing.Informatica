@@ -131,10 +131,17 @@ class Web3Service {
     }
     
     getNetworkStatus(){
-        const status:NetworkStatusDto = {
-            networkId: this.networkId,
-            blockchainName: this.web3.currentProvider?.toString(),
-            status: 'Connected'
+        let status:NetworkStatusDto = {
+            networkId: 0,
+            blockchainName: '',
+            connected: false
+        }
+        if(this.networkId && this.web3 && this.web3.currentProvider){
+            status = {
+                networkId: this.networkId,
+                blockchainName: this.web3.currentProvider?.toString(),
+                connected: true
+            }
         }
         notificationService.sendNotification(1,status);
     }

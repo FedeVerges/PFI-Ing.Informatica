@@ -1,6 +1,6 @@
 
 export interface NetworkStatusDto {
     networkId?: number,
-    status?: string,
+    connected?: boolean,
     blockchainName?: string,
 }
