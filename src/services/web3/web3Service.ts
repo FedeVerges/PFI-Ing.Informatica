@@ -4,6 +4,7 @@ import { TransactionReceipt, TransactionConfig, Account, SignedTransaction } fro
 import { AbiInput} from 'web3-utils';
 import { CertificateEth, fromDto } from '../../models/blockchain/certificateEth';
 import { notificationService } from '../../services/notifications/notificationService';
+import { NetworkStatusDto } from 'dto/notificationDto';
 
 
 const URL_GANACHE = 'http://127.0.0.1:7545';
@@ -130,9 +131,13 @@ class Web3Service {
     }
     
     getNetworkStatus(){
-        notificationService.sendNotification(1,{status:'connected', message:'holis', networkId:this.networkId});
+        const status:NetworkStatusDto = {
+            networkId: this.networkId,
+            blockchainName: this.web3.currentProvider?.toString(),
+            status: 'Connected'
+        }
+        notificationService.sendNotification(1,status);
     }
-
 }
 
 export const web3Service = new Web3Service();
