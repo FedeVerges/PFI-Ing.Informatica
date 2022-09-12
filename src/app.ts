@@ -1,17 +1,15 @@
-import express, {Application} from "express";
+import express, { Application } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import db from "./db/db";
 import authRoutes from './routes/routes';
-import certificateRoutes from './routes/routes';
-import {web3Service} from "./services/web3/web3Service";
-import {WebSocketServer} from "ws";
-import {NotificationService} from "./services/notifications/notificationService";
+import { notificationService } from "./services/notifications/notificationService";
+import { web3Service } from "./services/web3/web3Service";
 
 
 export class App {
     private app: Application;
-    private notificationService!: NotificationService;
+    // private notificationService!: NotificationService;
 
     constructor(private port?: number | string) {
         this.app = express();
@@ -19,8 +17,10 @@ export class App {
         this.settings();
         this.middlewares();
         this.initNotificationService();
+        this.initBlockchainConnection();
         // Iniciar servicio de web3.
     }
+
 
     settings() {
         this.app.set('port', this.port || 8080);
@@ -35,8 +35,8 @@ export class App {
 
     async connectDb() {
         try {
-            await db.sync({force:true});
-            // await db.sync();
+            // await db.sync({force:true});
+            await db.sync();
             console.log("Base de datos conectada.");
         } catch (error: any) {
             throw new Error(error || 'Error al conectarse con la base de datos');
@@ -45,11 +45,14 @@ export class App {
 
     initNotificationService() {
         try {
-            this.notificationService = new NotificationService();
-            console.log("Servicio de notificaciones iniciado en el puerto", this.notificationService.port);
+            notificationService.connect();
+            console.log("Servicio de notificaciones iniciado en el puerto", notificationService.port);
         } catch (error: any) {
             throw new Error(error || 'Error al iniciar WebSocket.');
         }
+    }
+    initBlockchainConnection() {
+        web3Service.connectNetwork();
     }
 
     async listen() {

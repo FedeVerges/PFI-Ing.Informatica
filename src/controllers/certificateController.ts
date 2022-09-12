@@ -1,8 +1,8 @@
-import {Request, Response} from "express";
-import {getErrorMessage} from "../utils/manageError";
-import {CertificateDto} from "../dto/certificateDto";
-import {CertificateService} from "../services/certificates/certificatesService";
-import {StudentService} from "../services/student/studentService";
+import { Request, Response } from "express";
+import { getErrorMessage } from "../utils/manageError";
+import { CertificateDto } from "../dto/certificateDto";
+import { CertificateService } from "../services/certificates/certificatesService";
+import { StudentService } from "../services/student/studentService";
 
 export const certificateController = {
 
@@ -41,10 +41,12 @@ export const certificateController = {
     },
     async getByDocNumber(req: Request, res: Response) {
         try {
+            let certificates: CertificateDto[] = [];
             const studentDocNumber = req.params.docNumber;
             const student = await StudentService.getStudentByDocNumber(studentDocNumber);
-
-            const certificates = await CertificateService.getCertificatesByStudentId(Number(studentDocNumber));
+            if (student.length > 0) {
+                certificates = await CertificateService.getCertificatesByStudentId(Number(student[0].id));
+            }
             // const studentId = Number(studentDocNumber);
             // const certificates = await web3Service.getCertificatesByStudentId(studentId);
             res.status(200).json(certificates);

@@ -21,18 +21,6 @@ export class Certificate extends Model {
         type: DataType.STRING,
         allowNull: false,
     })
-    fullname?: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    docNumber!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
     degreeType!: string;
 
     @Column({

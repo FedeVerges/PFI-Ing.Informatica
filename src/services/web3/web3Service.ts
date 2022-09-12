@@ -1,13 +1,9 @@
-import { CertificateDto } from '../../dto/certificateDto';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { TransactionReceipt, TransactionConfig, Account, SignedTransaction } from 'web3-core';
 import { AbiInput} from 'web3-utils';
-import { Certificate } from '../../models/certificate';
 import { CertificateEth, fromDto } from '../../models/blockchain/certificateEth';
-import { TransactionDto } from '../../dto/transactionDto';
-import { BlockchainTransaction } from '../../models/transaction';
-import { StudentDto } from 'dto/studentDto';
+import { notificationService } from '../../services/notifications/notificationService';
 
 
 const URL_GANACHE = 'http://127.0.0.1:7545';
@@ -33,16 +29,20 @@ class Web3Service {
 
     constructor() {
         this.web3 = new Web3(URL_GANACHE);
-        this.web3.setProvider(new Web3.providers.HttpProvider(URL_INFURA));
         this.certificateContract = this.getCertificateContract();
+        
+    }
+    connectNetwork(){
+        this.web3.setProvider(new Web3.providers.HttpProvider(URL_GANACHE));
         this.web3.eth.net.getId().then((id: number) => {
-            this.networkId = id
+            this.networkId = id;
+            console.log('Blockchain conectada');
         });
     }
 
     private getCertificateContract() {
         const abi = contractArtifact.abi;
-        const certificateContract = new this.web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS_INFURA_ROPSTEN);
+        const certificateContract = new this.web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS_Ganache);
         return certificateContract;
     }
 
@@ -98,7 +98,7 @@ class Web3Service {
 
     async createSignTransaction(certificate: CertificateEth): Promise<SignedTransaction> {
         // Importante que la creacion de la cuenta sea local en el metodo. Para evitar que sea expuesta.
-        const account: Account = this.web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY_METAMASK!);
+        const account: Account = this.web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY_WALLET1_GANACHE!);
         if (account) {
             // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
             const transaction = this.certificateContract!.methods.createCertificate(certificate);
@@ -126,9 +126,13 @@ class Web3Service {
             return signed;
         } else {
             throw new Error('Ocurrio un error al firmar la transaccion. Revise sus parametros.')
-        }
-        
+        }  
     }
+    
+    getNetworkStatus(){
+        notificationService.sendNotification(1,{status:'connected', message:'holis', networkId:this.networkId});
+    }
+
 }
 
 export const web3Service = new Web3Service();

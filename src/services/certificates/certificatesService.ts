@@ -39,20 +39,13 @@ export const CertificateService = {
         const students = await StudentService.getStudentByDocNumber(certificateData.student.person.docNumber);
         const student = students[0];
         if (this.validateCertificates(student.certificates, certificateData)) {
-            // Creamos la transaccion
-            const ethCertificate: CertificateEth = fromDto(certificateData);
-            const signed = await web3Service.createSignTransaction(ethCertificate);
+            // // Creamos la transaccion
+            // const ethCertificate: CertificateEth = fromDto(certificateData);
+            // const signed = await web3Service.createSignTransaction(ethCertificate);
 
             // Una vez validada la firma. Creo el certificado en la base.
             const newCertificate = new Certificate(
                 {
-                    fullname: certificateData.student.person.name + " " + certificateData.student.person.lastname,
-                    docNumber: certificateData.student.person.docNumber,
-                    universityName: certificateData.student.universityName,
-                    academicUnit: certificateData.student.academicUnit,
-                    degreeProgramName: certificateData.student.degreeProgramName,
-                    degreeProgramCurriculum: certificateData.student.degreeProgramCurriculum,
-                    degreeProgramOrdinance: certificateData.student.degreeProgramOrdinance,
                     degreeType: certificateData.degreeType,
                     degreeName: certificateData.degreeName,
                     ministerialOrdinance: certificateData.ministerialOrdinance,
@@ -64,21 +57,18 @@ export const CertificateService = {
                     studentId: student.id,
                     student,
                     status: 'ACT',
-                } as unknown as Certificate
-            );
+                });
             await newCertificate.save();
-
-            //  Relacionar certificado al estudiante.
-
-            // Creo la transaccion en la base.
-            const transaction = new BlockchainTransaction(
-                {
-                    transactionHash: signed.transactionHash,
-                    ceritificateId: newCertificate.id,
-                    status: 'PENDING',
-                } as BlockchainTransaction
-            );
-            const transactionResponse = await transaction.save();
+            
+            // // Creo la transaccion en la base.
+            // const transaction = new BlockchainTransaction(
+            //     {
+            //         transactionHash: signed.transactionHash,
+            //         ceritificateId: newCertificate.id,
+            //         status: 'PENDING',
+            //     } as BlockchainTransaction
+            // );
+            // const transactionResponse = await transaction.save();
 
             // // Envio a publicar la transaccion.
             // // Mandar a publicar la trnasaccion de manera asincrona.
@@ -89,7 +79,7 @@ export const CertificateService = {
 
             // Todo: Mientras tranto, se informa al usuario la publicacion de la transaccion y el estado (Pendiente).
             return {
-                receipt: transactionResponse,
+                receipt: {},
                 certificate: certificateData
             } as TransactionDto;
         } else {
