@@ -1,4 +1,6 @@
-import { Table, Model, Column, DataType } from 'sequelize-typescript'
+import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
+import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript'
+import { Certificate } from './certificate';
 
 @Table({
     timestamps: false,
@@ -19,6 +21,7 @@ export class BlockchainTransaction extends Model {
     })
     transactionHash!: string;
 
+    @ForeignKey(() => Certificate)
     @Column({
         type: DataType.INTEGER,
         allowNull: true,
@@ -61,4 +64,34 @@ export class BlockchainTransaction extends Model {
     })
     gasUsed: number | undefined;
 
+
+    @BelongsTo(() => Certificate)
+    certificate!: Certificate;
+
+    static toDtoList(transactions: BlockchainTransaction[]): BlockchainTransactionDto[] {
+        return transactions.map(t => {
+            return {
+                transactionHash: t.transactionHash,
+                ceritificateBlockchainId: t.ceritificateBlockchainId,
+                status: t.status,
+                blockHash: t.blockHash,
+                gasUsed: t.gasUsed,
+            } as BlockchainTransactionDto
+        })
+    }
+    // static toDto(certificate: Certificate): CertificateDto {
+    //     return {
+    //         id: certificate.id,
+    //         student: Student.toDto(certificate.student),
+    //         degreeType: certificate.degreeType,
+    //         degreeName: certificate.degreeName,
+    //         ministerialOrdinance: certificate.ministerialOrdinance,
+    //         waferNumber: certificate.waferNumber,
+    //         volumeNumber: certificate.volumeNumber,
+    //         recordNumber: certificate.recordNumber,
+    //         createdAt: certificate.createdAt,
+    //         updatedAt: certificate.updatedAt,
+    //         status: certificate.status,
+    //     } as CertificateDto
+    // }
 }

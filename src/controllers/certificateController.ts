@@ -46,6 +46,7 @@ export const certificateController = {
             const student = await StudentService.getStudentByDocNumber(studentDocNumber);
             if (student.length > 0) {
                 certificates = await CertificateService.getCertificatesByStudentId(Number(student[0].id));
+                
             }
             // const studentId = Number(studentDocNumber);
             // const certificates = await web3Service.getCertificatesByStudentId(studentId);

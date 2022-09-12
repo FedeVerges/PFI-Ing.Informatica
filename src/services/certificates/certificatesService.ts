@@ -4,7 +4,7 @@ import { web3Service } from "../../services/web3/web3Service";
 import { CertificateEth, fromDto } from "../../models/blockchain/certificateEth";
 import { Certificate } from "../../models/certificate";
 import { BlockchainTransaction } from "../../models/transaction";
-import { TransactionReceipt } from "web3-core";
+import { TransactionReceipt, SignedTransaction } from "web3-core";
 import { StudentService } from "../student/studentService";
 import { Student } from "../../models/student";
 
@@ -12,6 +12,13 @@ export const CertificateService = {
     async getCertificatesByStudentId(id: number) {
         try {
             const certificates = await Certificate.findAll({ include: { model: Student, where: { id }, required: true } })
+            const transaction: BlockchainTransaction[] = [];
+            certificates.forEach(async c => {
+                const t = await BlockchainTransaction.findOne({ include: { model: Certificate, where: { id: c.id } } });
+                if (t) {
+                    transaction.push(t);
+                }
+            })
             return Certificate.toDtoList(certificates);
         } catch (error) {
             throw error;
@@ -38,10 +45,17 @@ export const CertificateService = {
         // const student = await StudentService.getStudentById(certificateData.student.id);
         const students = await StudentService.getStudentByDocNumber(certificateData.student.person.docNumber);
         const student = students[0];
+        let signed: SignedTransaction;
+        let ethCertificate: CertificateEth;
         if (this.validateCertificates(student.certificates, certificateData)) {
             // // Creamos la transaccion
-            // const ethCertificate: CertificateEth = fromDto(certificateData);
-            // const signed = await web3Service.createSignTransaction(ethCertificate);
+            try {
+                ethCertificate = fromDto(certificateData);
+                signed = await web3Service.createSignTransaction(ethCertificate);
+            } catch (ex) {
+                console.error(ex);
+                throw new Error('Ha ocurrido un error al conectarse con la red ');
+            }
 
             // Una vez validada la firma. Creo el certificado en la base.
             const newCertificate = new Certificate(
@@ -59,28 +73,31 @@ export const CertificateService = {
                     status: 'ACT',
                 });
             await newCertificate.save();
-            
+
             // // Creo la transaccion en la base.
-            // const transaction = new BlockchainTransaction(
-            //     {
-            //         transactionHash: signed.transactionHash,
-            //         ceritificateId: newCertificate.id,
-            //         status: 'PENDING',
-            //     } as BlockchainTransaction
-            // );
-            // const transactionResponse = await transaction.save();
+            if (signed) {
+                const transaction = new BlockchainTransaction(
+                    {
+                        transactionHash: signed.transactionHash,
+                        ceritificateId: newCertificate.id,
+                        status: 'PENDING',
+                    } as BlockchainTransaction
+                );
+                const transactionResponse = await transaction.save();
+                // // Envio a publicar la transaccion.
+                // // Mandar a publicar la trnasaccion de manera asincrona.
+                web3Service.sendTransaction(signed).then(
+                    async ([resultCertificate, receipt]) =>
+                        this.updateStateTransaction(transactionResponse, resultCertificate, receipt));
 
-            // // Envio a publicar la transaccion.
-            // // Mandar a publicar la trnasaccion de manera asincrona.
-            // web3Service.sendTransaction(signed)
-            //     .then(
-            //         async ([resultCertificate, receipt]) =>
-            //             this.updateStateTransaction(transactionResponse, resultCertificate, receipt));
-
+            } else {
+                throw new Error('Ha ocurrido un error al crear la firma');
+            }
             // Todo: Mientras tranto, se informa al usuario la publicacion de la transaccion y el estado (Pendiente).
             return {
                 receipt: {},
-                certificate: certificateData
+                certificate: certificateData,
+                status: 'pending',
             } as TransactionDto;
         } else {
             throw new Error(' Ya existe un certificado con el mismo nombre.')
