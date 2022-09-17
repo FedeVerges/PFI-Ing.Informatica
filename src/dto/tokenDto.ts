@@ -1,4 +1,7 @@
+import { PermissionDto } from "./permissionDto";
+
 export interface TokenDto<T> {
     content: T,
-    token: string
+    token: string,
+    permissions: PermissionDto;
 }

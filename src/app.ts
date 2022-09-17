@@ -5,6 +5,7 @@ import db from "./db/db";
 import authRoutes from './routes/routes';
 import { notificationService } from "./services/notifications/notificationService";
 import { web3Service } from "./services/web3/web3Service";
+import { initializer } from "./db/initDB";
 
 
 export class App {
@@ -35,8 +36,8 @@ export class App {
 
     async connectDb() {
         try {
-            // await db.sync({force:true});
-            await db.sync();
+            this.resetDataBase();
+            // await db.sync();
             console.log("Base de datos conectada.");
         } catch (error: any) {
             throw new Error(error || 'Error al conectarse con la base de datos');
@@ -62,6 +63,13 @@ export class App {
 
     async setRoutes() {
         this.app.use([authRoutes]);
+    }
+
+
+    private async resetDataBase() {
+        await db.sync({ force: true });
+        await initializer.seedPermissions();
+        await initializer.seedRoles();
     }
 
 }

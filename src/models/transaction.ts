@@ -72,6 +72,7 @@ export class BlockchainTransaction extends Model {
         return transactions.map(t => {
             return {
                 transactionHash: t.transactionHash,
+                ceritificate: Certificate.toDto(t.certificate),
                 ceritificateBlockchainId: t.ceritificateBlockchainId,
                 status: t.status,
                 blockHash: t.blockHash,

@@ -7,9 +7,9 @@ import {Role} from "./role";
 
 @Table({
     timestamps: false,
-    tableName: "permissionHasRole"
+    tableName: "roleHasPermission"
 })
-export class PermissionHasRole extends Model {
+export class RoleHasPermission extends Model {
     @ForeignKey(() => Permission)
     permissionId!: number
 

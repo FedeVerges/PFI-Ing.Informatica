@@ -8,7 +8,7 @@ import {Person} from '../models/person';
 import {BlockchainTransaction} from '../models/transaction';
 import {Role} from "../models/role";
 import {Permission} from "../models/permission";
-import {PermissionHasRole} from "../models/permissionHasRole";
+import {RoleHasPermission} from "../models/permissionHasRole";
 
 const DATABASE_URL = 'localhost://postgres:5433/SVT_20220706';
 
@@ -22,6 +22,6 @@ const db = new Sequelize(database, user, password, {
     host,
     port,
     dialect: 'postgres',
-    models: [Certificate, User, Student, CertificateType, Institution, Person, BlockchainTransaction, Role, Permission, PermissionHasRole]
+    models: [Certificate, User, Student, CertificateType, Institution, Person, BlockchainTransaction, Role, Permission, RoleHasPermission]
 });
 export default db;

@@ -68,7 +68,7 @@ export class User extends Model {
     role!: Role
 
     @ForeignKey(() => Role)
-    RoleId!: Role
+    roleId!: Role
 
 
     @BeforeCreate

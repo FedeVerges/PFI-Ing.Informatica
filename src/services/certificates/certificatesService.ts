@@ -12,14 +12,23 @@ export const CertificateService = {
     async getCertificatesByStudentId(id: number) {
         try {
             const certificates = await Certificate.findAll({ include: { model: Student, where: { id }, required: true } })
-            const transaction: BlockchainTransaction[] = [];
-            certificates.forEach(async c => {
-                const t = await BlockchainTransaction.findOne({ include: { model: Certificate, where: { id: c.id } } });
-                if (t) {
-                    transaction.push(t);
-                }
-            })
-            return Certificate.toDtoList(certificates);
+            const ids = certificates.map(c => c.id);
+            const t = await BlockchainTransaction.findAll({
+                include: [
+                    {
+                        model: Certificate,
+                        as:"certificate",
+                        where: {
+                            id: ids
+                        },
+                        include: [{
+                            model: Student
+                        }]
+                    }
+                ]
+            }
+            );
+            return BlockchainTransaction.toDtoList(t)
         } catch (error) {
             throw error;
         }
@@ -74,7 +83,7 @@ export const CertificateService = {
                 });
             await newCertificate.save();
 
-            // // Creo la transaccion en la base.
+            // Creo la transaccion en la base.
             if (signed) {
                 const transaction = new BlockchainTransaction(
                     {
@@ -84,8 +93,8 @@ export const CertificateService = {
                     } as BlockchainTransaction
                 );
                 const transactionResponse = await transaction.save();
-                // // Envio a publicar la transaccion.
-                // // Mandar a publicar la trnasaccion de manera asincrona.
+                // Envio a publicar la transaccion.
+                // Mandar a publicar la trnasaccion de manera asincrona.
                 web3Service.sendTransaction(signed).then(
                     async ([resultCertificate, receipt]) =>
                         this.updateStateTransaction(transactionResponse, resultCertificate, receipt));

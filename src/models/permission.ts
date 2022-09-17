@@ -3,14 +3,10 @@ import {
     Model,
     Column,
     DataType,
-    BelongsTo,
-    ForeignKey,
-    HasOne,
-    HasMany,
     BelongsToMany
 } from "sequelize-typescript";
-import {PermissionHasRole} from "./permissionHasRole";
-import {Role} from "./role";
+import { RoleHasPermission } from "./permissionHasRole";
+import { Role } from "./role";
 @Table({
     timestamps: false,
     tableName: "permission"
@@ -34,6 +30,6 @@ export class Permission extends Model {
     })
     description!: string;
 
-    @BelongsToMany(() => Role, () => PermissionHasRole )
+    @BelongsToMany(() => Role, () => RoleHasPermission)
     Roles!: Role[]
 }

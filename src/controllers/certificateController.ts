@@ -3,6 +3,8 @@ import { getErrorMessage } from "../utils/manageError";
 import { CertificateDto } from "../dto/certificateDto";
 import { CertificateService } from "../services/certificates/certificatesService";
 import { StudentService } from "../services/student/studentService";
+import { BlockchainTransaction } from "models/transaction";
+import { BlockchainTransactionDto } from "dto/blockchainTransactionDto";
 
 export const certificateController = {
 
@@ -41,17 +43,17 @@ export const certificateController = {
     },
     async getByDocNumber(req: Request, res: Response) {
         try {
-            let certificates: CertificateDto[] = [];
+            let transactions: BlockchainTransactionDto[] = [];
             const studentDocNumber = req.params.docNumber;
             const student = await StudentService.getStudentByDocNumber(studentDocNumber);
             if (student.length > 0) {
-                certificates = await CertificateService.getCertificatesByStudentId(Number(student[0].id));
-                
+                transactions = await CertificateService.getCertificatesByStudentId(Number(student[0].id));
             }
             // const studentId = Number(studentDocNumber);
             // const certificates = await web3Service.getCertificatesByStudentId(studentId);
-            res.status(200).json(certificates);
+            res.status(200).json(transactions);
         } catch (error) {
+            console.error(error);
             res.setHeader('Content-Type', 'application/json');
             res.status(409).json(getErrorMessage(error));
         }

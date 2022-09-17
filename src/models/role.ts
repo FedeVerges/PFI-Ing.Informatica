@@ -6,9 +6,9 @@ import {
     HasMany,
     BelongsToMany
 } from "sequelize-typescript";
-import {Permission} from "./permission";
-import {PermissionHasRole} from "./permissionHasRole";
-import {User} from "./user";
+import { Permission } from "./permission";
+import { RoleHasPermission } from "./permissionHasRole";
+import { User } from "./user";
 
 @Table({
     timestamps: false,
@@ -33,9 +33,9 @@ export class Role extends Model {
     })
     description!: string;
 
-    @BelongsToMany(() => Permission, () => PermissionHasRole )
-    permissions!: Permission[]
+    @BelongsToMany(() => Permission, () => RoleHasPermission)
+    permissions: Permission[] | undefined
 
     @HasMany(() => User)
-    user!: User[]
+    user: User[] | undefined
 }
