@@ -1,3 +1,4 @@
+import { PermissionDto } from "dto/permissionDto";
 import {
     Table,
     Model,
@@ -32,4 +33,28 @@ export class Permission extends Model {
 
     @BelongsToMany(() => Role, () => RoleHasPermission)
     Roles!: Role[]
+
+    static toDtoList(permissions: Permission[]): PermissionDto {
+        let dto: PermissionDto = {};
+        permissions.forEach(p => {
+            switch (p.name) {
+                case 'CREATE_CERTIFICATE':
+                    dto.canCreateCertificate = true;
+                    break;
+                case 'DELETE_CERTIFICATE':
+                    dto.canDeleteCertificates = true;
+                    break;
+                case 'READ_CERTIFICATE':
+                    dto.canViewCertificates = true;
+                    break;
+                case 'VALIDATE_CERTIFICATE':
+                    dto.canValidateCertificates = true;
+                    break;
+                case 'CREATE_USER':
+                    dto.canCreateUser = true;
+                    break;
+            }
+        })
+        return dto;
+    }
 }
