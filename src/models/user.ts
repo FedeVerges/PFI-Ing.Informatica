@@ -89,7 +89,6 @@ export class User extends Model {
         return {
             id: user.id,
             name: user.name,
-            password: user.password,
             email: user.email,
         } as UserDto
     }

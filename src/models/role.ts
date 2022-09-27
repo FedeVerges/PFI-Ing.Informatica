@@ -1,3 +1,4 @@
+import { RoleDto } from "dto/roleDto";
 import {
     Table,
     Model,
@@ -38,4 +39,14 @@ export class Role extends Model {
 
     @HasMany(() => User)
     user: User[] | undefined
+
+    static toDto(role: Role): RoleDto {
+        return {
+            id: role.id,
+            name: role.name,
+            description: role.description,
+        }
+
+    }
+
 }

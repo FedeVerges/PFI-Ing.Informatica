@@ -33,22 +33,19 @@ export const UserService = {
                                 where: {
                                     id: userDto.id
                             }
-                            },
-                            {
-                                model: Permission
                             }
                         ]
                     })
                     let ret:TokenDto<UserDto> = {
                         content: userDto,
-                            token,
-                        permissions: {},
+                        token,
+                        role: {},
                     };
-                    if(userRol?.permissions && userRol?.permissions.length > 0){
-                        ret= {
+                    if (userRol) {
+                        ret = {
                             content:userDto,
                             token,
-                            permissions: Permission.toDtoList(userRol?.permissions)
+                            role: Role.toDto(userRol),
                         }
                     }
                     return ret;

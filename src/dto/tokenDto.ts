@@ -1,7 +1,7 @@
-import { PermissionDto } from "./permissionDto";
+import { RoleDto } from "./roleDto";
 
 export interface TokenDto<T> {
     content: T,
     token: string,
-    permissions: PermissionDto;
+    role: RoleDto;
 }
