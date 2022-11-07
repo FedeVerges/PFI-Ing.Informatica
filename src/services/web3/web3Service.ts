@@ -6,16 +6,15 @@ import { CertificateEth, fromDto } from '../../models/blockchain/certificateEth'
 import { notificationService } from '../../services/notifications/notificationService';
 import { NetworkStatusDto } from 'dto/notificationDto';
 
+const URL = process.env.NETWORK_URL!;
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
 
-const URL_GANACHE = 'http://127.0.0.1:7545';
-const URL_INFURA = 'https://ropsten.infura.io/v3/04be9cd572fa4376a643b4b78aaa7498';
 
 const contractArtifact = require('../../../../blockchain/certificateContract/build/contracts/Certificates.json');
 
+
 class Web3Service {
     private _web3!: Web3;
-    //   leer del archivo de configuracion la billetera.
-    contactAddress: string = '0xA6fD1e205b51a6e6BF22533f853c50e37C1D776f';
 
     readonly certificateContract: Contract | undefined = undefined;
     certificates = [];
@@ -29,12 +28,16 @@ class Web3Service {
     }
 
     constructor() {
-        this.web3 = new Web3(URL_GANACHE);
-        this.certificateContract = this.getCertificateContract();
+        if(URL){
+            this.web3 = new Web3(URL);
+            this.certificateContract = this.getCertificateContract();
+        }else{
+            throw new Error('No existe URL para conectar con blockchain');
+        }
         
     }
     connectNetwork(){
-        this.web3.setProvider(new Web3.providers.HttpProvider(URL_GANACHE));
+        this.web3.setProvider(new Web3.providers.HttpProvider(URL));
         this.web3.eth.net.getId().then((id: number) => {
             this.networkId = id;
             console.log('Blockchain conectada');
@@ -42,9 +45,14 @@ class Web3Service {
     }
 
     private getCertificateContract() {
-        const abi = contractArtifact.abi;
-        const certificateContract = new this.web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS_Ganache);
-        return certificateContract;
+        if(CONTRACT_ADDRESS){
+            const abi = contractArtifact.abi;
+            const certificateContract = new this.web3.eth.Contract(abi, CONTRACT_ADDRESS);
+            return certificateContract;
+        }else{
+            throw new Error('No existe Direccion de contrato.');
+        }
+
     }
 
     async getCertificatesByStudentId(id: number) {
@@ -58,7 +66,6 @@ class Web3Service {
     async sendTransaction(signed: SignedTransaction) {
         let receipt = null;
         let blockchainCertificate: Partial<CertificateEth> | null = null;
-        
         // Todo: agregar gestion de eventos. No se va a poder usar ese await.
         try {
             receipt = await this.web3.eth.sendSignedTransaction(signed.rawTransaction!) as TransactionReceipt;
@@ -98,36 +105,40 @@ class Web3Service {
     }
 
     async createSignTransaction(certificate: CertificateEth): Promise<SignedTransaction> {
-        // Importante que la creacion de la cuenta sea local en el metodo. Para evitar que sea expuesta.
-        const account: Account = this.web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY_WALLET1_GANACHE!);
-        if (account) {
-            // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
-            const transaction = this.certificateContract!.methods.createCertificate(certificate);
-
-            // Calculo el gas estimado de la transaccion.
-            const gas = await transaction.estimateGas({ from: account?.address! });
-
-            // Codifico la transaccion para ser firmada.
-            const data = transaction.encodeABI();
-
-            // Obtengo el numero de transacciones de la cuenta.
-            const nonce = await this.web3.eth.getTransactionCount(account?.address!);
-
-            // Creo la configuracion de la transaccion con los datos para ser firmada.
-            const options = {
-                to: transaction._parent._address,
-                data: data,
-                nonce: nonce,
-                gas: gas,
-                gasPrice: 55000,
-            } as TransactionConfig;
-
-            // Firmo la transaccion con la clave privada.
-            const signed = await this.web3.eth.accounts.signTransaction(options, account.privateKey!);
-            return signed;
-        } else {
-            throw new Error('Ocurrio un error al firmar la transaccion. Revise sus parametros.')
-        }  
+        const privateKey = process.env.PRIVATE_KEY;
+        if(privateKey){
+            const account: Account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
+            if (account) {
+                // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
+                const transaction = this.certificateContract!.methods.createCertificate(certificate);
+    
+                // Calculo el gas estimado de la transaccion.
+                const gas = await transaction.estimateGas({ from: account?.address! });
+    
+                // Codifico la transaccion para ser firmada.
+                const data = transaction.encodeABI();
+    
+                // Obtengo el numero de transacciones de la cuenta.
+                const nonce = await this.web3.eth.getTransactionCount(account?.address!);
+    
+                // Creo la configuracion de la transaccion con los datos para ser firmada.
+                const options = {
+                    to: transaction._parent._address,
+                    data: data,
+                    nonce: nonce,
+                    gas: gas,
+                    gasPrice: 55000,
+                } as TransactionConfig;
+    
+                // Firmo la transaccion con la clave privada.
+                const signed = await this.web3.eth.accounts.signTransaction(options, account.privateKey!);
+                return signed;
+            } else {
+                throw new Error('Ocurrio un error al firmar la transaccion. Revise sus parametros.')
+            }  
+        }else{
+            throw new Error('Error al obtener la clave privada. Revise la configuracion');
+        }
     }
     
     getNetworkStatus(){
