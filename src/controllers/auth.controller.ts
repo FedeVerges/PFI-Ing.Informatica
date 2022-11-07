@@ -9,6 +9,7 @@ export const authController = {
             console.log(user);
             res.status(200).json(user);
         } catch (error) {
+            console.error(error);
             res.setHeader('Content-Type', 'application/json');
             res.status(409).json(getErrorMessage(error));
         }

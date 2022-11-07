@@ -4,7 +4,7 @@ export interface PersonDto {
     lastname: string;
     fullname?: string;
     docNumber: string;
-    documentType: string;
+    documentType?: string;
     sex: string;
     genderIdentity?: string | null;
 }
