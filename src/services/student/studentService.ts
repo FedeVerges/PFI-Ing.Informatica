@@ -7,7 +7,7 @@ export const StudentService = {
         if (!id) {
             throw new Error('El identificador es invalido.');
         }
-        const foundStudent = await Student.findOne({ where: { id } });
+        const foundStudent = await Student.findOne({ where: { id }, include: Person });
         if (foundStudent && foundStudent.id) {
             return foundStudent;
         } else {
@@ -79,6 +79,7 @@ export const StudentService = {
                 genderIdentity: studentData.person.genderIdentity,
             });
             await person.save();
+
             newStudent = new Student({
                 personId: person.id,
                 createdAt: new Date(),
@@ -93,6 +94,6 @@ export const StudentService = {
             });
             await newStudent.save();
         }
-        return newStudent;
+        return await this.getStudentById(newStudent.id);
     }
 }

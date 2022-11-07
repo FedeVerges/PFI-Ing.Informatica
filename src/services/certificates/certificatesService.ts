@@ -54,6 +54,7 @@ export const CertificateService = {
         // const student = await StudentService.getStudentById(certificateData.student.id);
         const students = await StudentService.getStudentByDocNumber(certificateData.student.person.docNumber);
         const student = students[0];
+        //Todo: Si no existe lo pateo.
         let signed: SignedTransaction;
         let ethCertificate: CertificateEth;
         if (this.validateCertificates(student.certificates, certificateData)) {
