@@ -1,6 +1,6 @@
-import {CertificateDto} from "dto/certificateDto";
-import {StudentEth} from "./studentEth";
-import {UniversityDegreeEth} from "./universityDegreeEth";
+import { CertificateDto } from "dto/certificateDto";
+import { StudentEth } from "./studentEth";
+import { UniversityDegreeEth } from "./universityDegreeEth";
 
 export interface CertificateEth {
     id: number;
@@ -24,7 +24,7 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
         docNumber: certificate.student.person.docNumber,
         studentName: certificate.student.person.name,
         studentLastname: certificate.student.person.lastname,
-        documentType: certificate.student.person.documentType,
+        documentType: certificate.student.person.documentType || 'DNI',
         sex: certificate.student.person.sex,
         genderIdentity: certificate.student.person.genderIdentity || '',
     };
