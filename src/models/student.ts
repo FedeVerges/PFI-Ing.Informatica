@@ -67,6 +67,7 @@ export class Student extends Model {
             degreeProgramCurriculum: student.degreeProgramCurriculum,
             degreeProgramName: student.degreeProgramName,
             degreeProgramOrdinance: student.degreeProgramOrdinance,
+            person: Person.toDto(student.person)
         } as StudentDto;
     }
     static toDtoList(students: Student[]): StudentDto[] {

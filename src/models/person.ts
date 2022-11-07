@@ -52,14 +52,20 @@ export class Person extends Model {
     user!: User;
 
     static toDto(p: Person): PersonDto {
-        return {
-            id: p.id,
-            name: p.name,
-            lastname: p.lastname,
-            fullname: `${p.name} ${p.lastname}`,
-            docNumber: p.docNumber,
-            sex: p.sex,
-            genderIdentity: p.genderIdentity,
-        } as PersonDto;
+        let person: PersonDto;
+        if (p) {
+            person = {
+                id: p.id,
+                name: p.name,
+                lastname: p.lastname,
+                fullname: `${p.name} ${p.lastname}`,
+                docNumber: p.docNumber,
+                sex: p.sex,
+                genderIdentity: p.genderIdentity,
+            };
+        } else {
+            throw new Error('No existe la persona.')
+        }
+        return person;
     }
 }
