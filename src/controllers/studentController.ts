@@ -12,7 +12,7 @@ export const studentController = {
             // todo: Funcion para validar permisos.
             // Todo: Crear Dto a partir del req.body y ahi verificar los datos.
             const student = await StudentService.createStudent(req.body as StudentDto);
-            res.status(200).json(Student.toDto(student));
+             res.status(200).json(Student.toDto(student));
         } catch (error) {
             console.log(error)
             res.setHeader('Content-Type', 'application/json');

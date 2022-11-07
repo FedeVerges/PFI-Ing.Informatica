@@ -7,6 +7,7 @@ import { BlockchainTransaction } from "../../models/transaction";
 import { TransactionReceipt, SignedTransaction } from "web3-core";
 import { StudentService } from "../student/studentService";
 import { Student } from "../../models/student";
+import { Person } from "../../models/person";
 
 export const CertificateService = {
     async getCertificatesByStudentId(id: number) {
@@ -17,12 +18,20 @@ export const CertificateService = {
                 include: [
                     {
                         model: Certificate,
-                        as:"certificate",
+                        as: "certificate",
                         where: {
                             id: ids
                         },
+                        required: true,
                         include: [{
-                            model: Student
+                            model: Student,
+                            required: true,
+                            include: [
+                                {
+                                    model: Person,
+                                    required: true,
+                                }
+                            ]
                         }]
                     }
                 ]

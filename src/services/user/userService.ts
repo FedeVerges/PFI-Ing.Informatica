@@ -29,21 +29,22 @@ export const UserService = {
                     const userRol = await Role.findOne({
                         include: [
                             {
-                                model:User,
+                                model: User,
+                                required: true,
                                 where: {
                                     id: userDto.id
-                            }
+                                }
                             }
                         ]
                     })
-                    let ret:TokenDto<UserDto> = {
+                    let ret: TokenDto<UserDto> = {
                         content: userDto,
                         token,
                         role: {},
                     };
                     if (userRol) {
                         ret = {
-                            content:userDto,
+                            content: userDto,
                             token,
                             role: Role.toDto(userRol),
                         }

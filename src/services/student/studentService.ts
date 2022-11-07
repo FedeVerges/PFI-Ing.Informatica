@@ -90,7 +90,7 @@ export const StudentService = {
                 universityName: studentData.universityName,
                 degreeProgramOrdinance: studentData.degreeProgramOrdinance,
             }, {
-                include: [{ model: Person }]
+                include: [{ model: Person, required: true }]
             });
             await newStudent.save();
         }

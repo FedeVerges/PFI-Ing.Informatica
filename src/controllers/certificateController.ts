@@ -3,7 +3,6 @@ import { getErrorMessage } from "../utils/manageError";
 import { CertificateDto } from "../dto/certificateDto";
 import { CertificateService } from "../services/certificates/certificatesService";
 import { StudentService } from "../services/student/studentService";
-import { BlockchainTransaction } from "models/transaction";
 import { BlockchainTransactionDto } from "dto/blockchainTransactionDto";
 
 export const certificateController = {
