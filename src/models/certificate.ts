@@ -106,8 +106,8 @@ export class Certificate extends Model {
                 waferNumber: c.waferNumber,
                 volumeNumber: c.volumeNumber,
                 recordNumber: c.recordNumber,
-                createdAt: c.createdAt,
-                updatedAt: c.updatedAt,
+                createdAt: c.dateCreated,
+                updatedAt: c.dateModified,
                 status: c.status,
             } as CertificateDto
         })
@@ -122,8 +122,8 @@ export class Certificate extends Model {
             waferNumber: certificate.waferNumber,
             volumeNumber: certificate.volumeNumber,
             recordNumber: certificate.recordNumber,
-            createdAt: certificate.createdAt,
-            updatedAt: certificate.updatedAt,
+            createdAt: certificate.dateCreated,
+            updatedAt: certificate.dateModified,
             status: certificate.status,
         } as CertificateDto
     }
