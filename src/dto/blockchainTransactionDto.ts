@@ -1,10 +1,12 @@
 import { CertificateDto } from "./certificateDto"
 
+
 export interface BlockchainTransactionDto {
-    transactionHash?: string
-    ceritificate?: CertificateDto;
-    ceritificateBlockchainId?: number
-    status?: string
-    blockHash?: number
-    gasUsed?: number
+    transactionHash?: string;
+    certificate?: CertificateDto;
+    certificateBlockchainId?: number;
+    status?: string;
+    blockHash?: string;
+    etherscanLink?: string;
+    gasUsed?: number;
 }
