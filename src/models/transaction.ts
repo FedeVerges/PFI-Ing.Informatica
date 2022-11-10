@@ -1,3 +1,4 @@
+import { strict } from 'assert';
 import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
 import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript'
 import { Certificate } from './certificate';
@@ -72,13 +73,26 @@ export class BlockchainTransaction extends Model {
         return transactions.map(t => {
             return {
                 transactionHash: t.transactionHash,
-                ceritificate: Certificate.toDto(t.certificate),
-                ceritificateBlockchainId: t.ceritificateBlockchainId,
+                certificate: Certificate.toDto(t.certificate),
+                certificateBlockchainId: t.ceritificateBlockchainId,
                 status: t.status,
                 blockHash: t.blockHash,
+                etherscanLink: this.createEtherscanLink(t.transactionHash),
                 gasUsed: t.gasUsed,
             } as BlockchainTransactionDto
         })
+    }
+
+    private static createEtherscanLink(transactionHash: string): string {
+        /**
+         * Poner la dir de etherscan en una config por las dudas.
+         */
+        let ret = 'https://sepolia.etherscan.io/tx/';
+        if (transactionHash && transactionHash.length > 0) {
+            ret += transactionHash;
+        }
+        return ret;
+
     }
     // static toDto(certificate: Certificate): CertificateDto {
     //     return {

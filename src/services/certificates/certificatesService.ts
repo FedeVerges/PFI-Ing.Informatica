@@ -8,6 +8,9 @@ import { TransactionReceipt, SignedTransaction } from "web3-core";
 import { StudentService } from "../student/studentService";
 import { Student } from "../../models/student";
 import { Person } from "../../models/person";
+import dayjs from 'dayjs';
+import 'dayjs/locale/es' // import locale
+dayjs.locale('es');
 
 export const CertificateService = {
     async getCertificatesByStudentId(id: number) {
@@ -76,14 +79,15 @@ export const CertificateService = {
                 throw new Error('Ha ocurrido un error al conectarse con la red ');
             }
 
+
             // Una vez validada la firma. Creo el certificado en la base.
             const newCertificate = new Certificate(
                 {
                     degreeType: certificateData.degreeType,
                     degreeName: certificateData.degreeName,
                     ministerialOrdinance: certificateData.ministerialOrdinance,
-                    dateCreated: new Date().toISOString(),
-                    dateModified: new Date().toISOString(),
+                    dateCreated: dayjs(new Date()).toString(),
+                    dateModified: dayjs(new Date()).toString(),
                     waferNumber: certificateData.waferNumber,
                     volumeNumber: certificateData.volumeNumber,
                     recordNumber: certificateData.recordNumber,
@@ -127,7 +131,7 @@ export const CertificateService = {
         // Con el resultado de la transaccion, actualizamos la transaccion y el certificado.
         transactionResponse.set({
             status: 'COMPLETED',
-            ceritificateBlockchainId: resultCertificate?.id,
+            certificateBlockchainId: resultCertificate?.id,
             blockNumber: receipt.blockNumber,
             blockHash: receipt.blockHash,
             from: receipt.from,
