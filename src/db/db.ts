@@ -8,7 +8,7 @@ import {Person} from '../models/person';
 import {BlockchainTransaction} from '../models/transaction';
 import {Role} from "../models/role";
 import {Permission} from "../models/permission";
-import {RoleHasPermission} from "../models/permissionHasRole";
+import {RoleHasPermission} from "../models/roleHasPermission";
 
 const DATABASE_URL = 'localhost://postgres:5433/SVT_20220706';
 

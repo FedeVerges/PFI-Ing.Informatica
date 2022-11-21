@@ -1,0 +1,4 @@
+export const CONSTANT_CONFIG = {
+    ROLE_ADMIN_CODE: 'ADMIN',
+    ROLE_STUDENT_CODE: 'STUDENT',
+}

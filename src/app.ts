@@ -36,7 +36,7 @@ export class App {
 
     async connectDb() {
         try {
-            // this.resetDataBase();
+            // await this.resetDataBase();
             await db.sync();
             console.log("Base de datos conectada.");
         } catch (error: any) {
@@ -70,6 +70,7 @@ export class App {
         await db.sync({ force: true });
         await initializer.seedPermissions();
         await initializer.seedRoles();
+        // await initializer.seedUsers();
     }
 
 }

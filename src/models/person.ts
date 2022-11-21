@@ -46,10 +46,10 @@ export class Person extends Model {
     genderIdentity: string | undefined;
 
     @HasMany(() => Student, "personId")
-    students!: Student[]
+    students: Student[] | undefined
 
     @HasOne(() => User)
-    user!: User;
+    user: User | undefined;
 
     static toDto(p: Person): PersonDto {
         let person: PersonDto;

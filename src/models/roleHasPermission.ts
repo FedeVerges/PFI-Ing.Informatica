@@ -1,6 +1,6 @@
 import {
     Table,
-    Model, ForeignKey
+    Model, ForeignKey, Column, DataType
 } from "sequelize-typescript";
 import {Permission} from "./permission";
 import {Role} from "./role";
@@ -10,9 +10,12 @@ import {Role} from "./role";
     tableName: "roleHasPermission"
 })
 export class RoleHasPermission extends Model {
+
     @ForeignKey(() => Permission)
-    permissionId!: number
+    @Column({ type: DataType.INTEGER})
+    permissionId!: number;
 
     @ForeignKey(() => Role)
-    roleId!: number
+    @Column({ type: DataType.INTEGER})
+    roleId!: number;
 }

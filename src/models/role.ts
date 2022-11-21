@@ -8,7 +8,7 @@ import {
     BelongsToMany
 } from "sequelize-typescript";
 import { Permission } from "./permission";
-import { RoleHasPermission } from "./permissionHasRole";
+import { RoleHasPermission } from "./roleHasPermission";
 import { User } from "./user";
 
 @Table({
@@ -35,10 +35,10 @@ export class Role extends Model {
     description!: string;
 
     @BelongsToMany(() => Permission, () => RoleHasPermission)
-    permissions: Permission[] | undefined
+    permissions?: Permission[]
 
     @HasMany(() => User)
-    user: User[] | undefined
+    user?: User[];
 
     static toDto(role: Role): RoleDto {
         return {

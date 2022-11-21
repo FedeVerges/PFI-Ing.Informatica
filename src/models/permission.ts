@@ -5,7 +5,7 @@ import {
     DataType,
     BelongsToMany
 } from "sequelize-typescript";
-import { RoleHasPermission } from "./permissionHasRole";
+import { RoleHasPermission } from "./roleHasPermission";
 import { Role } from "./role";
 @Table({
     timestamps: false,

@@ -60,7 +60,7 @@ export const UserService = {
             throw error;
         }
     },
-    async signUser(userBody: { user: string, password: string }) {
+    async signUser(userBody: { user: string, password: string }): Promise<User> {
         try {
             const userName = userBody.user;
             const password = userBody.password;
@@ -68,6 +68,7 @@ export const UserService = {
                 throw new Error('Deben existir usuario y contraseña')
             }
             const role = await Role.findOne({ where: { name: 'ADMIN' } });
+
             // Todo: Hay que crear a la persona tambien.
             if (role) {
                 const newUser = new User({

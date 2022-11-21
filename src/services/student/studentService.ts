@@ -1,6 +1,7 @@
 import { StudentDto } from "../../dto/studentDto";
 import { Person } from "../../models/person";
 import { Student } from "../../models/student";
+import { UserService } from "../../services/user/userService";
 
 export const StudentService = {
     async getStudentById(id: number) {
@@ -43,31 +44,34 @@ export const StudentService = {
         let person: Person;
         let newStudent: Student;
         // busco a la persona.
-        const findedPerson = await Person.findOne({ where: { docNumber: studentData.person.docNumber }, include: Student },);
+        const findedPerson = await Person.findOne({ where: { docNumber: studentData.person.docNumber }, include: Student });
 
         if (findedPerson) {
             person = findedPerson
-            // comparo informacion de los estudiantes asociados para encontrar coincidencias con el nuevo
-            const filteredStudents = person.students
-                .filter(s => s.degreeProgramName === studentData.degreeProgramName
-                    && s.degreeProgramCurriculum === studentData.degreeProgramCurriculum
-                    && s.degreeProgramOrdinance === studentData.degreeProgramOrdinance);
-            if (!filteredStudents || filteredStudents.length < 1) {
-                newStudent = new Student({
-                    personId: person.id,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    academicUnit: studentData.academicUnit,
-                    degreeProgramCurriculum: studentData.degreeProgramCurriculum,
-                    degreeProgramName: studentData.degreeProgramName,
-                    universityName: studentData.universityName,
-                    degreeProgramOrdinance: studentData.degreeProgramOrdinance,
-                });
-                await newStudent.save();
+            if (person.students && person.students.length > 0) {
+                // comparo informacion de los estudiantes asociados para encontrar coincidencias con el nuevo
+                const filteredStudents = person.students
+                    .filter(s => s.degreeProgramName === studentData.degreeProgramName
+                        && s.degreeProgramCurriculum === studentData.degreeProgramCurriculum
+                        && s.degreeProgramOrdinance === studentData.degreeProgramOrdinance);
+                if (!filteredStudents || filteredStudents.length < 1) {
+                    newStudent = new Student({
+                        personId: person.id,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                        academicUnit: studentData.academicUnit,
+                        degreeProgramCurriculum: studentData.degreeProgramCurriculum,
+                        degreeProgramName: studentData.degreeProgramName,
+                        universityName: studentData.universityName,
+                        degreeProgramOrdinance: studentData.degreeProgramOrdinance,
+                    });
+                    await newStudent.save();
+                } else {
+                    throw new Error('El estudiante ya existe.')
+                }
             } else {
-                throw new Error('El estudiante ya existe.')
+                throw new Error('La persona no es estudiante.')
             }
-
         } else {
             // Si no existe, la creo.
             person = new Person({
@@ -93,6 +97,9 @@ export const StudentService = {
                 include: [{ model: Person, required: true }]
             });
             await newStudent.save();
+
+            // Creo usuario temporal.
+            await UserService.signUser({ user: person.docNumber, password: `${person.lastname}${person.docNumber}` });
         }
         return await this.getStudentById(newStudent.id);
     }
