@@ -48,7 +48,7 @@ export class Person extends Model {
     @HasMany(() => Student, "personId")
     students: Student[] | undefined
 
-    @HasOne(() => User)
+    @HasOne(() => User, "personId")
     user: User | undefined;
 
     static toDto(p: Person): PersonDto {

@@ -5,15 +5,14 @@ import {
     DataType,
     CreatedAt,
     UpdatedAt,
-    DeletedAt,
     BeforeCreate,
     BeforeUpdate,
     BelongsTo, ForeignKey
 } from "sequelize-typescript";
 import bcrypt from 'bcrypt';
-import {UserDto} from "dto/userDto";
-import {Person} from "./person";
-import {Role} from "./role";
+import { UserDto } from "dto/userDto";
+import { Person } from "./person";
+import { Role } from "./role";
 
 @Table({
     timestamps: false,
@@ -38,11 +37,26 @@ export class User extends Model {
         allowNull: false,
     })
     password!: string;
+
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
     email!: string;
+
+    @ForeignKey(() => Role)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false,
+    })
+    roleId!: number;
+
+    @ForeignKey(() => Person)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false,
+    })
+    personId!: number;
 
     @CreatedAt
     @Column({
@@ -58,18 +72,11 @@ export class User extends Model {
     })
     updatedAt!: Date;
 
-    @BelongsTo(() => Person)
-    person!: Person
+    @BelongsTo(() => Person, 'personId')
+    person!: Person;
 
-    @ForeignKey(() => Person)
-    personId!: Person
-
-    @BelongsTo(() => Role)
-    role!: Role
-
-    @ForeignKey(() => Role)
-    roleId!: Role
-
+    @BelongsTo(() => Role, 'roleId')
+    role!: Role;
 
     @BeforeCreate
     @BeforeUpdate
@@ -90,6 +97,7 @@ export class User extends Model {
             id: user.id,
             name: user.name,
             email: user.email,
+            person: Person.toDto(user.person)
         } as UserDto
     }
 

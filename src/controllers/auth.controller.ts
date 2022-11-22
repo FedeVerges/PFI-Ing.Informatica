@@ -17,11 +17,12 @@ export const authController = {
 
     async signin(req: Request, res: Response) {
         try {
-            const user = await UserService.signUser({ user: req.body.user, password: req.body.password });
+            const user = await UserService.signUser(req.body);
             console.log(user);
             res.status(200).send(user);
         } catch (error) {
-            res.status(409).send('Ha ocurrido un error en el servidor')
+            console.error(error);
+            res.status(409).json(getErrorMessage(error));
         }
     },
 

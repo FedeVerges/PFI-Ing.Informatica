@@ -1,3 +1,5 @@
+import { UserDto } from "dto/userDto";
+import { User } from "models/user";
 import { StudentDto } from "../../dto/studentDto";
 import { Person } from "../../models/person";
 import { Student } from "../../models/student";
@@ -98,8 +100,15 @@ export const StudentService = {
             });
             await newStudent.save();
 
+            
             // Creo usuario temporal.
-            await UserService.signUser({ user: person.docNumber, password: `${person.lastname}${person.docNumber}` });
+            const userDto: UserDto = {
+                name: person.docNumber,
+                password: `${person.lastname}${person.docNumber}`,
+                person: Person.toDto(person),
+            }
+
+            await UserService.signUser(userDto);
         }
         return await this.getStudentById(newStudent.id);
     }
