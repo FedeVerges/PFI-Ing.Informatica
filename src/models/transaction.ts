@@ -1,8 +1,11 @@
 import { strict } from 'assert';
 import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
-import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript'
+import { Table, Model, Column, DataType, ForeignKey, BelongsTo, DefaultScope } from 'sequelize-typescript'
 import { Certificate } from './certificate';
 
+@DefaultScope(() => ({
+    include: [Certificate],
+}))
 @Table({
     timestamps: false,
     tableName: "transaction"
@@ -66,7 +69,7 @@ export class BlockchainTransaction extends Model {
     gasUsed: number | undefined;
 
 
-    @BelongsTo(() => Certificate)
+    @BelongsTo(() => Certificate, 'ceritificateId')
     certificate!: Certificate;
 
     static toDtoList(transactions: BlockchainTransaction[]): BlockchainTransactionDto[] {

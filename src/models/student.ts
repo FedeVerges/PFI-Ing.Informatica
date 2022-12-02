@@ -1,8 +1,10 @@
-import { Table, Model, Column, DataType, ForeignKey, HasMany, HasOne, BelongsTo } from 'sequelize-typescript'
+import { Table, Model, Column, DataType, ForeignKey, HasMany, BelongsTo, DefaultScope } from 'sequelize-typescript'
 import { Certificate } from './certificate';
 import { Person } from './person';
 import { StudentDto } from "../dto/studentDto";
-
+@DefaultScope(() => ({
+    include: [Person],
+}))
 @Table({
     timestamps: false,
     tableName: "student"
@@ -47,7 +49,7 @@ export class Student extends Model {
     degreeProgramOrdinance!: string; // Ordenanza
 
     // RELACIONES
-    @HasMany(() => Certificate)
+    @HasMany(() => Certificate, 'studentId')
     certificates: Certificate[] | undefined;
 
     @ForeignKey(() => Person)

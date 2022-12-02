@@ -1,5 +1,5 @@
 import { PersonDto } from "dto/personDto";
-import { Table, Model, Column, DataType, BelongsTo, ForeignKey, HasOne, HasMany } from "sequelize-typescript";
+import { Table, Model, Column, DataType, HasOne, HasMany } from "sequelize-typescript";
 import { Student } from "./student";
 import { User } from "./user";
 

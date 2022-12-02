@@ -86,7 +86,7 @@ export class Certificate extends Model {
     })
     studentId!: number;
 
-    @BelongsTo(() => Student)
+    @BelongsTo(() => Student, 'studentId')
     student!: Student;
 
     @Column({
