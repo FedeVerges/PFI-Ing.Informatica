@@ -1,7 +1,7 @@
 import { CertificateDto } from "../../dto/certificateDto";
 import { TransactionDto } from "../../dto/transactionDto";
 import { web3Service } from "../../services/web3/web3Service";
-import { CertificateEth, fromDto } from "../../models/blockchain/certificateEth";
+import { CertificateEth, fromDto, toBlockchainTransactionDto } from "../../models/blockchain/certificateEth";
 import { Certificate } from "../../models/certificate";
 import { BlockchainTransaction } from "../../models/transaction";
 import { TransactionReceipt, SignedTransaction } from "web3-core";
@@ -10,9 +10,11 @@ import { Student } from "../../models/student";
 import { Person } from "../../models/person";
 import dayjs from 'dayjs';
 import 'dayjs/locale/es' // import locale
+import { BlockchainTransactionDto } from "../../dto/blockchainTransactionDto";
 dayjs.locale('es');
 
 export const CertificateService = {
+
     async getCertificatesByStudentId(id: number) {
         try {
             const certificates = await Certificate.findAll({ include: { model: Student, where: { id }, required: true } })
@@ -45,21 +47,12 @@ export const CertificateService = {
             throw error;
         }
     },
-    async getCertificatesById() {
-        try {
-
-        } catch (error) {
-            throw error;
-        }
+    async getCertificatesById(id: number): Promise<BlockchainTransactionDto> {
+        const certificate = await web3Service.getCertificatesById(id);
+        return toBlockchainTransactionDto(certificate);
     },
 
-    async getAllCertificates() {
-        try {
-
-        } catch (error) {
-            throw error;
-        }
-    },
+    async getAllCertificates() { },
 
     async createCertificate(certificateData: CertificateDto): Promise<TransactionDto> {
         // VALIDACIONES: IDEMPOTENCIA: 2 Certificados iguales al mismo estudiante. -> Obtener los certificados por estudiante (primero local y luego en blockchain)

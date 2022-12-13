@@ -9,7 +9,6 @@ import { NetworkStatusDto } from 'dto/notificationDto';
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
 
-
 const contractArtifact = require('../../../../blockchain/certificateContract/build/contracts/Certificates.json');
 
 
@@ -23,6 +22,7 @@ class Web3Service {
     public get web3(): Web3 {
         return this._web3;
     }
+    
     public set web3(value: Web3) {
         this._web3 = value;
     }
@@ -36,6 +36,7 @@ class Web3Service {
         }
         
     }
+
     connectNetwork(){
         this.web3.setProvider(new Web3.providers.HttpProvider(URL));
         this.web3.eth.net.getId().then((id: number) => {
@@ -52,15 +53,18 @@ class Web3Service {
         }else{
             throw new Error('No existe Direccion de contrato.');
         }
-
     }
 
     async getCertificatesByStudentId(id: number) {
-        return await this.certificateContract!.methods.getCertificatesByStudentId(id).call() as Promise<any>;
+        return await this.certificateContract!.methods.getCertificatesByStudentId(id).call() as Promise<CertificateEth>;
+    }
+    
+    async getCertificatesById(id: number) {
+        return await this.certificateContract!.methods.getCertificatesById(id).call() as Promise<CertificateEth>;
     }
 
     async getAmountCertificates() {
-        return this.certificateContract!.methods.amountCertificates().call() as Promise<any>;
+        return this.certificateContract!.methods.amountCertificates().call() as Promise<CertificateEth>;
     }
 
     async sendTransaction(signed: SignedTransaction) {

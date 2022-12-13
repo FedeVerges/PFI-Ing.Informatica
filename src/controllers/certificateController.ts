@@ -31,6 +31,7 @@ export const certificateController = {
             res.status(409).json(getErrorMessage(error));
         }
     },
+
     async getAll(req: Request, res: Response) {
         try {
             const certificates = await CertificateService.getAllCertificates();
@@ -40,6 +41,7 @@ export const certificateController = {
             res.status(409).json(getErrorMessage(error));
         }
     },
+
     async getByDocNumber(req: Request, res: Response) {
         try {
             let transactions: BlockchainTransactionDto[] = [];
@@ -57,6 +59,19 @@ export const certificateController = {
             res.status(409).json(getErrorMessage(error));
         }
     },
+
+    async getById(req: Request, res: Response) {
+        try {
+            const id = req.params.id;
+            const transaction = await CertificateService.getCertificatesById(Number(id));
+            res.status(200).json(transaction);
+        } catch (error) {
+            console.error(error);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(409).json(getErrorMessage(error));
+        }
+    },
+
 }
 
 function validateFields(certificate: CertificateDto) {

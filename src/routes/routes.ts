@@ -1,7 +1,7 @@
-import {Router} from "express";
-import {authController} from "../controllers/auth.controller";
-import {certificateController} from "../controllers/certificateController";
-import {studentController} from "../controllers/studentController";
+import { Router } from "express";
+import { authController } from "../controllers/auth.controller";
+import { certificateController } from "../controllers/certificateController";
+import { studentController } from "../controllers/studentController";
 
 const router = Router();
 // Login
@@ -15,6 +15,7 @@ router.post(`${certificateUrlBase}/new`, certificateController.create);
 router.post(`${certificateUrlBase}/delete`, certificateController.delete);
 router.get(`${certificateUrlBase}/all`, certificateController.getAll);
 router.get(`${certificateUrlBase}/docNumber/:docNumber`, certificateController.getByDocNumber);
+router.get(`${certificateUrlBase}/:id`, certificateController.getById);
 
 // Estudiantes
 const studentUrlBase = '/student';
