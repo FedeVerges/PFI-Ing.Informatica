@@ -1,90 +1,114 @@
-import { Table, Model, Column, DataType, ForeignKey, HasMany, BelongsTo, DefaultScope } from 'sequelize-typescript'
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  BelongsTo,
+  DefaultScope
+} from 'sequelize-typescript';
 import { Certificate } from './certificate';
 import { Person } from './person';
-import { StudentDto } from "../dto/studentDto";
+import { StudentDto } from '../dto/studentDto';
 @DefaultScope(() => ({
-    include: [Person],
+  include: [Person]
 }))
 @Table({
-    timestamps: false,
-    tableName: "student"
+  timestamps: false,
+  tableName: 'student'
 })
 export class Student extends Model {
-    @Column({
-        type: DataType.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
-    })
-    id!: number;
+  @Column({
+    type: DataType.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  })
+  id!: number;
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    universityName!: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  blockchainId!: string; // idBlockchain.
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    academicUnit!: string; // Facultad
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false
+  })
+  registrationNumber!: number;
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    degreeProgramName!: string; // Nombre de la carrera
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  universityName!: string;
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    degreeProgramCurriculum!: string; // Plan de estudios
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  academicUnit!: string; // Facultad
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    degreeProgramOrdinance!: string; // Ordenanza
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  degreeProgramName!: string; // Nombre de la carrera
 
-    // RELACIONES
-    @HasMany(() => Certificate, 'studentId')
-    certificates: Certificate[] | undefined;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  degreeProgramCurriculum!: string; // Plan de estudios
 
-    @ForeignKey(() => Person)
-    @Column({
-        type: DataType.INTEGER
-    })
-    personId!: number
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  ministerialOrdinance!: string; // Ordenanza ministerial
 
-    @BelongsTo(() => Person, "personId")
-    person!: Person
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  superiorCouncilOrdinance!: string; // Ordenanza consejo superior.
 
-    static toDto(student: Student): StudentDto {
-        return {
-            id: student.id,
-            universityName: student.universityName,
-            academicUnit: student.academicUnit,
-            degreeProgramCurriculum: student.degreeProgramCurriculum,
-            degreeProgramName: student.degreeProgramName,
-            degreeProgramOrdinance: student.degreeProgramOrdinance,
-            person: Person.toDto(student.person)
-        } as StudentDto;
-    }
-    static toDtoList(students: Student[]): StudentDto[] {
-        return students.map(s => {
-            return {
-                id: s.id,
-                person: Person.toDto(s.person),
-                universityName: s.universityName,
-                academicUnit: s.academicUnit,
-                degreeProgramCurriculum: s.degreeProgramCurriculum,
-                degreeProgramName: s.degreeProgramName,
-                degreeProgramOrdinance: s.degreeProgramOrdinance,
-            } as StudentDto;
-        })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  directiveCouncilOrdinance!: string;
 
-    }
+  // RELACIONES
+  @HasMany(() => Certificate, 'studentId')
+  certificates: Certificate[] | undefined;
 
+  @ForeignKey(() => Person)
+  @Column({
+    type: DataType.INTEGER
+  })
+  personId!: number;
+
+  @BelongsTo(() => Person, 'personId')
+  person!: Person;
+
+  static toDto(student: Student): StudentDto {
+    return {
+      id: student.id,
+      universityName: student.universityName,
+      academicUnit: student.academicUnit,
+      degreeProgramCurriculum: student.degreeProgramCurriculum,
+      degreeProgramName: student.degreeProgramName,
+      superiorCouncilOrdinance: student.superiorCouncilOrdinance,
+      directiveCouncilOrdinance: student.directiveCouncilOrdinance,
+      ministerialOrdinance: student.ministerialOrdinance,
+      person: Person.toDto(student.person)
+    } as StudentDto;
+  }
+
+  static toDtoList(students: Student[]): StudentDto[] {
+    return students.map((s) => this.toDto(s));
+  }
 }

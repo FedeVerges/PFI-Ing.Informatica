@@ -1,9 +1,8 @@
 export interface StudentEth {
-    id: number;
-    studentName: string;
-    studentLastname: string;
-    docNumber: string;
-    documentType: string;
-    sex: string;
-    genderIdentity: string;
+  id: number; // DNI+N.Estudiante. Ej: 412217783028516
+  studentName: string;
+  studentLastname: string;
+  docNumber: string;
+  sex: string;
+  registrationNumber: number;
 }
