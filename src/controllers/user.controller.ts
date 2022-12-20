@@ -1,4 +1,1 @@
-
-export const userController = {
-    
-}
+export const userController = {};

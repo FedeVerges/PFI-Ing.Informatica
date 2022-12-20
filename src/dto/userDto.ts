@@ -1,9 +1,9 @@
-import { PersonDto } from "./personDto";
+import { PersonDto } from './personDto';
 
 export interface UserDto {
-    id?: number,
-    name?: string;
-    password?: string;
-    email?: string;
-    person?: PersonDto;
+  id?: number;
+  name?: string;
+  password?: string;
+  email?: string;
+  person?: PersonDto;
 }
