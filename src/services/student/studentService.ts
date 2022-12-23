@@ -97,8 +97,6 @@ export const StudentService = {
         lastname: studentData.person.lastname,
         sex: studentData.person.sex,
         docNumber: studentData.person.docNumber,
-        documentType: studentData.person.documentType,
-        genderIdentity: studentData.person.genderIdentity
       });
       await person.save();
 

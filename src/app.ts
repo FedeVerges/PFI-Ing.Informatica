@@ -34,8 +34,8 @@ export class App {
 
   async connectDb() {
     try {
-      // await this.resetDataBase();
-      await db.sync();
+      await this.resetDataBase();
+      // await db.sync();
       console.log('Base de datos conectada.');
     } catch (error: any) {
       throw new Error(error || 'Error al conectarse con la base de datos');
@@ -68,8 +68,7 @@ export class App {
 
   private async resetDataBase() {
     await db.sync({ force: true });
-    await initializer.seedPermissions();
     await initializer.seedRoles();
-    // await initializer.seedUsers();
+    await initializer.seedUsers();
   }
 }

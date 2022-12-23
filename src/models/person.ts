@@ -47,15 +47,10 @@ export class Person extends Model {
   })
   sex!: string;
 
-  @Column({
-    type: DataType.STRING
-  })
-  genderIdentity: string | undefined;
-
-  @HasMany(() => Student, 'personId')
+  @HasMany(() => Student)
   students: Student[] | undefined;
 
-  @HasOne(() => User, 'personId')
+  @HasOne(() => User)
   user: User | undefined;
 
   static toDto(p: Person): PersonDto {
@@ -68,7 +63,6 @@ export class Person extends Model {
         fullname: `${p.name} ${p.lastname}`,
         docNumber: p.docNumber,
         sex: p.sex,
-        genderIdentity: p.genderIdentity
       };
     } else {
       throw new Error('No existe la persona.');

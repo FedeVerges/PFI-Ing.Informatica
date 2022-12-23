@@ -30,8 +30,8 @@ export class Permission extends Model {
   })
   description!: string;
 
-  @BelongsToMany(() => Role, () => RoleHasPermission, 'roleId')
-  Roles!: Role[];
+  @BelongsToMany(() => Role, () => RoleHasPermission)
+  Roles!:Array<Role & {RoleHasPermission: RoleHasPermission}>;
 
   // static toDtoList(permissions: Permission[]): PermissionDto {
   //     let dto: PermissionDto = {};

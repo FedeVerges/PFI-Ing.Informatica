@@ -21,8 +21,8 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
   const student: StudentEth = {
     id: Number(certificate.student.person.docNumber),
     docNumber: certificate.student.person.docNumber,
-    studentName: certificate.student.person.name,
-    studentLastname: certificate.student.person.lastname,
+    name: certificate.student.person.name,
+    lastname: certificate.student.person.lastname,
     sex: certificate.student.person.sex,
     registrationNumber: certificate.student.registrationNumber
   };
@@ -54,9 +54,9 @@ export function toDto(certificate: CertificateEth): CertificateDto {
     id: 0,
     person: {
       docNumber: certificate.student.docNumber,
-      name: certificate.student.studentName,
-      lastname: certificate.student.studentLastname,
-      fullname: `${certificate.student.studentName} ${certificate.student.studentLastname}`,
+      name: certificate.student.name,
+      lastname: certificate.student.lastname,
+      fullname: `${certificate.student.name} ${certificate.student.lastname}`,
       sex: certificate.student.sex
     } as PersonDto,
     universityName: certificate.universityDegree.universityName,

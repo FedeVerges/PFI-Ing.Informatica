@@ -31,10 +31,12 @@ export const roleData: Partial<Role | any>[] = [
     description: 'Administrador',
     permissions: [
       {
-        name: 'CREATE_CERTIFICATE'
+        name: 'CREATE_CERTIFICATE',
+        description: 'Crear certificados'
       },
       {
-        name: 'DELETE_CERTIFICATE'
+        name: 'DELETE_CERTIFICATE',
+        description: 'Dar de baja certificados'
       },
       {
         name: 'READ_CERTIFICATE'
@@ -73,10 +75,12 @@ export const roleData: Partial<Role | any>[] = [
     description: 'System Owner',
     permissions: [
       {
-        name: 'CREATE_CERTIFICATE'
+        name: 'CREATE_CERTIFICATE',
+        description: 'Crear certificados'
       },
       {
-        name: 'DELETE_CERTIFICATE'
+        name: 'DELETE_CERTIFICATE',
+        description: 'Dar de baja certificados'
       },
       {
         name: 'READ_CERTIFICATE'

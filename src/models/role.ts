@@ -34,8 +34,8 @@ export class Role extends Model {
   })
   description!: string;
 
-  @BelongsToMany(() => Permission, () => RoleHasPermission, 'permissionId')
-  permissions?: Permission[];
+  @BelongsToMany(() => Permission, () => RoleHasPermission)
+  permissions?: Array<Permission & {RoleHasPermission: RoleHasPermission}>;
 
   @HasMany(() => User, 'roleId')
   user?: User[];
