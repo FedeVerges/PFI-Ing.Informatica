@@ -50,7 +50,9 @@ export const StudentService = {
     // todo: Agregar controles
     let person: Person;
     let newStudent: Student;
-    const blockchainId: string = String(studentData.person.docNumber);
+    const blockchainId: string = String(
+      studentData.person.docNumber + studentData.registrationNumber
+    );
     // busco a la persona.
     const findedPerson = await Person.findOne({
       where: { docNumber: studentData.person.docNumber },
@@ -88,21 +90,40 @@ export const StudentService = {
           throw new Error('El estudiante ya existe.');
         }
       } else {
-        throw new Error('La persona no es estudiante.');
+        newStudent = new Student({
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          registrationNumber: studentData.registrationNumber,
+          academicUnit: studentData.academicUnit,
+          degreeProgramCurriculum: studentData.degreeProgramCurriculum,
+          degreeProgramName: studentData.degreeProgramName,
+          universityName: studentData.universityName,
+          ministerialOrdinance: studentData.ministerialOrdinance,
+          superiorCouncilOrdinance: studentData.superiorCouncilOrdinance,
+          directiveCouncilOrdinance: studentData.directiveCouncilOrdinance,
+          blockchainId: blockchainId
+        });
+        newStudent.person = person;
+        await newStudent.save();
+
+        // Creo usuario temporal.
+        const userDto: UserDto = {
+          name: newStudent.person.docNumber,
+          password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
+          person: Person.toDto(newStudent.person)
+        };
+
+        await UserService.signUser(userDto);
       }
     } else {
-      // Si no existe, la creo.
-      person = new Person({
-        name: studentData.person.name,
-        lastname: studentData.person.lastname,
-        sex: studentData.person.sex,
-        docNumber: studentData.person.docNumber,
-      });
-      await person.save();
-
       newStudent = new Student(
         {
-          personId: person.id,
+          person: {
+            name: studentData.person.name,
+            lastname: studentData.person.lastname,
+            sex: studentData.person.sex,
+            docNumber: studentData.person.docNumber
+          },
           createdAt: new Date(),
           updatedAt: new Date(),
           registrationNumber: studentData.registrationNumber,
@@ -123,9 +144,9 @@ export const StudentService = {
 
       // Creo usuario temporal.
       const userDto: UserDto = {
-        name: person.docNumber,
-        password: `${person.lastname}${person.docNumber}`,
-        person: Person.toDto(person)
+        name: newStudent.person.docNumber,
+        password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
+        person: Person.toDto(newStudent.person)
       };
 
       await UserService.signUser(userDto);

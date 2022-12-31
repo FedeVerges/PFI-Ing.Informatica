@@ -3,9 +3,10 @@ import { Permission } from '../models/permission';
 import { Role } from '../models/role';
 import { permissionsSeedData } from './seeders/permisos';
 import { roleData } from './seeders/roles';
-import { userData } from './seeders/user';
+import { personsData, userData } from './seeders/user';
 import { Person } from '../models/person';
 import { User } from '../models/user';
+import { Student } from '../models/student';
 
 export const initializer = {
   async seedRoles() {
@@ -90,6 +91,32 @@ export const initializer = {
       }
     });
   },
+  async seedStudents() {
+    try {
+      await Promise.all(
+        personsData.map(async (person) => {
+          const newPerson = new Person(
+            {
+              name: person.name,
+              lastname: person.lastname,
+              docNumber: person.docNumber,
+              sex: person.sex,
+              students: person.students
+            },
+            {
+              include: [{ model: Student, required: true }]
+            }
+          );
+          return await newPerson.save();
+        })
+      );
+      console.info('User seeded 🍺');
+    } catch (error) {
+      console.error('Users seeder failed.');
+      console.error(error);
+      console.error('-------------------------------');
+    }
+  },
   async seedUsers() {
     try {
       await Promise.all(
@@ -97,31 +124,27 @@ export const initializer = {
           const role = await Role.findOne({
             where: { name: user.role.name }
           });
-          if (role) {
-            const newUser = new User(
-              {
-                name: user.name,
-                password: user.password,
-                email: user.email,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                roleId: role.id,
-                role: role,
-                person: {
-                  ...user.person
-                }
-              },
-              {
-                include: [{ model: Person, required: true }]
-              }
-            );
+          const person = await Person.findOne({
+            where: { docNumber: user.person.docNumber }
+          });
+          if (role && person) {
+            const newUser = new User({
+              name: user.name,
+              password: user.password,
+              email: user.email,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              roleId: role.id,
+              role: role,
+              person: person,
+              personId: person.id
+            });
             return await newUser.save();
           } else {
-            throw new Error('No existe el rol');
+            throw new Error('No existe el rol o la persona.');
           }
         })
       );
-
       console.info('User seeded 🍺');
     } catch (error) {
       console.error('Users seeder failed.');

@@ -69,6 +69,7 @@ export class App {
   private async resetDataBase() {
     await db.sync({ force: true });
     await initializer.seedRoles();
+    await initializer.seedStudents();
     await initializer.seedUsers();
   }
 }
