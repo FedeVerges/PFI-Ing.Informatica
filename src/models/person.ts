@@ -1,4 +1,5 @@
 import { PersonDto } from 'dto/personDto';
+import { PersonWithStudentsDto } from 'dto/personWithStudents';
 import {
   Table,
   Model,
@@ -62,7 +63,24 @@ export class Person extends Model {
         lastname: p.lastname,
         fullname: `${p.name} ${p.lastname}`,
         docNumber: p.docNumber,
+        sex: p.sex
+      };
+    } else {
+      throw new Error('No existe la persona.');
+    }
+    return person;
+  }
+  static toDtoWithStudents(p: Person): PersonWithStudentsDto {
+    let person: PersonWithStudentsDto;
+    if (p) {
+      person = {
+        id: p.id,
+        name: p.name,
+        lastname: p.lastname,
+        fullname: `${p.name} ${p.lastname}`,
+        docNumber: p.docNumber,
         sex: p.sex,
+        students: Student.toDtoList(p.students || []),
       };
     } else {
       throw new Error('No existe la persona.');

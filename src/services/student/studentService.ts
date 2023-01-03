@@ -110,7 +110,7 @@ export const StudentService = {
         const userDto: UserDto = {
           name: newStudent.person.docNumber,
           password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
-          person: Person.toDto(newStudent.person)
+          person: Person.toDtoWithStudents(newStudent.person)
         };
 
         await UserService.signUser(userDto);
@@ -146,7 +146,7 @@ export const StudentService = {
       const userDto: UserDto = {
         name: newStudent.person.docNumber,
         password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
-        person: Person.toDto(newStudent.person)
+        person: Person.toDtoWithStudents(newStudent.person),
       };
 
       await UserService.signUser(userDto);

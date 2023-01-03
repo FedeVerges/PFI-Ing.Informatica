@@ -6,6 +6,7 @@ import { UserDto } from '../../dto/userDto';
 import { Role } from '../../models/role';
 import { CONSTANT_CONFIG } from '../../constants/constanConfig';
 import { Person } from '../../models/person';
+import { Student } from '../../models/student';
 
 export const SECRET_KEY: Secret = 'HOLIS';
 
@@ -16,7 +17,19 @@ export const UserService = {
     if (!user || !password) {
       throw new Error('Deben existir usuario y contraseña');
     }
-    const foundUser = await User.findOne({ where: { name: user } });
+    const foundUser = await User.findOne({
+      where: { name: user },
+      include: [
+        {
+          model: Person,
+          required: true,
+          include:[{
+            model:Student,
+            required:true
+          }]
+        }
+      ]
+    });
     if (foundUser && foundUser.id) {
       // Validar el hash del password.
       const isMatch = bcrypt.compareSync(userBody.password, foundUser.password);

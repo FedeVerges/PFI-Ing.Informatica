@@ -35,16 +35,14 @@ export class Role extends Model {
   description!: string;
 
   @BelongsToMany(() => Permission, () => RoleHasPermission)
-  permissions?: Array<Permission & {RoleHasPermission: RoleHasPermission}>;
+  permissions?: Array<Permission & { RoleHasPermission: RoleHasPermission }>;
 
   @HasMany(() => User, 'roleId')
   user?: User[];
 
   static toDto(role: Role): RoleDto {
     return {
-      id: role.id,
-      name: role.name,
-      description: role.description
+      name: role.name
     };
   }
 }

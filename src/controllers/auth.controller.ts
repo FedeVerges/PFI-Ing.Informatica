@@ -9,7 +9,6 @@ export const authController = {
         user: req.body.user,
         password: req.body.password
       });
-      console.log(user);
       res.status(200).json(user);
     } catch (error) {
       console.error(error);
