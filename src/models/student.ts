@@ -104,7 +104,9 @@ export class Student extends Model {
       superiorCouncilOrdinance: student.superiorCouncilOrdinance,
       directiveCouncilOrdinance: student.directiveCouncilOrdinance,
       ministerialOrdinance: student.ministerialOrdinance,
-      person: Person.toDto(student.person)
+      person: Person.toDto(student.person),
+      blockchainId: Number(student.blockchainId),
+      registrationNumber: student.registrationNumber
     } as StudentDto;
   }
 
