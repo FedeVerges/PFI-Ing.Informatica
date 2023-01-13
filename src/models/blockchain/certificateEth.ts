@@ -19,7 +19,7 @@ export interface CertificateEth {
 export function fromDto(certificate: CertificateDto): CertificateEth {
   // Validar todos los campos.
   const student: StudentEth = {
-    id: Number(certificate.student.person.docNumber),
+    id: certificate.student.blockchainId,
     docNumber: certificate.student.person.docNumber,
     name: certificate.student.person.name,
     lastname: certificate.student.person.lastname,
@@ -31,18 +31,18 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
     academicUnit: certificate.student.academicUnit,
     degreeProgramName: certificate.student.degreeProgramName,
     degreeProgramCurriculum: certificate.student.degreeProgramCurriculum,
+    degreeType: certificate.degreeType,
     superiorCouncilOrdinance: certificate.student.superiorCouncilOrdinance,
     directiveCouncilOrdinance: certificate.student.directiveCouncilOrdinance,
     ministerialOrdinance: certificate.student.ministerialOrdinance,
-    degreeType: certificate.degreeType
   };
   const certificateEth: CertificateEth = {
     id: 0,
     student,
     universityDegree,
     active: true,
-    createdAt: 0,
-    updatedAt: 0,
+    createdAt: Number(certificate.dateCreated), // Pasar a milisgundos.
+    updatedAt: Number(certificate.dateCreated), // Pasar a milisgundos.
     waferNumber: certificate.waferNumber
   };
   return certificateEth;

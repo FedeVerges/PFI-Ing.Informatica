@@ -13,10 +13,9 @@ router.post('/signin', authController.signin);
 const certificateUrlBase = '/certificate';
 router.post(`${certificateUrlBase}/new`, certificateController.create);
 router.post(`${certificateUrlBase}/delete`, certificateController.delete);
-router.get(`${certificateUrlBase}/all`, certificateController.getAll);
 router.get(
   `${certificateUrlBase}/studentId/:studentId`,
-  certificateController.getByStudentId
+  certificateController.getByStudentBlockchainId
 );
 router.get(`${certificateUrlBase}/:id`, certificateController.getById);
 

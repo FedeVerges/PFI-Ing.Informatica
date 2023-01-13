@@ -64,6 +64,11 @@ class Web3Service {
     }
   }
 
+  /**
+   * Ejecuta un metodo del contrato inteligente para obtener los titulos por id de estudiante.
+   * @param id - BlockchainId del estudiante.
+   * @returns
+   */
   async getCertificatesByStudentId(id: number) {
     return (await this.certificateContract!.methods.getCertificatesByStudentId(
       id
@@ -125,8 +130,8 @@ class Web3Service {
   }): Partial<CertificateEth> {
     const cert: Partial<CertificateEth> = {
       id: logData.id ? Number(logData.id) : 0,
-      createdAt: logData.createdAt ? Number(logData.createdAt) : 0,
-      updatedAt: logData.updatedAt ? Number(logData.updatedAt) : 0
+      createdAt: logData['createdAt'] ? Number(logData['createdAt']) : 0,
+      updatedAt: logData['updatedAt'] ? Number(logData['updatedAt']) : 0
     };
     return cert;
   }

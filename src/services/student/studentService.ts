@@ -42,6 +42,23 @@ export const StudentService = {
     return foundStudents;
   },
 
+  async getStudentByBlockchainId(blockchainId: string) {
+    if (!blockchainId) {
+      throw new Error('Deben existir usuario y contraseña');
+    }
+    if (blockchainId.length < 8) {
+      throw new Error('El dni es incorrecto');
+    }
+    const foundStudents = await Student.findAll({
+      include: {
+        model: Person,
+        where: { blockchainId: blockchainId },
+        required: true
+      }
+    });
+    return foundStudents;
+  },
+
   async putStudent(docNumber: string) {},
 
   async deleteStudent(docNumber: string) {},
@@ -146,7 +163,7 @@ export const StudentService = {
       const userDto: UserDto = {
         name: newStudent.person.docNumber,
         password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
-        person: Person.toDtoWithStudents(newStudent.person),
+        person: Person.toDtoWithStudents(newStudent.person)
       };
 
       await UserService.signUser(userDto);

@@ -18,44 +18,14 @@ import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
 dayjs.locale('es');
 
 export const CertificateService = {
-  /* async getCertificatesByStudentId(id: number) {
-        try {
-            const certificates = await Certificate.findAll({ include: { model: Student, where: { id }, required: true } })
-            const ids = certificates.map(c => c.id);
-            const t = await BlockchainTransaction.findAll({
-                include: [
-                    {
-                        model: Certificate,
-                        as: "certificate",
-                        where: {
-                            id: ids
-                        },
-                        required: true,
-                        include: [{
-                            model: Student,
-                            required: true,
-                            include: [
-                                {
-                                    model: Person,
-                                    required: true,
-                                }
-                            ]
-                        }]
-                    }
-                ]
-            }
-            );
-            return BlockchainTransaction.toDtoList(t)
-        } catch (error) {
-            throw error;
-        }
-    }, */
-
-  //Se conecta con blockchain.
+  /**
+   * Obtiene los certificados en blockchain y las transacciones.
+   * @param id - blochainId del estudiante.
+   * @returns Listado de transacciones.
+   */
   async getCertificatesByStudentId(id: number) {
     // Obtengo los certificados de la blockchain.
     const certificates = await web3Service.getCertificatesByStudentId(id);
-    // const certificates = await Certificate.findAll({ include: { model: Student, where: { id }, required: true } })
 
     // Obtengo los ids.
     const ids = certificates.map((c) => c.id);
@@ -91,9 +61,6 @@ export const CertificateService = {
     const certificate = await web3Service.getCertificatesById(id);
     return toBlockchainTransactionDto(certificate);
   },
-
-  async getAllCertificates() {},
-
   async createCertificate(
     certificateData: CertificateDto
   ): Promise<TransactionDto> {
@@ -169,15 +136,14 @@ export const CertificateService = {
     receipt: TransactionReceipt
   ) {
     // Con el resultado de la transaccion, actualizamos la transaccion y el certificado.
-    transactionResponse.set({
+    await transactionResponse.update({
       status: 'COMPLETED',
-      certificateBlockchainId: resultCertificate?.id,
+      ceritificateBlockchainId: resultCertificate?.id || 0,
       blockNumber: receipt.blockNumber,
       blockHash: receipt.blockHash,
       from: receipt.from,
       gasUsed: receipt.gasUsed
     });
-    await transactionResponse.save();
 
     // Validamos el retorno de la misma corroborando en errores.
   },
