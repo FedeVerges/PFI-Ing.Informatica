@@ -7,12 +7,10 @@ import {
   SignedTransaction
 } from 'web3-core';
 import { AbiInput } from 'web3-utils';
-import {
-  CertificateEth,
-  fromDto
-} from '../../models/blockchain/certificateEth';
+import { CertificateEth } from '../../models/blockchain/certificateEth';
 import { notificationService } from '../../services/notifications/notificationService';
-import { NetworkStatusDto } from 'dto/notificationDto';
+import { NotificationDto } from '../../dto/notificationDto';
+import { NetworkStatusDto } from '../../dto/networkStatusDto';
 
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
@@ -187,54 +185,22 @@ class Web3Service {
   }
 
   getNetworkStatus() {
-    let status: NetworkStatusDto = {
+    let notification: NotificationDto = {
+      type: 'STATUS',
       networkId: 0,
       blockchainName: '',
       connected: false
     };
     if (this.networkId && this.web3 && this.web3.currentProvider) {
-      status = {
+      notification = {
+        type: 'STATUS',
         networkId: this.networkId,
         blockchainName: this.web3.currentProvider?.toString(),
         connected: true
       };
     }
-    notificationService.sendNotification(1, status);
+    notificationService.sendNotification(1, notification);
   }
 }
 
 export const web3Service = new Web3Service();
-
-// const rawTx = {
-//     to: transaction._parent._address,
-//     data: data,
-//     nonce: this.web3.utils.toHex(nonce),
-//     gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('2', 'gwei')),
-//     gasLimit: this.web3.utils.toHex(55000),
-// } as TxData
-
-// const common = new Common({ chain: Chain.Ropsten })
-// const tx = Transaction.fromTxData(rawTx, { common })
-
-// const signedTx = tx.sign(this.privateKey)
-
-// const serializedTx = signedTx.serialize()
-
-// async function send() {
-//     const web3        = new Web3(YOUR_NODE_ADDRESS);
-//     const contract    = new web3.eth.Contract(YOUR_CONTRACT_ABI, YOUR_CONTRACT_ADDRESS);
-//     const account     = web3.eth.accounts.privateKeyToAccount(YOUR_PRIVATE_KEY);
-//     const transaction = contract.methods.notarizeHash(YOUR_ID, YOUR_DOCUMENT_HASH);
-
-//     const options  = {
-//         to      : transaction._parent._address,
-//         data    : transaction.encodeABI(),
-//         gas     : await transaction.estimateGas({from: account.address}),
-//         gasPrice: WHATEVER_GAS_PRICE_YOU_ARE_WILLING_TO_PAY
-//     };
-
-//     const signed  = await web3.eth.accounts.signTransaction(options, account.privateKey);
-//     const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
-
-//     return receipt;
-// }
