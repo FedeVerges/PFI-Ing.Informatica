@@ -15,6 +15,8 @@ import { Person } from '../../models/person';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es'; // import locale
 import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
+import { notificationService } from '../../services/notifications/notificationService';
+import { NotificationDto } from '../../dto/notificationDto';
 dayjs.locale('es');
 
 export const CertificateService = {
@@ -109,12 +111,13 @@ export const CertificateService = {
         // Mandar a publicar la trnasaccion de manera asincrona.
         web3Service
           .sendTransaction(signed)
-          .then(async ([resultCertificate, receipt]) =>
-            this.updateStateTransaction(
-              transactionResponse,
-              resultCertificate,
-              receipt
-            )
+          .then(
+            async ([resultCertificate, receipt]) =>
+              await this.updateStateTransaction(
+                transactionResponse,
+                resultCertificate,
+                receipt
+              )
           );
       } else {
         throw new Error('Ha ocurrido un error al crear la firma');
@@ -136,7 +139,7 @@ export const CertificateService = {
     receipt: TransactionReceipt
   ) {
     // Con el resultado de la transaccion, actualizamos la transaccion y el certificado.
-    await transactionResponse.update({
+    const ret = await transactionResponse.update({
       status: 'COMPLETED',
       ceritificateBlockchainId: resultCertificate?.id || 0,
       blockNumber: receipt.blockNumber,
@@ -144,8 +147,12 @@ export const CertificateService = {
       from: receipt.from,
       gasUsed: receipt.gasUsed
     });
-
-    // Validamos el retorno de la misma corroborando en errores.
+    const notification: NotificationDto = {
+      type: 'TRANSACTION',
+      transactionHash: ret.transactionHash,
+      status: ret.status
+    };
+    notificationService.sendNotification(1, notification);
   },
 
   async deleteCertificate(id: number) {
