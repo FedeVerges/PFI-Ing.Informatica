@@ -56,6 +56,15 @@ export const certificateController = {
       res.setHeader('Content-Type', 'application/json');
       res.status(409).json(getErrorMessage(error));
     }
+  },
+  async getAllTransaction(_: Request, res: Response) {
+    try {
+      res.status(200).json(await CertificateService.getAllTransaction());
+    } catch (error) {
+      console.error(error);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(409).json(getErrorMessage(error));
+    }
   }
 };
 

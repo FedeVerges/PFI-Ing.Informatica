@@ -1,4 +1,6 @@
 import { strict } from 'assert';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es'; // import locale
 import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
 import {
   Table,
@@ -10,9 +12,29 @@ import {
   DefaultScope
 } from 'sequelize-typescript';
 import { Certificate } from './certificate';
+import { Person } from './person';
+import { Student } from './student';
+dayjs.locale('es');
 
 @DefaultScope(() => ({
-  include: [Certificate]
+  include: [
+    {
+      model: Certificate,
+      required: true,
+      include: [
+        {
+          model: Student,
+          required: true,
+          include: [
+            {
+              model: Person,
+              required: true
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }))
 @Table({
   timestamps: false,
@@ -75,6 +97,21 @@ export class BlockchainTransaction extends Model {
     allowNull: true
   })
   gasUsed: number | undefined;
+
+  @Column({
+    type: DataType.DATE,
+    get() {
+      return dayjs(this.getDataValue('dateCreated')).toString();
+    },
+    allowNull: false
+  })
+  dateCreated!: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false
+  })
+  dateModified!: string;
 
   @BelongsTo(() => Certificate, 'ceritificateId')
   certificate!: Certificate;

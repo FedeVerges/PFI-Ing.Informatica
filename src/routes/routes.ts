@@ -25,4 +25,10 @@ router.post(`${studentUrlBase}/new`, studentController.create);
 router.get(`${studentUrlBase}/all`, studentController.getAll);
 router.get(`${studentUrlBase}/:docNumber`, studentController.getByDocNumber);
 
+//Transacciones
+const transactionUrlBase = '/transaction';
+router.get(`${transactionUrlBase}/all`, certificateController.getAllTransaction);
+
+
+
 export default router;
