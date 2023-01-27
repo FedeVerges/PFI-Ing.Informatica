@@ -8,4 +8,6 @@ export interface BlockchainTransactionDto {
   blockHash?: string;
   etherscanLink?: string;
   gasUsed?: number;
+  dateCreated?: string;
+  dateModified?: string;
 }

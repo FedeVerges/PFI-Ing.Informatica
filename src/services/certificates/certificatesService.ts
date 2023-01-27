@@ -104,7 +104,8 @@ export const CertificateService = {
         const transaction = new BlockchainTransaction({
           transactionHash: signed.transactionHash,
           ceritificateId: newCertificate.id,
-          status: 'PENDING'
+          status: 'PENDING',
+          dateCreated: dayjs(new Date()).toString()
         } as BlockchainTransaction);
         const transactionResponse = await transaction.save();
         // Envio a publicar la transaccion.
@@ -145,7 +146,8 @@ export const CertificateService = {
       blockNumber: receipt.blockNumber,
       blockHash: receipt.blockHash,
       from: receipt.from,
-      gasUsed: receipt.gasUsed
+      gasUsed: receipt.gasUsed,
+      dateModified: dayjs(new Date()).toString(),
     });
     const notification: NotificationDto = {
       type: 'TRANSACTION',

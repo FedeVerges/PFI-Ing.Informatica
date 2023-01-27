@@ -32,13 +32,12 @@ class NotificationService {
   connect() {
     this.webSocketInstance.on('connection', (ws: WebSocket) => {
       ws.on('message', (messageAsString: string) => {
-        try {
-          if (this.webSocketInstance.clients.has(ws)) {
+          if (!this.webSocketInstance.clients.has(ws)) {
             console.log('conectado');
           }
-        } catch (e) {
-          console.log('Ocurrió un error al parsear el mensaje');
-        }
+      });
+      ws.on("error", (err) => {
+        console.log(err.stack);
       });
       web3Service.getNetworkStatus();
     });
