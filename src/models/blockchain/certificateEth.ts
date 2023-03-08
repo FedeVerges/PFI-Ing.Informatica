@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { PersonDto } from 'dto/personDto';
 import { Person } from 'models/person';
 import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
@@ -5,6 +6,9 @@ import { CertificateDto } from '../../dto/certificateDto';
 import { StudentDto } from '../../dto/studentDto';
 import { StudentEth } from './studentEth';
 import { UniversityDegreeEth } from './universityDegreeEth';
+dayjs.locale('es');
+
+
 
 export interface CertificateEth {
   id: number;
@@ -77,8 +81,8 @@ export function toDto(certificate: CertificateEth): CertificateDto {
     student: student,
     degreeName: certificate.universityDegree.degreeProgramName,
     waferNumber: certificate.waferNumber,
-    dateCreated: String(new Date(certificate.createdAt * 1000)),
-    dateModified: String(new Date(certificate.updatedAt * 1000)),
+    dateCreated: dayjs(certificate.createdAt * 1000).format('DD/MM/YYYY - hh:mm'),
+    dateModified: dayjs(certificate.updatedAt * 1000).format('DD/MM/YYYY'),
     degreeType: certificate.universityDegree.degreeType
   };
   return ret;

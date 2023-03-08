@@ -100,21 +100,15 @@ export class BlockchainTransaction extends Model {
 
   @Column({
     type: DataType.DATE,
-    get() {
-      return dayjs(this.getDataValue('dateCreated')).toString() || '';
-    },
     allowNull: false
   })
-  dateCreated: string = '';
+  dateCreated!: Date;
 
   @Column({
     type: DataType.DATE,
-    get() {
-      return dayjs(this.getDataValue('dateCreated')).toString() || '';
-    },
     allowNull: false
   })
-  dateModified: string | undefined;
+  dateModified?: Date;
 
   @BelongsTo(() => Certificate, 'ceritificateId')
   certificate!: Certificate;
@@ -131,8 +125,12 @@ export class BlockchainTransaction extends Model {
         blockHash: t.blockHash,
         etherscanLink: this.createEtherscanLink(t.transactionHash),
         gasUsed: t.gasUsed,
-        dateCreated: t.dateCreated,
+        dateCreated: t.dateCreated
+          ? dayjs(t.dateCreated).format('DD/MM/YYYY')
+          : '',
         dateModified: t.dateModified
+          ? dayjs(t.dateModified).format('DD/MM/YYYY')
+          : ''
       } as BlockchainTransactionDto;
     });
   }

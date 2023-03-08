@@ -11,6 +11,7 @@ export const studentController = {
     try {
       // todo: Funcion para validar permisos.
       // Todo: Crear Dto a partir del req.body y ahi verificar los datos.
+      // todo: verificar que idempotencia del estudiante.
       const student = await StudentService.createStudent(
         req.body as StudentDto
       );
