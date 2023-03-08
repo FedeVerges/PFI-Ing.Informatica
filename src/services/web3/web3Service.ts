@@ -10,7 +10,6 @@ import { AbiInput } from 'web3-utils';
 import { CertificateEth } from '../../models/blockchain/certificateEth';
 import { notificationService } from '../../services/notifications/notificationService';
 import { NotificationDto } from '../../dto/notificationDto';
-import { NetworkStatusDto } from '../../dto/networkStatusDto';
 
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
@@ -123,7 +122,7 @@ class Web3Service {
     return cert;
   }
 
-  createEthCertificate(logData: {
+  private createEthCertificate(logData: {
     [key: string]: string;
   }): Partial<CertificateEth> {
     const cert: Partial<CertificateEth> = {
@@ -200,6 +199,12 @@ class Web3Service {
       };
     }
     notificationService.sendNotification(1, notification);
+  }
+
+  async deleteCertificate(id:number){
+    return (await this.certificateContract!.methods.deleteCertificate(
+      id
+    ).call()) as Promise<CertificateEth[]>;
   }
 }
 

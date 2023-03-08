@@ -57,6 +57,7 @@ export const CertificateService = {
         }
       ]
     });
+    // todo: cuando no hay transacciones pero si hay certificados, recuperar la info y devolverla pero sin informacion en el sistema.
     return BlockchainTransaction.toDtoList(transactions);
   },
   async getCertificatesById(id: number): Promise<BlockchainTransactionDto> {
@@ -85,13 +86,14 @@ export const CertificateService = {
         throw new Error('Ha ocurrido un error al conectarse con la red');
       }
 
+      const currentDateStr = dayjs(new Date()).toString();
       // Una vez validada la firma. Creo el certificado en la base.
       const newCertificate = new Certificate({
         degreeType: certificateData.degreeType,
         degreeName: certificateData.degreeName,
         ministerialOrdinance: certificateData.student.ministerialOrdinance,
-        dateCreated: dayjs(new Date()).toString(),
-        dateModified: dayjs(new Date()).toString(),
+        dateCreated: currentDateStr,
+        dateModified: currentDateStr,
         waferNumber: certificateData.waferNumber,
         studentId: student.id,
         student,
@@ -105,7 +107,8 @@ export const CertificateService = {
           transactionHash: signed.transactionHash,
           ceritificateId: newCertificate.id,
           status: 'PENDING',
-          dateCreated: dayjs(new Date()).toString()
+          dateCreated: new Date(),
+          dateModified: new Date(),
         } as BlockchainTransaction);
         const transactionResponse = await transaction.save();
         // Envio a publicar la transaccion.
@@ -164,7 +167,6 @@ export const CertificateService = {
     }
   },
 
-  //TODO.
   createUpdateStudent(studentId: number) {
     // Obtener el estudiante por id.
     // Si existe, verifico que el la idempotencia del titulo.
@@ -188,7 +190,6 @@ export const CertificateService = {
   ): boolean {
     let ret = false;
     if (certfificates && certfificates.length > 0) {
-      //    Validaciones
       // Mismo numero de oblea o mismo estudiante y misma carrera.
       const results = certfificates.filter(
         (c) =>
@@ -196,7 +197,7 @@ export const CertificateService = {
           (c.student.id === newCertificate.student.id &&
             c.degreeName === newCertificate.degreeName)
       );
-      ret = !results;
+      ret = results.length < 1;
     } else {
       ret = true;
     }
