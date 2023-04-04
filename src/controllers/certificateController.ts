@@ -65,6 +65,24 @@ export const certificateController = {
       res.setHeader('Content-Type', 'application/json');
       res.status(409).json(getErrorMessage(error));
     }
+  },
+  async generatePdfCertificate(req: Request, res: Response) {
+    try {
+      const id = req.params.id;
+      const transaction = await CertificateService.getCertificatesById(
+        Number(id)
+      );
+      if (transaction) {
+        const ret = await CertificateService.createCertificatePdf(transaction);
+        res.status(200).json(ret);
+      } else {
+        throw new Error('El certificado no existe.');
+      }
+    } catch (error) {
+      console.error(error);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(409).json(getErrorMessage(error));
+    }
   }
 };
 

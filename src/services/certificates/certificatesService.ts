@@ -17,6 +17,9 @@ import 'dayjs/locale/es'; // import locale
 import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
 import { notificationService } from '../../services/notifications/notificationService';
 import { NotificationDto } from '../../dto/notificationDto';
+import { pdfService } from '../../services/pdf/pdfService';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
+import { PdfDto } from 'dto/pdfDto';
 dayjs.locale('es');
 
 export const CertificateService = {
@@ -30,17 +33,17 @@ export const CertificateService = {
     const certificates = await web3Service.getCertificatesByStudentId(id);
 
     // Obtengo los ids.
-    const ids = certificates.map((c) => c.id);
+    const ids = certificates.map((c) => Number(c.id));
 
     // Obtengo las datos de las transacciones de cada certificado (a traves del id). Se conecta a DB local.
     const transactions = await BlockchainTransaction.findAll({
+      where: {
+        ceritificateBlockchainId: ids
+      },
       include: [
         {
           model: Certificate,
           as: 'certificate',
-          where: {
-            id: ids
-          },
           required: true,
           include: [
             {
@@ -57,12 +60,22 @@ export const CertificateService = {
         }
       ]
     });
-    // todo: cuando no hay transacciones pero si hay certificados, recuperar la info y devolverla pero sin informacion en el sistema.
-    return BlockchainTransaction.toDtoList(transactions);
+
+    /* Cuando no hay transacciones pero si hay certificados, 
+      recuperar la info y devolverla pero sin informacion en el sistema. 
+    */
+    if (transactions && transactions.length > 0) {
+      return BlockchainTransaction.toDtoList(transactions);
+    } else {
+      return certificates.map((c) => toBlockchainTransactionDto(c));
+    }
   },
-  async getCertificatesById(id: number): Promise<BlockchainTransactionDto> {
+  async getCertificatesById(id: number) {
     const certificate = await web3Service.getCertificatesById(id);
-    return toBlockchainTransactionDto(certificate);
+    // validar que el dato sea nulo.
+    return !isNullCertificate(certificate)
+      ? toBlockchainTransactionDto(certificate)
+      : null;
   },
   async createCertificate(
     certificateData: CertificateDto
@@ -108,7 +121,7 @@ export const CertificateService = {
           ceritificateId: newCertificate.id,
           status: 'PENDING',
           dateCreated: new Date(),
-          dateModified: new Date(),
+          dateModified: new Date()
         } as BlockchainTransaction);
         const transactionResponse = await transaction.save();
         // Envio a publicar la transaccion.
@@ -150,7 +163,7 @@ export const CertificateService = {
       blockHash: receipt.blockHash,
       from: receipt.from,
       gasUsed: receipt.gasUsed,
-      dateModified: dayjs(new Date()).toString(),
+      dateModified: dayjs(new Date()).toString()
     });
     const notification: NotificationDto = {
       type: 'TRANSACTION',
@@ -202,5 +215,97 @@ export const CertificateService = {
       ret = true;
     }
     return ret;
+  },
+
+  async createCertificatePdf(
+    transaction: BlockchainTransactionDto
+  ): Promise<PdfDto> {
+    let documentEncoded: string;
+    const docDefinition: TDocumentDefinitions = {
+      // ownerPassword: '1234',
+      permissions: {
+        printing: 'highResolution', //'lowResolution'
+        modifying: false,
+        copying: false,
+        contentAccessibility: true,
+        documentAssembly: true
+      },
+      content: [
+        { text: 'Titulo universitario', style: ['title'] },
+        {
+          text: [
+            'El estudiante ',
+            {
+              text: `${transaction.certificate?.student?.person?.fullname}`,
+              bold: true
+            },
+            'ha aprobado todas las materias corresponiendtes al plan ',
+            {
+              text: `${transaction.certificate?.student?.degreeProgramCurriculum}`,
+              bold: true
+            },
+            'de la carrera ',
+            {
+              text: `${transaction.certificate?.student?.degreeProgramName}`,
+              bold: true
+            },
+            'de la institución ',
+            {
+              text: `${transaction.certificate?.student?.universityName}`,
+              bold: true
+            }
+          ],
+          style: ['textMuted']
+        },
+        {
+          text: ` Se le considera plenamente capaz de realizar todas las tareas respectivas a la actividad de `,
+          style: ['h4']
+        },
+        {
+          text: `${transaction.certificate?.degreeName}`,
+          bold: true,
+          style: ['h4']
+        },
+        { qr: 'text in QR', fit: 100, margin: [0, 30] }
+      ],
+      defaultStyle: {
+        font: 'MyFont',
+        alignment: 'center',
+        fontSize: 18
+      },
+      styles: {
+        normalText: {
+          fontSize: 18
+        },
+        textMuted: {
+          color: '#8e8c8c'
+        },
+        textBold: {
+          bold: true
+        },
+        h4: {
+          fontSize: 20
+        },
+        title: {
+          fontSize: 32
+        }
+      }
+    };
+    return {
+      name: `${transaction.certificate?.student.person.fullname}_Certificado${transaction.certificateBlockchainId}.pdf`,
+      document: await pdfService.createPdf(docDefinition)
+    };
   }
 };
+
+function isNullCertificate(certificate: CertificateEth): boolean {
+  return (
+    certificate &&
+    certificate.active == false &&
+    certificate.createdAt <= 0 &&
+    Number(certificate.id) === 0 &&
+    certificate.student.name === '' &&
+    certificate.updatedAt <= 0 &&
+    certificate.waferNumber === ''
+  );
+}

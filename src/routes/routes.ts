@@ -19,6 +19,13 @@ router.get(
 );
 router.get(`${certificateUrlBase}/:id`, certificateController.getById);
 
+// PDF
+const pdfUrlBase = '/pdf';
+router.get(
+  `${pdfUrlBase}/certificate/:id`,
+  certificateController.generatePdfCertificate
+);
+
 // Estudiantes
 const studentUrlBase = '/student';
 router.post(`${studentUrlBase}/new`, studentController.create);
@@ -27,8 +34,9 @@ router.get(`${studentUrlBase}/:docNumber`, studentController.getByDocNumber);
 
 //Transacciones
 const transactionUrlBase = '/transaction';
-router.get(`${transactionUrlBase}/all`, certificateController.getAllTransaction);
-
-
+router.get(
+  `${transactionUrlBase}/all`,
+  certificateController.getAllTransaction
+);
 
 export default router;
