@@ -16,7 +16,6 @@ import bcrypt from 'bcrypt';
 import { UserDto } from 'dto/userDto';
 import { Person } from './person';
 import { Role } from './role';
-import { Student } from './student';
 @DefaultScope(() => ({
   include: [Person, Role]
 }))
@@ -108,7 +107,7 @@ export class User extends Model {
       id: user.id,
       name: user.name,
       email: user.email,
-      person: Person.toDtoWithStudents(user.person),
+      person: Person.toDtoWithStudents(user.person)
     } as UserDto;
   }
 }

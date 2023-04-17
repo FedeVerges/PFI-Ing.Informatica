@@ -20,6 +20,8 @@ import { NotificationDto } from '../../dto/notificationDto';
 import { pdfService } from '../../services/pdf/pdfService';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PdfDto } from 'dto/pdfDto';
+import * as CryptoJS from 'crypto-js';
+
 dayjs.locale('es');
 
 export const CertificateService = {
@@ -220,7 +222,14 @@ export const CertificateService = {
   async createCertificatePdf(
     transaction: BlockchainTransactionDto
   ): Promise<PdfDto> {
-    let documentEncoded: string;
+    let documentEncoded: string = CryptoJS.AES.encrypt(
+      JSON.stringify(transaction),
+      '1234'
+    ).toString();
+
+    const encodedWord = CryptoJS.enc.Utf8.parse(JSON.stringify(transaction)); // encodedWord Array object
+    const encoded = CryptoJS.enc.Base64.stringify(encodedWord); // string: 'NzUzMjI1NDE='
+
     const docDefinition: TDocumentDefinitions = {
       // ownerPassword: '1234',
       permissions: {
@@ -258,15 +267,18 @@ export const CertificateService = {
           style: ['textMuted']
         },
         {
-          text: ` Se le considera plenamente capaz de realizar todas las tareas respectivas a la actividad de `,
-          style: ['h4']
+          text: 'Por lo tanto, de acuerdo con las normas vigentes en ésta Universidad, le confieren el presente diploma de '
         },
         {
           text: `${transaction.certificate?.degreeName}`,
-          bold: true,
-          style: ['h4']
+          bold: true
         },
-        { qr: 'text in QR', fit: 100, margin: [0, 30] }
+        {
+          qr: `http://192.168.0.10:4200/validate/${encoded}`,
+          version: 25,
+          fit: 250,
+          margin: [0, 30]
+        }
       ],
       defaultStyle: {
         font: 'MyFont',
