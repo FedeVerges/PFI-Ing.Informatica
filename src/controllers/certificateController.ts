@@ -23,7 +23,9 @@ export const certificateController = {
   },
   async delete(req: Request, res: Response) {
     try {
-      //todo: implementar.
+      const id = Number(req.params.id);
+      const receipt = await CertificateService.deleteCertificate(id);
+      res.status(200).json(receipt);
     } catch (error) {
       res.setHeader('Content-Type', 'application/json');
       res.status(409).json(getErrorMessage(error));

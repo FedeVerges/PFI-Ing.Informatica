@@ -101,7 +101,7 @@ export const personsData: Partial<Person>[] = [
         registrationNumber: 3028520,
         superiorCouncilOrdinance: '12312312312',
         directiveCouncilOrdinance: '123123123'
-      },
+      }
     ] as Student[]
   },
   {
@@ -120,7 +120,7 @@ export const personsData: Partial<Person>[] = [
         registrationNumber: 3028517,
         superiorCouncilOrdinance: '12312312312',
         directiveCouncilOrdinance: '123123123'
-      },
+      }
     ] as Student[]
   },
   {
@@ -139,7 +139,7 @@ export const personsData: Partial<Person>[] = [
         registrationNumber: 3028518,
         superiorCouncilOrdinance: '12312312312',
         directiveCouncilOrdinance: '123123123'
-      },
+      }
     ] as Student[]
   }
 ];

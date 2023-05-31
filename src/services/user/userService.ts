@@ -23,10 +23,12 @@ export const UserService = {
         {
           model: Person,
           required: true,
-          include:[{
-            model:Student,
-            required:true
-          }]
+          include: [
+            {
+              model: Student,
+              required: true
+            }
+          ]
         }
       ]
     });
@@ -84,7 +86,7 @@ export const UserService = {
       throw new Error('Los datos de la persona son obligatorios');
 
     const role = await Role.findOne({
-      where: { name: CONSTANT_CONFIG.ROLE_ADMIN_CODE }
+      where: { name: CONSTANT_CONFIG.ROLE_STUDENT_CODE }
     });
 
     const user = await User.findOne({ where: { personId: dto.person.id } });

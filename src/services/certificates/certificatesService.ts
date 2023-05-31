@@ -95,7 +95,7 @@ export const CertificateService = {
       // Creamos la transaccion
       try {
         ethCertificate = fromDto(certificateData);
-        signed = await web3Service.createSignTransaction(ethCertificate);
+        signed = await web3Service.createSignCreateTransaction(ethCertificate);
       } catch (ex) {
         console.error(ex);
         throw new Error('Ha ocurrido un error al conectarse con la red');
@@ -121,6 +121,7 @@ export const CertificateService = {
         const transaction = new BlockchainTransaction({
           transactionHash: signed.transactionHash,
           ceritificateId: newCertificate.id,
+          methodName: 'CREATE',
           status: 'PENDING',
           dateCreated: new Date(),
           dateModified: new Date()
@@ -176,9 +177,39 @@ export const CertificateService = {
   },
 
   async deleteCertificate(id: number) {
-    try {
-    } catch (error) {
-      throw error;
+    let ret: Partial<TransactionDto> = {
+      status: 'pending'
+    };
+
+    // creo la transaccion.
+    let signed: SignedTransaction;
+    signed = await web3Service.createSignDeleteTransaction(id);
+
+    // Creo la transaccion en la base.
+    if (signed) {
+      const transaction = new BlockchainTransaction({
+        transactionHash: signed.transactionHash,
+        methodName: 'DELETE',
+        status: 'pending',
+        dateCreated: new Date(),
+        dateModified: new Date()
+      } as BlockchainTransaction);
+      const transactionResponse = await transaction.save();
+      // Envio a publicar la transaccion.
+      // Mandar a publicar la trnasaccion de manera asincrona.
+      web3Service
+        .sendTransaction(signed)
+        .then(
+          async ([resultCertificate, receipt]) =>
+            await this.updateStateTransaction(
+              transactionResponse,
+              resultCertificate,
+              receipt
+            )
+        );
+      ret.receipt = BlockchainTransaction.toD;
+    } else {
+      throw new Error('Ha ocurrido un error al crear la firma');
     }
   },
 
@@ -274,8 +305,8 @@ export const CertificateService = {
           bold: true
         },
         {
-          qr: `http://192.168.0.10:4200/validate/${encoded}`,
-          version: 25,
+          qr: `http://192.168.0.11:4200/validate/${encoded}`,
+          version: 15,
           fit: 250,
           margin: [0, 30]
         }

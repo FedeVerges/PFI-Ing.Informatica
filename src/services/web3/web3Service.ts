@@ -133,7 +133,7 @@ class Web3Service {
     return cert;
   }
 
-  async createSignTransaction(
+  async createSignCreateTransaction(
     certificate: CertificateEth
   ): Promise<SignedTransaction> {
     const privateKey = process.env.PRIVATE_KEY;
@@ -144,6 +144,53 @@ class Web3Service {
         // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
         const transaction =
           this.certificateContract!.methods.createCertificate(certificate);
+
+        // Calculo el gas estimado de la transaccion.
+        const gas = await transaction.estimateGas({ from: account?.address! });
+
+        // Codifico la transaccion para ser firmada.
+        const data = transaction.encodeABI();
+
+        // Obtengo el numero de transacciones de la cuenta.
+        const nonce = await this.web3.eth.getTransactionCount(
+          account?.address!
+        );
+
+        // Creo la configuracion de la transaccion con los datos para ser firmada.
+        const options = {
+          to: transaction._parent._address,
+          data: data,
+          nonce: nonce,
+          gas: gas,
+          gasPrice: 55000
+        } as TransactionConfig;
+
+        // Firmo la transaccion con la clave privada.
+        const signed = await this.web3.eth.accounts.signTransaction(
+          options,
+          account.privateKey!
+        );
+        return signed;
+      } else {
+        throw new Error(
+          'Ocurrio un error al firmar la transaccion. Revise sus parametros.'
+        );
+      }
+    } else {
+      throw new Error(
+        'Error al obtener la clave privada. Revise la configuracion'
+      );
+    }
+  }
+  async createSignDeleteTransaction(id: number): Promise<SignedTransaction> {
+    const privateKey = process.env.PRIVATE_KEY;
+    if (privateKey) {
+      const account: Account =
+        this.web3.eth.accounts.privateKeyToAccount(privateKey);
+      if (account) {
+        // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
+        const transaction =
+          this.certificateContract!.methods.deleteCertificate(id);
 
         // Calculo el gas estimado de la transaccion.
         const gas = await transaction.estimateGas({ from: account?.address! });
@@ -201,11 +248,7 @@ class Web3Service {
     notificationService.sendNotification(1, notification);
   }
 
-  async deleteCertificate(id:number){
-    return (await this.certificateContract!.methods.deleteCertificate(
-      id
-    ).call()) as Promise<CertificateEth[]>;
-  }
+  async deleteCertificate(id: number) {}
 }
 
 export const web3Service = new Web3Service();

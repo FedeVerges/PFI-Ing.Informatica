@@ -53,6 +53,12 @@ export class BlockchainTransaction extends Model {
     type: DataType.STRING,
     allowNull: false
   })
+  methodName!: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
   transactionHash!: string;
 
   @ForeignKey(() => Certificate)
@@ -60,43 +66,43 @@ export class BlockchainTransaction extends Model {
     type: DataType.INTEGER,
     allowNull: true
   })
-  ceritificateId: number | undefined;
+  ceritificateId?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true
   })
-  ceritificateBlockchainId: number | undefined;
+  ceritificateBlockchainId?: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  status!: string;
+  status: string = 'pending';
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true
   })
-  blockNumber: number | undefined;
+  blockNumber?: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: true
   })
-  blockHash: number | undefined;
+  blockHash?: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: true
   })
-  from: string | undefined;
+  from?: string;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true
   })
-  gasUsed: number | undefined;
+  gasUsed?: number;
 
   @Column({
     type: DataType.DATE,
@@ -117,22 +123,26 @@ export class BlockchainTransaction extends Model {
     transactions: BlockchainTransaction[]
   ): BlockchainTransactionDto[] {
     return transactions.map((t) => {
-      return {
-        transactionHash: t.transactionHash,
-        certificate: Certificate.toDto(t.certificate),
-        certificateBlockchainId: t.ceritificateBlockchainId,
-        status: t.status,
-        blockHash: t.blockHash,
-        etherscanLink: this.createEtherscanLink(t.transactionHash),
-        gasUsed: t.gasUsed,
-        dateCreated: t.dateCreated
-          ? dayjs(t.dateCreated).format('DD/MM/YYYY')
-          : '',
-        dateModified: t.dateModified
-          ? dayjs(t.dateModified).format('DD/MM/YYYY')
-          : ''
-      } as BlockchainTransactionDto;
+      return BlockchainTransaction.toDto(t);
     });
+  }
+
+  static toDto(t: BlockchainTransaction): BlockchainTransactionDto {
+    return {
+      transactionHash: t.transactionHash,
+      certificate: t.certificate ? Certificate.toDto(t.certificate) : null,
+      certificateBlockchainId: t.ceritificateBlockchainId,
+      status: t.status,
+      blockHash: t.blockHash,
+      etherscanLink: this.createEtherscanLink(t.transactionHash),
+      gasUsed: t.gasUsed,
+      dateCreated: t.dateCreated
+        ? dayjs(t.dateCreated).format('DD/MM/YYYY')
+        : '',
+      dateModified: t.dateModified
+        ? dayjs(t.dateModified).format('DD/MM/YYYY')
+        : ''
+    } as BlockchainTransactionDto;
   }
 
   private static createEtherscanLink(transactionHash: string): string {

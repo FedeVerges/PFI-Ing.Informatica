@@ -35,6 +35,7 @@ export class App {
   async connectDb() {
     try {
       // await this.resetDataBase();
+      // await db.sync({ alter: true });
       await db.sync();
       console.log('Base de datos conectada.');
     } catch (error: any) {

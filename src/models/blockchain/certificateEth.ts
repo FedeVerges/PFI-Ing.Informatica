@@ -8,8 +8,6 @@ import { StudentEth } from './studentEth';
 import { UniversityDegreeEth } from './universityDegreeEth';
 dayjs.locale('es');
 
-
-
 export interface CertificateEth {
   id: number;
   student: StudentEth;
@@ -38,7 +36,7 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
     degreeType: certificate.degreeType,
     superiorCouncilOrdinance: certificate.student.superiorCouncilOrdinance,
     directiveCouncilOrdinance: certificate.student.directiveCouncilOrdinance,
-    ministerialOrdinance: certificate.student.ministerialOrdinance,
+    ministerialOrdinance: certificate.student.ministerialOrdinance
   };
   const certificateEth: CertificateEth = {
     id: 0,
@@ -81,7 +79,9 @@ export function toDto(certificate: CertificateEth): CertificateDto {
     student: student,
     degreeName: certificate.universityDegree.degreeProgramName,
     waferNumber: certificate.waferNumber,
-    dateCreated: dayjs(certificate.createdAt * 1000).format('DD/MM/YYYY - hh:mm'),
+    dateCreated: dayjs(certificate.createdAt * 1000).format(
+      'DD/MM/YYYY - hh:mm'
+    ),
     dateModified: dayjs(certificate.updatedAt * 1000).format('DD/MM/YYYY'),
     degreeType: certificate.universityDegree.degreeType
   };
@@ -94,7 +94,7 @@ export function toBlockchainTransactionDto(
   // Validar todos los campos.
   const transaction: BlockchainTransactionDto = {
     certificate: toDto(certificate),
-    certificateBlockchainId: certificate.id,
+    certificateBlockchainId: certificate.id
   };
   return transaction;
 }
