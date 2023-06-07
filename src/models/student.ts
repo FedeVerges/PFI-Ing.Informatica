@@ -64,20 +64,17 @@ export class Student extends Model {
   degreeProgramCurriculum!: string; // Plan de estudios
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false
+    type: DataType.STRING
   })
   ministerialOrdinance!: string; // Ordenanza ministerial
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false
+    type: DataType.STRING
   })
   superiorCouncilOrdinance!: string; // Ordenanza consejo superior.
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false
+    type: DataType.STRING
   })
   directiveCouncilOrdinance!: string;
 
@@ -101,9 +98,6 @@ export class Student extends Model {
       academicUnit: student.academicUnit,
       degreeProgramCurriculum: student.degreeProgramCurriculum,
       degreeProgramName: student.degreeProgramName,
-      superiorCouncilOrdinance: student.superiorCouncilOrdinance,
-      directiveCouncilOrdinance: student.directiveCouncilOrdinance,
-      ministerialOrdinance: student.ministerialOrdinance,
       person: Person.toDto(student.person),
       blockchainId: Number(student.blockchainId),
       registrationNumber: student.registrationNumber

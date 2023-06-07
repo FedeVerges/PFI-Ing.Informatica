@@ -10,6 +10,7 @@ import { AbiInput } from 'web3-utils';
 import { CertificateEth } from '../../models/blockchain/certificateEth';
 import { notificationService } from '../../services/notifications/notificationService';
 import { NotificationDto } from '../../dto/notificationDto';
+import { NOTIFICATION_TYPES } from '../../enum/notificationTypes';
 
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
@@ -42,10 +43,15 @@ class Web3Service {
 
   connectNetwork() {
     this.web3.setProvider(new Web3.providers.HttpProvider(URL));
-    this.web3.eth.net.getId().then((id: number) => {
-      this.networkId = id;
-      console.log('Blockchain conectada');
-    });
+    this.web3.eth.net
+      .getId()
+      .then((id: number) => {
+        this.networkId = id;
+        console.log('Blockchain conectada');
+      })
+      .catch((e) => {
+        console.log('** Error al conectar con blockchain ** \n', e);
+      });
   }
 
   private getCertificateContract() {
@@ -87,9 +93,9 @@ class Web3Service {
     let blockchainCertificate: Partial<CertificateEth> | null = null;
     // Todo: agregar gestion de eventos. No se va a poder usar ese await.
     try {
-      receipt = (await this.web3.eth.sendSignedTransaction(
+      receipt = await this.web3.eth.sendSignedTransaction(
         signed.rawTransaction!
-      )) as TransactionReceipt;
+      );
     } catch (e) {
       throw e;
     }
@@ -232,14 +238,14 @@ class Web3Service {
 
   getNetworkStatus() {
     let notification: NotificationDto = {
-      type: 'STATUS',
+      type: NOTIFICATION_TYPES.STATUS,
       networkId: 0,
       blockchainName: '',
       connected: false
     };
     if (this.networkId && this.web3 && this.web3.currentProvider) {
       notification = {
-        type: 'STATUS',
+        type: NOTIFICATION_TYPES.STATUS,
         networkId: this.networkId,
         blockchainName: this.web3.currentProvider?.toString(),
         connected: true
@@ -247,8 +253,6 @@ class Web3Service {
     }
     notificationService.sendNotification(1, notification);
   }
-
-  async deleteCertificate(id: number) {}
 }
 
 export const web3Service = new Web3Service();

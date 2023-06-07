@@ -84,7 +84,6 @@ export const StudentService = {
           (s) =>
             s.degreeProgramName === studentData.degreeProgramName &&
             s.degreeProgramCurriculum === studentData.degreeProgramCurriculum &&
-            s.ministerialOrdinance === studentData.ministerialOrdinance &&
             s.blockchainId === blockchainId
         );
         if (!filteredStudents || filteredStudents.length < 1) {
@@ -126,7 +125,8 @@ export const StudentService = {
         // Creo usuario temporal.
         const userDto: UserDto = {
           name: newStudent.person.docNumber,
-          password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
+          // password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
+          password: '1234',
           person: Person.toDtoWithStudents(newStudent.person)
         };
 
@@ -162,7 +162,8 @@ export const StudentService = {
       // Creo usuario temporal.
       const userDto: UserDto = {
         name: newStudent.person.docNumber,
-        password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
+        // password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
+        password: '1234',
         person: Person.toDtoWithStudents(newStudent.person)
       };
 

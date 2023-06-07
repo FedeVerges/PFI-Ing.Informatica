@@ -9,9 +9,9 @@ import { Student } from '../models/student';
 export const studentController = {
   async create(req: Request, res: Response) {
     try {
-      // todo: Funcion para validar permisos.
-      // Todo: Crear Dto a partir del req.body y ahi verificar los datos.
-      // todo: verificar que idempotencia del estudiante.
+      //TODO: Funcion para validar permisos.
+      //TODO: Crear Dto a partir del req.body y ahi verificar los datos.
+      //TODO: verificar que idempotencia del estudiante.
       const student = await StudentService.createStudent(
         req.body as StudentDto
       );

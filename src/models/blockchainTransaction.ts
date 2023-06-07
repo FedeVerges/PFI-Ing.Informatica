@@ -2,6 +2,7 @@ import { strict } from 'assert';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es'; // import locale
 import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
+import { TRANSACTION_STATUS } from 'enum/transactionStatus';
 import {
   Table,
   Model,
@@ -78,7 +79,7 @@ export class BlockchainTransaction extends Model {
     type: DataType.STRING,
     allowNull: false
   })
-  status: string = 'pending';
+  status!: string;
 
   @Column({
     type: DataType.INTEGER,
@@ -137,10 +138,10 @@ export class BlockchainTransaction extends Model {
       etherscanLink: this.createEtherscanLink(t.transactionHash),
       gasUsed: t.gasUsed,
       dateCreated: t.dateCreated
-        ? dayjs(t.dateCreated).format('DD/MM/YYYY')
+        ? dayjs(t.dateCreated).format('DD/MM/YYYY HH:mm')
         : '',
       dateModified: t.dateModified
-        ? dayjs(t.dateModified).format('DD/MM/YYYY')
+        ? dayjs(t.dateModified).format('DD/MM/YYYY HH:mm')
         : ''
     } as BlockchainTransactionDto;
   }

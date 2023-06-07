@@ -1,0 +1,5 @@
+export enum CERTIFICATE_STATUS {
+  ACTIVE = 'ACT',
+  INACTIVE = 'BAJ',
+  PENDING = 'PEN'
+}

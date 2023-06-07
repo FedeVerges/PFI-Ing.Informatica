@@ -2,7 +2,7 @@ import { web3Service } from '../../services/web3/web3Service';
 import * as WebSocket from 'ws';
 import { WebSocketServer } from 'ws';
 import { NotificationDto } from '../../dto/notificationDto';
-import { NOTIFICATION_TYPES } from 'models/notificationTypes';
+import { NOTIFICATION_TYPES } from 'enum/notificationTypes';
 
 class NotificationService {
   private static instance: NotificationService;
@@ -32,11 +32,11 @@ class NotificationService {
   connect() {
     this.webSocketInstance.on('connection', (ws: WebSocket) => {
       ws.on('message', (messageAsString: string) => {
-          if (!this.webSocketInstance.clients.has(ws)) {
-            console.log('conectado');
-          }
+        if (!this.webSocketInstance.clients.has(ws)) {
+          console.log('conectado');
+        }
       });
-      ws.on("error", (err) => {
+      ws.on('error', (err) => {
         console.log(err.stack);
       });
       web3Service.getNetworkStatus();

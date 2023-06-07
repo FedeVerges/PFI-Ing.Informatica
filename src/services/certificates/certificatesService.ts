@@ -21,6 +21,8 @@ import { pdfService } from '../../services/pdf/pdfService';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PdfDto } from 'dto/pdfDto';
 import * as CryptoJS from 'crypto-js';
+import { CERTIFICATE_STATUS } from '../../enum/certificateStatus';
+import { TRANSACTION_STATUS } from '../../enum/transactionStatus';
 
 dayjs.locale('es');
 
@@ -112,7 +114,7 @@ export const CertificateService = {
         waferNumber: certificateData.waferNumber,
         studentId: student.id,
         student,
-        status: 'ACT'
+        status: CERTIFICATE_STATUS.ACTIVE
       });
       await newCertificate.save();
 
@@ -122,7 +124,7 @@ export const CertificateService = {
           transactionHash: signed.transactionHash,
           ceritificateId: newCertificate.id,
           methodName: 'CREATE',
-          status: 'PENDING',
+          status: TRANSACTION_STATUS.PENDING,
           dateCreated: new Date(),
           dateModified: new Date()
         } as BlockchainTransaction);
@@ -146,7 +148,7 @@ export const CertificateService = {
       return {
         receipt: {},
         certificate: certificateData,
-        status: 'pending'
+        status: TRANSACTION_STATUS.PENDING
       } as TransactionDto;
     } else {
       throw new Error(' Ya existe un certificado con el mismo nombre.');
@@ -160,7 +162,7 @@ export const CertificateService = {
   ) {
     // Con el resultado de la transaccion, actualizamos la transaccion y el certificado.
     const ret = await transactionResponse.update({
-      status: 'COMPLETED',
+      status: TRANSACTION_STATUS.COMPLETED,
       ceritificateBlockchainId: resultCertificate?.id || 0,
       blockNumber: receipt.blockNumber,
       blockHash: receipt.blockHash,
@@ -178,7 +180,7 @@ export const CertificateService = {
 
   async deleteCertificate(id: number) {
     let ret: Partial<TransactionDto> = {
-      status: 'pending'
+      status: TRANSACTION_STATUS.PENDING
     };
 
     // creo la transaccion.
@@ -190,7 +192,7 @@ export const CertificateService = {
       const transaction = new BlockchainTransaction({
         transactionHash: signed.transactionHash,
         methodName: 'DELETE',
-        status: 'pending',
+        status: TRANSACTION_STATUS.PENDING,
         dateCreated: new Date(),
         dateModified: new Date()
       } as BlockchainTransaction);
@@ -207,10 +209,12 @@ export const CertificateService = {
               receipt
             )
         );
-      ret.receipt = BlockchainTransaction.toD;
+
+      ret.receipt = BlockchainTransaction.toDto(transaction);
     } else {
       throw new Error('Ha ocurrido un error al crear la firma');
     }
+    return ret;
   },
 
   createUpdateStudent(studentId: number) {
@@ -219,7 +223,9 @@ export const CertificateService = {
   },
 
   async getAllTransaction(): Promise<BlockchainTransactionDto[]> {
-    const transactions = await BlockchainTransaction.findAll();
+    const transactions = await BlockchainTransaction.findAll({
+      order: [['dateModified', 'DESC']]
+    });
     return BlockchainTransaction.toDtoList(transactions);
   },
 

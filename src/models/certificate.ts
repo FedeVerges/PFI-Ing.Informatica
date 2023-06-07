@@ -67,7 +67,7 @@ export class Certificate extends Model {
     type: DataType.STRING,
     allowNull: false
   })
-  status!: string; // 'ACT', 'BAJ', 'PEN' => Pendiente de transaccion.
+  status!: string;
 
   static toDtoList(certificates: Certificate[]): CertificateDto[] {
     return certificates.map((c) => {
@@ -78,8 +78,10 @@ export class Certificate extends Model {
         degreeName: c.degreeName,
         ministerialOrdinance: c.student.ministerialOrdinance,
         waferNumber: c.waferNumber,
-        dateCreated: dayjs(c.dateCreated).format('DD/MM/YYYY'),
-        dateModified: dayjs(c.dateModified).format('DD/MM/YYYY'),
+        dateCreated: dayjs(c.dateCreated).format(
+          'DD/MM/YYYY HH:mm HH:mm HH:mm'
+        ),
+        dateModified: dayjs(c.dateModified).format('DD/MM/YYYY HH:mm'),
         status: c.status
       } as CertificateDto;
     });
@@ -92,8 +94,8 @@ export class Certificate extends Model {
       degreeName: certificate.degreeName,
       ministerialOrdinance: certificate.student.ministerialOrdinance,
       waferNumber: certificate.waferNumber,
-      dateCreated: dayjs(certificate.dateCreated).format('DD/MM/YYYY'),
-      dateModified: dayjs(certificate.dateModified).format('DD/MM/YYYY'),
+      dateCreated: dayjs(certificate.dateCreated).format('DD/MM/YYYY HH:mm'),
+      dateModified: dayjs(certificate.dateModified).format('DD/MM/YYYY HH:mm'),
       status: certificate.status
     } as CertificateDto;
   }

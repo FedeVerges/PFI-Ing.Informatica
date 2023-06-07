@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { PersonDto } from 'dto/personDto';
-import { Person } from 'models/person';
+import { CERTIFICATE_STATUS } from '../../enum/certificateStatus';
 import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
 import { CertificateDto } from '../../dto/certificateDto';
 import { StudentDto } from '../../dto/studentDto';
@@ -33,10 +33,10 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
     academicUnit: certificate.student.academicUnit,
     degreeProgramName: certificate.student.degreeProgramName,
     degreeProgramCurriculum: certificate.student.degreeProgramCurriculum,
-    degreeType: certificate.degreeType,
-    superiorCouncilOrdinance: certificate.student.superiorCouncilOrdinance,
-    directiveCouncilOrdinance: certificate.student.directiveCouncilOrdinance,
-    ministerialOrdinance: certificate.student.ministerialOrdinance
+    degreeType: certificate.degreeType
+    // superiorCouncilOrdinance: certificate.student.superiorCouncilOrdinance,
+    // directiveCouncilOrdinance: certificate.student.directiveCouncilOrdinance,
+    // ministerialOrdinance: certificate.student.ministerialOrdinance
   };
   const certificateEth: CertificateEth = {
     id: 0,
@@ -80,10 +80,15 @@ export function toDto(certificate: CertificateEth): CertificateDto {
     degreeName: certificate.universityDegree.degreeProgramName,
     waferNumber: certificate.waferNumber,
     dateCreated: dayjs(certificate.createdAt * 1000).format(
-      'DD/MM/YYYY - hh:mm'
+      'DD/MM/YYYY HH:mm - hh:mm'
     ),
-    dateModified: dayjs(certificate.updatedAt * 1000).format('DD/MM/YYYY'),
-    degreeType: certificate.universityDegree.degreeType
+    dateModified: dayjs(certificate.updatedAt * 1000).format(
+      'DD/MM/YYYY HH:mm'
+    ),
+    degreeType: certificate.universityDegree.degreeType,
+    status: certificate.active
+      ? CERTIFICATE_STATUS.ACTIVE
+      : CERTIFICATE_STATUS.INACTIVE
   };
   return ret;
 }

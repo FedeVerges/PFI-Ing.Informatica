@@ -18,7 +18,6 @@ export class App {
     this.middlewares();
     this.initNotificationService();
     this.initBlockchainConnection();
-    // Iniciar servicio de web3.
   }
 
   settings() {
@@ -55,7 +54,11 @@ export class App {
     }
   }
   initBlockchainConnection() {
-    web3Service.connectNetwork();
+    try {
+      web3Service.connectNetwork();
+    } catch (e) {
+      console.log('Error al conectar con blockchain', e);
+    }
   }
 
   async listen() {

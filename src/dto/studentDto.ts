@@ -1,5 +1,6 @@
 import { PersonDto } from './personDto';
 
+//TODO: Verificar de eliminar.
 export interface StudentDto {
   id: number;
   blockchainId: number;
@@ -9,7 +10,7 @@ export interface StudentDto {
   academicUnit: string; // Facultad
   degreeProgramName: string; // Nombre de la carrera
   degreeProgramCurriculum: string; // Plan de estudios.
-  superiorCouncilOrdinance: string; // Ordenanza consejo superior.
-  directiveCouncilOrdinance: string; // Ordenanza consejo superior.
-  ministerialOrdinance: string; // Ordenanza ministerial
+  superiorCouncilOrdinance?: string; // Ordenanza consejo superior.
+  directiveCouncilOrdinance?: string; // Ordenanza consejo superior.
+  ministerialOrdinance?: string; // Ordenanza ministerial
 }
