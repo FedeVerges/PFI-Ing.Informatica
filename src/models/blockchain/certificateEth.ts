@@ -31,12 +31,14 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
   const universityDegree: UniversityDegreeEth = {
     universityName: certificate.student.universityName,
     academicUnit: certificate.student.academicUnit,
-    degreeProgramName: certificate.student.degreeProgramName,
+    degreeProgramName: certificate.degreeName || '',
     degreeProgramCurriculum: certificate.student.degreeProgramCurriculum,
-    degreeType: certificate.degreeType
-    // superiorCouncilOrdinance: certificate.student.superiorCouncilOrdinance,
-    // directiveCouncilOrdinance: certificate.student.directiveCouncilOrdinance,
-    // ministerialOrdinance: certificate.student.ministerialOrdinance
+    degreeType: certificate.degreeType,
+    superiorCouncilOrdinance:
+      certificate.student.superiorCouncilOrdinance || '',
+    directiveCouncilOrdinance:
+      certificate.student.directiveCouncilOrdinance || '',
+    ministerialOrdinance: certificate.student.ministerialOrdinance || ''
   };
   const certificateEth: CertificateEth = {
     id: 0,

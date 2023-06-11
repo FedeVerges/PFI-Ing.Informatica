@@ -104,19 +104,6 @@ function validateFields(certificate: CertificateDto) {
   if (!certificate.student.degreeProgramCurriculum) {
     throw new Error('Debe seleccionar una facultad');
   }
-  if (!certificate.student.ministerialOrdinance) {
-    throw new Error('Debe ingresar el numero de ordenanza ministerial');
-  }
-  if (!certificate.student.superiorCouncilOrdinance) {
-    throw new Error(
-      'Debe ingresar el numero de ordenanza del consejo superior'
-    );
-  }
-  if (!certificate.student.directiveCouncilOrdinance) {
-    throw new Error(
-      'Debe ingresar el numero de ordenanza del consejo directivo'
-    );
-  }
   if (!certificate.student) {
     throw new Error('Debe ingresar los datos del estudiante');
   }

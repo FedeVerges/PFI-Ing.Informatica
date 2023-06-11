@@ -264,7 +264,11 @@ export const CertificateService = {
       '1234'
     ).toString();
 
-    const encodedWord = CryptoJS.enc.Utf8.parse(JSON.stringify(transaction)); // encodedWord Array object
+    const encodedWord = CryptoJS.enc.Utf8.parse(
+      JSON.stringify({
+        ceritificateBlockchainId: transaction.certificateBlockchainId
+      })
+    ); // encodedWord Array object
     const encoded = CryptoJS.enc.Base64.stringify(encodedWord); // string: 'NzUzMjI1NDE='
 
     const docDefinition: TDocumentDefinitions = {
@@ -277,7 +281,10 @@ export const CertificateService = {
         documentAssembly: true
       },
       content: [
-        { text: 'Titulo universitario', style: ['title'] },
+        {
+          text: `Titulo universitario #${transaction.certificateBlockchainId}`,
+          style: ['title']
+        },
         {
           text: [
             'El estudiante ',
@@ -285,26 +292,21 @@ export const CertificateService = {
               text: `${transaction.certificate?.student?.person?.fullname}`,
               bold: true
             },
-            'ha aprobado todas las materias corresponiendtes al plan ',
+            ' ha aprobado todas las materias corresponiendtes al plan ',
             {
               text: `${transaction.certificate?.student?.degreeProgramCurriculum}`,
               bold: true
             },
-            'de la carrera ',
+            ' de la carrera ',
             {
               text: `${transaction.certificate?.student?.degreeProgramName}`,
-              bold: true
-            },
-            'de la institución ',
-            {
-              text: `${transaction.certificate?.student?.universityName}`,
               bold: true
             }
           ],
           style: ['textMuted']
         },
         {
-          text: 'Por lo tanto, de acuerdo con las normas vigentes en ésta Universidad, le confieren el presente diploma de '
+          text: `Por lo tanto, de acuerdo con las normas vigentes en la ${transaction.certificate?.student?.universityName}, le confieren el presente diploma de `
         },
         {
           text: `${transaction.certificate?.degreeName}`,
