@@ -1,5 +1,4 @@
 import PdfPrinter from 'pdfmake';
-import fs from 'fs';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
 // Define font files

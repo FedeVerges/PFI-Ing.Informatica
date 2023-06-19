@@ -18,13 +18,16 @@ import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
 import { notificationService } from '../../services/notifications/notificationService';
 import { NotificationDto } from '../../dto/notificationDto';
 import { pdfService } from '../../services/pdf/pdfService';
-import { TDocumentDefinitions } from 'pdfmake/interfaces';
+import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PdfDto } from 'dto/pdfDto';
 import * as CryptoJS from 'crypto-js';
 import { CERTIFICATE_STATUS } from '../../enum/certificateStatus';
 import { TRANSACTION_STATUS } from '../../enum/transactionStatus';
+import { img } from '../../assets/img/logo_crop_64';
 
 dayjs.locale('es');
+
+const image64Txt = img;
 
 export const CertificateService = {
   /**
@@ -271,7 +274,6 @@ export const CertificateService = {
     ); // encodedWord Array object
     const encoded = CryptoJS.enc.Base64.stringify(encodedWord); // string: 'NzUzMjI1NDE='
 
-    const currentDate = new Date();
     const docDefinition: TDocumentDefinitions = {
       // ownerPassword: '1234',
       permissions: {
@@ -287,40 +289,53 @@ export const CertificateService = {
           style: ['title']
         },
         {
-          text: `concede a `,
-          style: ['textMuted']
+          // if you specify width, image will scale proportionally
+          image: image64Txt,
+          fit: [100, 100]
         },
         {
-          text: ` ${transaction.certificate?.student?.person?.fullname} `,
-          bold: true
+          text: [
+            {
+              text: `concede a `,
+              style: ['textMuted']
+            },
+            {
+              text: ` ${transaction.certificate?.student?.person?.fullname} `,
+              bold: true
+            },
+            {
+              text: ` el título profesional de `,
+              style: ['textMuted']
+            },
+            {
+              text: ` ${transaction.certificate?.student.degreeProgramName} `,
+              bold: true
+            },
+            {
+              text: `considerando que ha cumplido con los estudios correspondientes y satisfecho todos los requisitos necesarios`,
+              style: ['textMuted']
+            }
+          ]
         },
         {
-          text: ` el título profesional de `,
-          style: ['textMuted']
-        },
-        {
-          text: ` ${transaction.certificate?.student.degreeProgramName} `,
-          bold: true
-        },
-        {
-          text: `considerando que ha cumplido con los estudios correspondientes y satisfecho todos los requisitos necesarios`,
-          style: ['textMuted']
+          text: `Escaneá este codigo QR para verficar la valides de este documento.`,
+          style: ['small']
         },
         {
           qr: `http://192.168.0.11:4200/validate/${encoded}`,
           version: 15,
           fit: 200,
-          margin: [0, 30]
+          margin: [0, 15]
         }
       ],
       defaultStyle: {
         font: 'MyFont',
         alignment: 'center',
-        fontSize: 18
+        fontSize: 14
       },
       styles: {
-        normalText: {
-          fontSize: 18
+        small: {
+          fontSize: 14
         },
         textMuted: {
           color: '#8e8c8c',
@@ -333,7 +348,7 @@ export const CertificateService = {
           fontSize: 20
         },
         title: {
-          fontSize: 32
+          fontSize: 30
         }
       }
     };
