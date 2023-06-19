@@ -168,7 +168,7 @@ class Web3Service {
           data: data,
           nonce: nonce,
           gas: gas,
-          gasPrice: 55000
+          gasPrice: 5000000
         } as TransactionConfig;
 
         // Firmo la transaccion con la clave privada.

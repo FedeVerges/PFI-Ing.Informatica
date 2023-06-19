@@ -271,6 +271,7 @@ export const CertificateService = {
     ); // encodedWord Array object
     const encoded = CryptoJS.enc.Base64.stringify(encodedWord); // string: 'NzUzMjI1NDE='
 
+    const currentDate = new Date();
     const docDefinition: TDocumentDefinitions = {
       // ownerPassword: '1234',
       permissions: {
@@ -282,40 +283,33 @@ export const CertificateService = {
       },
       content: [
         {
-          text: `Titulo universitario #${transaction.certificateBlockchainId}`,
+          text: `La Universidad Nacional de San Luis `,
           style: ['title']
         },
         {
-          text: [
-            'El estudiante ',
-            {
-              text: `${transaction.certificate?.student?.person?.fullname}`,
-              bold: true
-            },
-            ' ha aprobado todas las materias corresponiendtes al plan ',
-            {
-              text: `${transaction.certificate?.student?.degreeProgramCurriculum}`,
-              bold: true
-            },
-            ' de la carrera ',
-            {
-              text: `${transaction.certificate?.student?.degreeProgramName}`,
-              bold: true
-            }
-          ],
+          text: `concede a `,
           style: ['textMuted']
         },
         {
-          text: `Por lo tanto, de acuerdo con las normas vigentes en la ${transaction.certificate?.student?.universityName}, le confieren el presente diploma de `
+          text: ` ${transaction.certificate?.student?.person?.fullname} `,
+          bold: true
         },
         {
-          text: `${transaction.certificate?.degreeName}`,
+          text: ` el título profesional de `,
+          style: ['textMuted']
+        },
+        {
+          text: ` ${transaction.certificate?.student.degreeProgramName} `,
           bold: true
+        },
+        {
+          text: `considerando que ha cumplido con los estudios correspondientes y satisfecho todos los requisitos necesarios`,
+          style: ['textMuted']
         },
         {
           qr: `http://192.168.0.11:4200/validate/${encoded}`,
           version: 15,
-          fit: 250,
+          fit: 200,
           margin: [0, 30]
         }
       ],
@@ -329,7 +323,8 @@ export const CertificateService = {
           fontSize: 18
         },
         textMuted: {
-          color: '#8e8c8c'
+          color: '#8e8c8c',
+          fontSize: 14
         },
         textBold: {
           bold: true
