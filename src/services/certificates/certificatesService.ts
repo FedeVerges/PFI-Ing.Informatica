@@ -18,16 +18,18 @@ import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
 import { notificationService } from '../../services/notifications/notificationService';
 import { NotificationDto } from '../../dto/notificationDto';
 import { pdfService } from '../../services/pdf/pdfService';
-import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PdfDto } from 'dto/pdfDto';
 import * as CryptoJS from 'crypto-js';
 import { CERTIFICATE_STATUS } from '../../enum/certificateStatus';
 import { TRANSACTION_STATUS } from '../../enum/transactionStatus';
 import { img } from '../../assets/img/logo_crop_64';
+import { background } from '../../assets/img/certificate_background';
 
 dayjs.locale('es');
 
 const image64Txt = img;
+const backgroundPdf = background;
 
 export const CertificateService = {
   /**
@@ -275,6 +277,10 @@ export const CertificateService = {
     const encoded = CryptoJS.enc.Base64.stringify(encodedWord); // string: 'NzUzMjI1NDE='
 
     const docDefinition: TDocumentDefinitions = {
+      pageSize: {
+        width: 800,
+        height: 600
+      },
       // ownerPassword: '1234',
       permissions: {
         printing: 'highResolution', //'lowResolution'
@@ -283,39 +289,44 @@ export const CertificateService = {
         contentAccessibility: true,
         documentAssembly: true
       },
+      background: {
+        // if you specify width, image will scale proportionally
+        image: backgroundPdf,
+        width: 800,
+        height: 600
+      },
       content: [
-        {
-          text: `La Universidad Nacional de San Luis `,
-          style: ['title']
-        },
         {
           // if you specify width, image will scale proportionally
           image: image64Txt,
           fit: [100, 100]
         },
         {
+          text: `Universidad Nacional de San Luis `,
+          style: ['title']
+        },
+
+        {
           text: [
             {
-              text: `concede a `,
-              style: ['textMuted']
+              text: `Se le concede a `
             },
             {
               text: ` ${transaction.certificate?.student?.person?.fullname} `,
               bold: true
             },
             {
-              text: ` el título profesional de `,
-              style: ['textMuted']
+              text: ` el título profesional de `
             },
             {
               text: ` ${transaction.certificate?.student.degreeProgramName} `,
               bold: true
             },
             {
-              text: `considerando que ha cumplido con los estudios correspondientes y satisfecho todos los requisitos necesarios`,
-              style: ['textMuted']
+              text: `considerando que ha cumplido con los estudios correspondientes y satisfecho todos los requisitos necesarios`
             }
-          ]
+          ],
+          marginBottom: 20
         },
         {
           text: `Escaneá este codigo QR para verficar la valides de este documento.`,
@@ -331,7 +342,7 @@ export const CertificateService = {
       defaultStyle: {
         font: 'MyFont',
         alignment: 'center',
-        fontSize: 14
+        fontSize: 16
       },
       styles: {
         small: {
@@ -345,10 +356,11 @@ export const CertificateService = {
           bold: true
         },
         h4: {
-          fontSize: 20
+          fontSize: 22
         },
         title: {
-          fontSize: 30
+          fontSize: 32,
+          marginBottom: 20
         }
       }
     };
