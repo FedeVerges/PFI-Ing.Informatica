@@ -6,6 +6,7 @@ import authRoutes from './routes/routes';
 import { notificationService } from './services/notifications/notificationService';
 import { web3Service } from './services/web3/web3Service';
 import { initializer } from './db/initDB';
+import bodyParser from 'body-parser';
 
 export class App {
   private app: Application;
@@ -26,7 +27,7 @@ export class App {
 
   middlewares() {
     this.app.use(morgan('dev'));
-    this.app.use(express.json());
+    this.app.use(bodyParser.json());
     this.app.use(cors());
     this.setRoutes();
   }
