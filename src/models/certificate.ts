@@ -15,6 +15,10 @@ dayjs.locale('es');
   timestamps: false,
   tableName: 'certificate'
 })
+/**
+ * @Deprecated
+ * Antes guardaba los datos en copia con los de la blockchain, pero ahora esta todo alli.
+ */
 export class Certificate extends Model {
   @Column({
     type: DataType.INTEGER,

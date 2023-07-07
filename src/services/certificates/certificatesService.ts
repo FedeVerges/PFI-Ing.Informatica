@@ -3,8 +3,7 @@ import { TransactionDto } from '../../dto/transactionDto';
 import { web3Service } from '../../services/web3/web3Service';
 import {
   CertificateEth,
-  fromDto,
-  toBlockchainTransactionDto
+  fromDto
 } from '../../models/blockchain/certificateEth';
 import { Certificate } from '../../models/certificate';
 import { BlockchainTransaction } from '../../models/blockchainTransaction';
@@ -41,51 +40,50 @@ export const CertificateService = {
     // Obtengo los certificados de la blockchain.
     const certificates = await web3Service.getCertificatesByStudentId(id);
 
-    // Obtengo los ids.
-    const ids = certificates.map((c) => Number(c.id));
+    const transactions: BlockchainTransactionDto[] = await Promise.all(
+      certificates.map(async (c) => {
+        return await this.getTrasactionDataByCertificate(c);
+      })
+    );
 
-    // Obtengo las datos de las transacciones de cada certificado (a traves del id). Se conecta a DB local.
-    const transactions = await BlockchainTransaction.findAll({
-      where: {
-        ceritificateBlockchainId: ids
-      },
-      include: [
-        {
-          model: Certificate,
-          as: 'certificate',
-          required: true,
-          include: [
-            {
-              model: Student,
-              required: true,
-              include: [
-                {
-                  model: Person,
-                  required: true
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    });
+    // // Obtengo los ids.
+    // const ids = certificates.map((c) => Number(c.id));
 
-    /* Cuando no hay transacciones pero si hay certificados, 
-      recuperar la info y devolverla pero sin informacion en el sistema. 
-    */
-    if (transactions && transactions.length > 0) {
-      return BlockchainTransaction.toDtoList(transactions);
-    } else {
-      return certificates.map((c) => toBlockchainTransactionDto(c));
-    }
+    // // Obtengo las datos de las transacciones de cada certificado (a traves del id). Se conecta a DB local.
+
+    // /* Cuando no hay transacciones pero si hay certificados,
+    //   recuperar la info y devolverla pero sin informacion en el sistema.
+    // */
+    // if (transactions && transactions.length > 0) {
+    //   return BlockchainTransaction.toDtoList(transactions);
+    // } else {
+    //   return certificates.map((c) => fromDto(c));
+    // }
+
+    return transactions;
   },
-  async getCertificatesById(id: number) {
+  /**
+   * Aparte de saber lo que esta almacenado en blockchain, hay que saber los datos transaccionales de los mismos.
+   * Para eso hay que buscar en la base esos datos y mostrarlos.
+   *
+   * IDEALMENTE SE DEBERIA ALMACENAR TODO EN EL CONTRATO PERO ESO QUEDA PARA MAS ADELANTE.
+   * @param id idblockchain del certificado
+   * @returns
+   */
+  async getCertificateById(id: number) {
     const certificate = await web3Service.getCertificatesById(id);
+    let transactionData: BlockchainTransactionDto | null = null;
     // validar que el dato sea nulo.
-    return !isNullCertificate(certificate)
-      ? toBlockchainTransactionDto(certificate)
-      : null;
+    if (!this.isNullCertificate(certificate)) {
+      transactionData = await this.getTrasactionDataByCertificate(certificate);
+    }
+    return transactionData;
   },
+  /**
+   * Crea un nuevo certificado temporal y envia la transaccion a la blockchain.
+   * @param certificateData
+   * @returns
+   */
   async createCertificate(
     certificateData: CertificateDto
   ): Promise<TransactionDto> {
@@ -119,23 +117,29 @@ export const CertificateService = {
         waferNumber: certificateData.waferNumber,
         studentId: student.id,
         student,
-        status: CERTIFICATE_STATUS.ACTIVE
+        status: CERTIFICATE_STATUS.PENDING
       });
       await newCertificate.save();
 
       // Creo la transaccion en la base.
       if (signed) {
+        /**
+         * Todo: desacoplar logica de guardado de transaccion.
+         */
         const transaction = new BlockchainTransaction({
           transactionHash: signed.transactionHash,
-          ceritificateId: newCertificate.id,
           methodName: 'CREATE',
           status: TRANSACTION_STATUS.PENDING,
           dateCreated: new Date(),
           dateModified: new Date()
         } as BlockchainTransaction);
         const transactionResponse = await transaction.save();
-        // Envio a publicar la transaccion.
-        // Mandar a publicar la trnasaccion de manera asincrona.
+        /**
+         * Envio a publicar la transaccion.
+         *
+         * Mandar a publicar la trnasaccion de manera asincrona.
+         */
+        //
         web3Service
           .sendTransaction(signed)
           .then(
@@ -149,7 +153,7 @@ export const CertificateService = {
       } else {
         throw new Error('Ha ocurrido un error al crear la firma');
       }
-      // Todo: Mientras tranto, se informa al usuario la publicacion de la transaccion y el estado (Pendiente).
+      //Mientras tranto, se informa al usuario la publicacion de la transaccion y el estado (Pendiente).
       return {
         receipt: {},
         certificate: certificateData,
@@ -183,11 +187,17 @@ export const CertificateService = {
     notificationService.sendNotification(1, notification);
   },
 
+  /**
+   *
+   * @param id id de la base de datos.
+   * @returns
+   */
   async deleteCertificate(id: number) {
     let ret: Partial<TransactionDto> = {
       status: TRANSACTION_STATUS.PENDING
     };
 
+    const certificate = await web3Service.getCertificatesById(id);
     // creo la transaccion.
     let signed: SignedTransaction;
     signed = await web3Service.createSignDeleteTransaction(id);
@@ -197,6 +207,8 @@ export const CertificateService = {
       const transaction = new BlockchainTransaction({
         transactionHash: signed.transactionHash,
         methodName: 'DELETE',
+        studentName: certificate.student.name + certificate.student.lastname,
+        ceritificateBlockchainId: id,
         status: TRANSACTION_STATUS.PENDING,
         dateCreated: new Date(),
         dateModified: new Date()
@@ -261,20 +273,22 @@ export const CertificateService = {
     return ret;
   },
 
-  async createCertificatePdf(
-    transaction: BlockchainTransactionDto
-  ): Promise<PdfDto> {
-    let documentEncoded: string = CryptoJS.AES.encrypt(
-      JSON.stringify(transaction),
-      '1234'
-    ).toString();
+  async createCertificatePdf(id: number): Promise<PdfDto | null> {
+    const transaction = await CertificateService.getCertificateById(Number(id));
+    if (transaction) {
+      return this.generatePDF(transaction);
+    } else {
+      throw new Error('El certificado no existe.');
+    }
+  },
 
-    const encodedWord = CryptoJS.enc.Utf8.parse(
+  async generatePDF(transaction: BlockchainTransactionDto) {
+    const documentEndoded = CryptoJS.enc.Utf8.parse(
       JSON.stringify({
         ceritificateBlockchainId: transaction.certificateBlockchainId
       })
     ); // encodedWord Array object
-    const encoded = CryptoJS.enc.Base64.stringify(encodedWord); // string: 'NzUzMjI1NDE='
+    const encoded = CryptoJS.enc.Base64.stringify(documentEndoded); // string: 'NzUzMjI1NDE='
 
     const docDefinition: TDocumentDefinitions = {
       pageSize: {
@@ -283,7 +297,7 @@ export const CertificateService = {
       },
       // ownerPassword: '1234',
       permissions: {
-        printing: 'highResolution', //'lowResolution'
+        printing: 'highResolution',
         modifying: false,
         copying: false,
         contentAccessibility: true,
@@ -312,16 +326,16 @@ export const CertificateService = {
               text: `Se le concede a `
             },
             {
-              text: ` ${transaction.certificate?.student?.person?.fullname} `,
+              text: ` ${transaction.studentName} `,
               bold: true
             },
             {
               text: ` el título profesional de `
             },
-            {
-              text: ` ${transaction.certificate?.student.degreeProgramName} `,
-              bold: true
-            },
+            // {
+            //   text: ` ${transaction.certificate?.student.degreeProgramName} `,
+            //   bold: true
+            // },
             {
               text: `considerando que ha cumplido con los estudios correspondientes y satisfecho todos los requisitos necesarios`
             }
@@ -365,20 +379,30 @@ export const CertificateService = {
       }
     };
     return {
-      name: `${transaction.certificate?.student.person.fullname}_Certificado${transaction.certificateBlockchainId}.pdf`,
+      name: `${transaction.studentName}_Certificado${transaction.certificateBlockchainId}.pdf`,
       document: await pdfService.createPdf(docDefinition)
     };
+  },
+  async getTrasactionDataByCertificate(c: CertificateEth) {
+    let trans = await BlockchainTransaction.findOne({
+      where: {
+        ceritificateBlockchainId: c.id
+      }
+    });
+    /**
+     * TODO: Pueden haber certificados sin registro de transacciones???
+     */
+    return BlockchainTransaction.toDto(trans || undefined, c);
+  },
+  isNullCertificate(certificate: CertificateEth): boolean {
+    return (
+      certificate &&
+      certificate.active === false &&
+      certificate.createdAt <= 0 &&
+      Number(certificate.id) === 0 &&
+      certificate.student.name === '' &&
+      certificate.updatedAt <= 0 &&
+      certificate.waferNumber === ''
+    );
   }
 };
-
-function isNullCertificate(certificate: CertificateEth): boolean {
-  return (
-    certificate &&
-    certificate.active == false &&
-    certificate.createdAt <= 0 &&
-    Number(certificate.id) === 0 &&
-    certificate.student.name === '' &&
-    certificate.updatedAt <= 0 &&
-    certificate.waferNumber === ''
-  );
-}

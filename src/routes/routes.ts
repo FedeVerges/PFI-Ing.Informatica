@@ -12,7 +12,10 @@ router.post('/signin', authController.signin);
 // Titulos
 const certificateUrlBase = '/certificate';
 router.post(`${certificateUrlBase}/new`, certificateController.create);
-router.delete(`${certificateUrlBase}/:id`, certificateController.delete);
+router.delete(
+  `${certificateUrlBase}/:id`,
+  certificateController.deleteCertificate
+);
 router.get(
   `${certificateUrlBase}/studentId/:studentId`,
   certificateController.getByStudentBlockchainId

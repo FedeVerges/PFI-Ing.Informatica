@@ -11,6 +11,7 @@ import { CertificateEth } from '../../models/blockchain/certificateEth';
 import { notificationService } from '../../services/notifications/notificationService';
 import { NotificationDto } from '../../dto/notificationDto';
 import { NOTIFICATION_TYPES } from '../../enum/notificationTypes';
+import { StudentEth } from 'models/blockchain/studentEth';
 
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
@@ -79,9 +80,9 @@ class Web3Service {
   }
 
   async getCertificatesById(id: number) {
-    return (await this.certificateContract!.methods.getCertificatesById(
+    return this.certificateContract!.methods.getCertificatesById(
       id
-    ).call()) as Promise<CertificateEth>;
+    ).call() as Promise<CertificateEth>;
   }
 
   async getAmountCertificates() {
@@ -167,8 +168,7 @@ class Web3Service {
           to: transaction._parent._address,
           data: data,
           nonce: nonce,
-          gas: gas,
-          gasPrice: 5000000
+          gas: gas
         } as TransactionConfig;
 
         // Firmo la transaccion con la clave privada.
@@ -193,6 +193,7 @@ class Web3Service {
     if (privateKey) {
       const account: Account =
         this.web3.eth.accounts.privateKeyToAccount(privateKey);
+
       if (account) {
         // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
         const transaction =
@@ -214,8 +215,7 @@ class Web3Service {
           to: transaction._parent._address,
           data: data,
           nonce: nonce,
-          gas: gas,
-          gasPrice: 55000
+          gas: gas
         } as TransactionConfig;
 
         // Firmo la transaccion con la clave privada.

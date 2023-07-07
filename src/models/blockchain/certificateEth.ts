@@ -94,14 +94,3 @@ export function toDto(certificate: CertificateEth): CertificateDto {
   };
   return ret;
 }
-
-export function toBlockchainTransactionDto(
-  certificate: CertificateEth
-): BlockchainTransactionDto {
-  // Validar todos los campos.
-  const transaction: BlockchainTransactionDto = {
-    certificate: toDto(certificate),
-    certificateBlockchainId: certificate.id
-  };
-  return transaction;
-}

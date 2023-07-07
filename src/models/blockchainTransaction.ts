@@ -10,33 +10,15 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  DefaultScope
+  DefaultScope,
+  Scopes
 } from 'sequelize-typescript';
 import { Certificate } from './certificate';
 import { Person } from './person';
 import { Student } from './student';
+import { CertificateEth } from './blockchain/certificateEth';
 dayjs.locale('es');
 
-@DefaultScope(() => ({
-  include: [
-    {
-      model: Certificate,
-      required: true,
-      include: [
-        {
-          model: Student,
-          required: true,
-          include: [
-            {
-              model: Person,
-              required: true
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}))
 @Table({
   timestamps: false,
   tableName: 'transaction'
@@ -62,12 +44,18 @@ export class BlockchainTransaction extends Model {
   })
   transactionHash!: string;
 
-  @ForeignKey(() => Certificate)
   @Column({
-    type: DataType.INTEGER,
-    allowNull: true
+    type: DataType.STRING,
+    allowNull: false
   })
-  ceritificateId?: number;
+  studentName!: string;
+
+  // @ForeignKey(() => Certificate)
+  // @Column({
+  //   type: DataType.INTEGER,
+  //   allowNull: true
+  // })
+  // ceritificateId?: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -117,8 +105,8 @@ export class BlockchainTransaction extends Model {
   })
   dateModified?: Date;
 
-  @BelongsTo(() => Certificate, 'ceritificateId')
-  certificate!: Certificate;
+  // @BelongsTo(() => Certificate, 'ceritificateId')
+  // certificate!: Certificate;
 
   static toDtoList(
     transactions: BlockchainTransaction[]
@@ -128,20 +116,56 @@ export class BlockchainTransaction extends Model {
     });
   }
 
-  static toDto(t: BlockchainTransaction): BlockchainTransactionDto {
+  static toDto(
+    t?: BlockchainTransaction,
+    certificateData?: CertificateEth
+  ): BlockchainTransactionDto {
+    let cert: CertificateEth | null = null;
+    if (certificateData) {
+      cert = {
+        id: certificateData.id,
+        student: {
+          id: certificateData.student.id,
+          name: certificateData.student.name,
+          lastname: certificateData.student.lastname,
+          docNumber: certificateData.student.docNumber,
+          sex: certificateData.student.sex,
+          registrationNumber: certificateData.student.registrationNumber
+        },
+        universityDegree: {
+          universityName: certificateData.universityDegree.universityName,
+          academicUnit: certificateData.universityDegree.academicUnit,
+          degreeProgramName: certificateData.universityDegree.degreeProgramName,
+          degreeProgramCurriculum:
+            certificateData.universityDegree.degreeProgramCurriculum,
+          degreeType: certificateData.universityDegree.degreeType,
+          superiorCouncilOrdinance:
+            certificateData.universityDegree.superiorCouncilOrdinance,
+          directiveCouncilOrdinance:
+            certificateData.universityDegree.directiveCouncilOrdinance,
+          ministerialOrdinance:
+            certificateData.universityDegree.ministerialOrdinance
+        },
+        waferNumber: certificateData.waferNumber,
+        createdAt: certificateData.createdAt,
+        updatedAt: certificateData.updatedAt,
+        active: certificateData.active
+      };
+    }
     return {
-      transactionHash: t.transactionHash,
-      certificate: t.certificate ? Certificate.toDto(t.certificate) : null,
-      certificateBlockchainId: t.ceritificateBlockchainId,
-      status: t.status,
-      blockHash: t.blockHash,
-      etherscanLink: this.createEtherscanLink(t.transactionHash),
-      gasUsed: t.gasUsed,
-      dateCreated: t.dateCreated
-        ? dayjs(t.dateCreated).format('DD/MM/YYYY HH:mm')
+      transactionHash: t?.transactionHash || '',
+      certificate: cert || null,
+      studentName: t?.studentName || '',
+      certificateBlockchainId: t?.ceritificateBlockchainId || '',
+      status: t?.status || '',
+      blockHash: t?.blockHash || '',
+      etherscanLink: this.createEtherscanLink(t?.transactionHash || ''),
+      gasUsed: t?.gasUsed || '',
+      dateCreated: t?.dateCreated
+        ? dayjs(t?.dateCreated).format('DD/MM/YYYY HH:mm')
         : '',
-      dateModified: t.dateModified
-        ? dayjs(t.dateModified).format('DD/MM/YYYY HH:mm')
+      dateModified: t?.dateModified
+        ? dayjs(t?.dateModified).format('DD/MM/YYYY HH:mm')
         : ''
     } as BlockchainTransactionDto;
   }

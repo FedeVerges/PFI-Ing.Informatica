@@ -79,13 +79,14 @@ export const StudentService = {
     if (findedPerson) {
       person = findedPerson;
       if (person.students && person.students.length > 0) {
-        // comparo informacion de los estudiantes asociados para encontrar coincidencias con el nuevo
+        // Busco por el mismo numero de estudiante y blockchainId.
         const filteredStudents = person.students.filter(
           (s) =>
-            s.degreeProgramName === studentData.degreeProgramName &&
-            s.degreeProgramCurriculum === studentData.degreeProgramCurriculum &&
+            s.degreeProgramCurriculum === studentData.degreeProgramCurriculum ||
             s.blockchainId === blockchainId
         );
+
+        // Si no hay coincidencias. Lo agrego.
         if (!filteredStudents || filteredStudents.length < 1) {
           newStudent = new Student({
             personId: person.id,

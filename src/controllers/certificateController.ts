@@ -21,12 +21,13 @@ export const certificateController = {
       res.status(409).json(getErrorMessage(error));
     }
   },
-  async delete(req: Request, res: Response) {
+  async deleteCertificate(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
       const receipt = await CertificateService.deleteCertificate(id);
       res.status(200).json(receipt);
     } catch (error) {
+      console.error(error);
       res.setHeader('Content-Type', 'application/json');
       res.status(409).json(getErrorMessage(error));
     }
@@ -49,7 +50,7 @@ export const certificateController = {
   async getById(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const transaction = await CertificateService.getCertificatesById(
+      const transaction = await CertificateService.getCertificateById(
         Number(id)
       );
       res.status(200).json(transaction);
@@ -70,22 +71,26 @@ export const certificateController = {
   },
   async generatePdfCertificate(req: Request, res: Response) {
     try {
-      const id = req.params.id;
-      const transaction = await CertificateService.getCertificatesById(
-        Number(id)
-      );
-      if (transaction) {
-        const ret = await CertificateService.createCertificatePdf(transaction);
-        res.status(200).json(ret);
-      } else {
-        throw new Error('El certificado no existe.');
-      }
+      const id = Number(req?.params?.id);
+      const ret = await CertificateService.createCertificatePdf(id);
+      res.status(200).json(ret);
     } catch (error) {
       console.error(error);
       res.setHeader('Content-Type', 'application/json');
       res.status(409).json(getErrorMessage(error));
     }
   }
+  // async getCertificateDetail(req: Request, res: Response) {
+  //   try {
+  //     const id = Number(req?.params?.id);
+  //     const ret = await CertificateService.getTrasactionDataByCertificateId(id);
+  //     res.status(200).json(ret);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.setHeader('Content-Type', 'application/json');
+  //     res.status(409).json(getErrorMessage(error));
+  //   }
+  // }
 };
 
 function validateFields(certificate: CertificateDto) {
