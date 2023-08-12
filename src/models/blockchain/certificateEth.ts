@@ -16,6 +16,8 @@ export interface CertificateEth {
   createdAt: number;
   updatedAt: number;
   active: boolean; // Activo
+  createdAtDesc?: string;
+  updatedAtDesc?: string;
 }
 
 export function fromDto(certificate: CertificateDto): CertificateEth {
@@ -45,8 +47,8 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
     student,
     universityDegree,
     active: true,
-    createdAt: Number(certificate.dateCreated), // Pasar a milisgundos.
-    updatedAt: Number(certificate.dateCreated), // Pasar a milisgundos.
+    createdAt: new Date().getTime(), // Pasar a milisgundos.
+    updatedAt: new Date().getTime(), // Pasar a milisgundos.
     waferNumber: certificate.waferNumber
   };
   return certificateEth;

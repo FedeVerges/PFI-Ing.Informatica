@@ -41,9 +41,11 @@ export const CertificateService = {
     const certificates = await web3Service.getCertificatesByStudentId(id);
 
     const transactions: BlockchainTransactionDto[] = await Promise.all(
-      certificates.map(async (c) => {
-        return await this.getTrasactionDataByCertificate(c);
-      })
+      certificates
+        .filter((c) => !this.isNullCertificate(c))
+        .map(async (c) => {
+          return await this.getTrasactionDataByCertificate(c);
+        })
     );
 
     // // Obtengo los ids.
@@ -107,6 +109,7 @@ export const CertificateService = {
       }
 
       const currentDateStr = dayjs(new Date()).toString();
+      // TODO: Eliminar. Ya no se guardan certificados en la base.
       // Una vez validada la firma. Creo el certificado en la base.
       const newCertificate = new Certificate({
         degreeType: certificateData.degreeType,
@@ -129,6 +132,7 @@ export const CertificateService = {
         const transaction = new BlockchainTransaction({
           transactionHash: signed.transactionHash,
           methodName: 'CREATE',
+          studentName: `${student.person.name} ${student.person.lastname}`,
           status: TRANSACTION_STATUS.PENDING,
           dateCreated: new Date(),
           dateModified: new Date()
@@ -207,7 +211,7 @@ export const CertificateService = {
       const transaction = new BlockchainTransaction({
         transactionHash: signed.transactionHash,
         methodName: 'DELETE',
-        studentName: certificate.student.name + certificate.student.lastname,
+        studentName: `${certificate.student.name} ${certificate.student.lastname}`,
         ceritificateBlockchainId: id,
         status: TRANSACTION_STATUS.PENDING,
         dateCreated: new Date(),

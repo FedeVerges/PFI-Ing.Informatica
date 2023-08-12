@@ -12,4 +12,17 @@ export interface BlockchainTransactionDto {
   gasUsed?: number;
   dateCreated?: string;
   dateModified?: string;
+  methodName: string;
 }
+
+/*
+
+Si se borran los datos de nuestra base, perdemos el registro de transacciones. 
+
+La idea es que se pueda sacar el transactionhash del get del contrato. y de esa manera recuperar los datos.
+
+
+
+Puede darse el caso de que, por nuevas funcionalidades o por hacer errores 
+
+*/

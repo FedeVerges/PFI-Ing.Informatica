@@ -33,7 +33,7 @@ export const users = {
 
 export const userData = [
   {
-    name: 'fede',
+    name: 'ADMIN',
     password: '1234',
     email: 'fedeverges@gmail.com',
     createdAt: new Date(),
@@ -43,6 +43,19 @@ export const userData = [
     },
     role: {
       name: 'ADMIN'
+    }
+  },
+  {
+    name: 'fede',
+    password: '1234',
+    email: 'fedeverges@gmail.com',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    person: {
+      docNumber: '41221778'
+    },
+    role: {
+      name: 'STUDENT'
     }
   },
   {

@@ -149,6 +149,12 @@ export class BlockchainTransaction extends Model {
         waferNumber: certificateData.waferNumber,
         createdAt: certificateData.createdAt,
         updatedAt: certificateData.updatedAt,
+        createdAtDesc: dayjs(certificateData.createdAt * 1000).format(
+          'DD/MM/YYYY HH:mm'
+        ),
+        updatedAtDesc: dayjs(certificateData.updatedAt * 1000).format(
+          'DD/MM/YYYY HH:mm'
+        ),
         active: certificateData.active
       };
     }
@@ -156,6 +162,7 @@ export class BlockchainTransaction extends Model {
       transactionHash: t?.transactionHash || '',
       certificate: cert || null,
       studentName: t?.studentName || '',
+      methodName: t?.methodName || '',
       certificateBlockchainId: t?.ceritificateBlockchainId || '',
       status: t?.status || '',
       blockHash: t?.blockHash || '',

@@ -12,6 +12,7 @@ import { notificationService } from '../../services/notifications/notificationSe
 import { NotificationDto } from '../../dto/notificationDto';
 import { NOTIFICATION_TYPES } from '../../enum/notificationTypes';
 import { StudentEth } from 'models/blockchain/studentEth';
+import dayjs from 'dayjs';
 
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
@@ -74,19 +75,39 @@ class Web3Service {
    * @returns
    */
   async getCertificatesByStudentId(id: number) {
-    return (await this.certificateContract!.methods.getCertificatesByStudentId(
-      id
-    ).call()) as Promise<CertificateEth[]>;
+    const certificates =
+      (await this.certificateContract!.methods.getCertificatesByStudentId(
+        id
+      ).call()) as CertificateEth[];
+
+    // certificates.map((c) => {
+    //   c.createdAtDesc = dayjs(c.createdAt * 1000).format('DD/MM/YYYY HH:mm');
+    //   c.updatedAtDesc = dayjs(c.updatedAt * 1000).format('DD/MM/YYYY HH:mm');
+    // });
+
+    return certificates;
   }
 
   async getCertificatesById(id: number) {
-    return this.certificateContract!.methods.getCertificatesById(
-      id
-    ).call() as Promise<CertificateEth>;
+    const certificate =
+      (await this.certificateContract!.methods.getCertificatesById(
+        id
+      ).call()) as CertificateEth;
+    // Ajusto las fechas.
+    const newCertificate = {
+      ...certificate,
+      createdAtDesc: dayjs(certificate.createdAt * 1000).format(
+        'DD/MM/YYYY HH:mm'
+      ),
+      updatedAtDesc: dayjs(certificate.updatedAt * 1000).format(
+        'DD/MM/YYYY HH:mm'
+      )
+    };
+    return newCertificate;
   }
 
   async getAmountCertificates() {
-    return this.certificateContract!.methods.amountCertificates().call() as Promise<CertificateEth>;
+    return this.certificateContract!.methods.amountCertificates().call() as Promise<number>;
   }
 
   async sendTransaction(signed: SignedTransaction) {
@@ -134,8 +155,8 @@ class Web3Service {
   }): Partial<CertificateEth> {
     const cert: Partial<CertificateEth> = {
       id: logData.id ? Number(logData.id) : 0,
-      createdAt: logData['createdAt'] ? Number(logData['createdAt']) : 0,
-      updatedAt: logData['updatedAt'] ? Number(logData['updatedAt']) : 0
+      createdAt: logData['date'] ? Number(logData['date']) : 0,
+      updatedAt: logData['date'] ? Number(logData['date']) : 0
     };
     return cert;
   }
