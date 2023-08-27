@@ -46,7 +46,7 @@ export const userData = [
     }
   },
   {
-    name: 'fede',
+    name: 'TEST',
     password: '1234',
     email: 'fedeverges@gmail.com',
     createdAt: new Date(),
@@ -59,7 +59,7 @@ export const userData = [
     }
   },
   {
-    name: 'francisco',
+    name: 'test-estudiante',
     password: '1234',
     email: 'fedeverges@gmail.com',
     createdAt: new Date(),

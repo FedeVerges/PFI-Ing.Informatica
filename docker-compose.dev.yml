@@ -1,0 +1,37 @@
+version: '2' # specify docker-compose version
+
+# Define the services/containers to be run
+services:
+  backend: #name of the second service
+    build: # specify the directory of the Dockerfile
+      context: .
+      dockerfile: dockerfile.dev
+    links:
+      - db
+    volumes:
+      - .:/home/app
+      - /home/app/node_modules
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: 41221778
+      DB_HOST: db #**ponele debe ser el nombre del servicio de docker que monta la bd.
+      DB_PORT: 5432
+      DB_NAME: SVT_20220706
+      PORT: 8080
+      INIT_DB: true
+    ports:
+      - '8080:8080' #specify ports forewarding
+
+  db: # name of the third service
+    image: postgres # specify image to build container from
+    ports:
+      - '35432:5432' # specify port forewarding
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 41221778
+      POSTGRES_DB: SVT_20220706
+    volumes:
+      - db-data:/var/lib/pgsql/data
+
+volumes:
+  db-data:

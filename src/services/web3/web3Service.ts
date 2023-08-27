@@ -17,7 +17,8 @@ import dayjs from 'dayjs';
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
 
-const contractArtifact = require('../../../../blockchain/certificateContract/build/contracts/Certificates.json');
+// const contractArtifact = require('../../../../blockchain/certificateContract/build/contracts/Certificates.json');
+const contractArtifact = require('../../../contracts/Certificates.json');
 
 class Web3Service {
   private _web3!: Web3;

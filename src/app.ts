@@ -34,9 +34,12 @@ export class App {
 
   async connectDb() {
     try {
-      // await this.resetDataBase();
+      if (process.env.INIT_DB === 'true') {
+        await this.resetDataBase();
+      } else {
+        await db.sync();
+      }
       // await db.sync({ alter: true });
-      await db.sync();
       console.log('Base de datos conectada.');
     } catch (error: any) {
       throw new Error(error || 'Error al conectarse con la base de datos');

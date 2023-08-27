@@ -32,6 +32,8 @@ export const UserService = {
         }
       ]
     });
+    console.log(foundUser?.id || '** null **');
+    console.log(JSON.stringify(foundUser) || '* null *');
     if (foundUser && foundUser.id) {
       // Validar el hash del password.
       const isMatch = bcrypt.compareSync(userBody.password, foundUser.password);

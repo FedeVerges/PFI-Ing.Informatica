@@ -10,17 +10,28 @@ import { Role } from '../models/role';
 import { Permission } from '../models/permission';
 import { RoleHasPermission } from '../models/roleHasPermission';
 
-const DATABASE_URL = 'localhost://postgres:5433/SVT_20220706';
+const DATABASE_URL = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 
-const user = 'postgres';
-const host = 'localhost';
-const database = 'SVT_20220706';
-const password = '41221778';
-const port = 5433;
-
-const db = new Sequelize(database, user, password, {
+/* const db = new Sequelize(database, user, password, {
   host,
   port,
+  dialect: 'postgres',
+  models: [
+    Certificate,
+    User,
+    Student,
+    CertificateType,
+    Institution,
+    Person,
+    BlockchainTransaction,
+    Role,
+    Permission,
+    RoleHasPermission
+  ]
+});
+ */
+console.log(DATABASE_URL);
+const db = new Sequelize(DATABASE_URL, {
   dialect: 'postgres',
   models: [
     Certificate,
