@@ -19,6 +19,7 @@ services:
       INIT_DB: false
     ports:
       - '8080:8080' #specify ports forewarding
+      - '9090:9090' #specify ports forewarding
 
   db: # name of the third service
     image: postgres # specify image to build container from

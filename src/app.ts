@@ -7,6 +7,7 @@ import { notificationService } from './services/notifications/notificationServic
 import { web3Service } from './services/web3/web3Service';
 import { initializer } from './db/initDB';
 import bodyParser from 'body-parser';
+import path from 'path';
 
 export class App {
   private app: Application;

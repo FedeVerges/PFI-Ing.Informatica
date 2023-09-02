@@ -101,7 +101,7 @@ export const StudentService = {
             superiorCouncilOrdinance: studentData.superiorCouncilOrdinance,
             directiveCouncilOrdinance: studentData.directiveCouncilOrdinance,
             blockchainId: blockchainId
-          } as Student);
+          });
           await newStudent.save();
         } else {
           throw new Error('El estudiante ya existe.');

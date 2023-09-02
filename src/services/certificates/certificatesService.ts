@@ -129,14 +129,14 @@ export const CertificateService = {
         /**
          * Todo: desacoplar logica de guardado de transaccion.
          */
-        const transaction = new BlockchainTransaction({
+        const transaction: BlockchainTransaction = new BlockchainTransaction({
           transactionHash: signed.transactionHash,
           methodName: 'CREATE',
           studentName: `${student.person.name} ${student.person.lastname}`,
           status: TRANSACTION_STATUS.PENDING,
           dateCreated: new Date(),
           dateModified: new Date()
-        } as BlockchainTransaction);
+        });
         const transactionResponse = await transaction.save();
         /**
          * Envio a publicar la transaccion.
@@ -208,7 +208,7 @@ export const CertificateService = {
 
     // Creo la transaccion en la base.
     if (signed) {
-      const transaction = new BlockchainTransaction({
+      const transaction: BlockchainTransaction = new BlockchainTransaction({
         transactionHash: signed.transactionHash,
         methodName: 'DELETE',
         studentName: `${certificate.student.name} ${certificate.student.lastname}`,
@@ -216,7 +216,7 @@ export const CertificateService = {
         status: TRANSACTION_STATUS.PENDING,
         dateCreated: new Date(),
         dateModified: new Date()
-      } as BlockchainTransaction);
+      });
       const transactionResponse = await transaction.save();
       // Envio a publicar la transaccion.
       // Mandar a publicar la trnasaccion de manera asincrona.

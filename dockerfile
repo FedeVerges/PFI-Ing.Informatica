@@ -1,10 +1,11 @@
 
-FROM node:18
-RUN mkdir -p /home/app
-WORKDIR /home/app
+FROM node:18.13
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app
 
-COPY package.json /home/app/
+COPY ./package.json /home/node/app
 RUN npm install
-COPY . /home/app
+COPY ./ /home/node/app
 CMD [ "npm","start" ]
 EXPOSE 8080
+EXPOSE 9090
