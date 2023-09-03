@@ -17,6 +17,7 @@ services:
       DB_NAME: SVT_20220706
       PORT: 8080
       INIT_DB: false
+      NETWORK_URL: https://sepolia.infura.io/v3/04be9cd572fa4376a643b4b78aaa7498
     ports:
       - '8080:8080' #specify ports forewarding
       - '9090:9090' #specify ports forewarding
