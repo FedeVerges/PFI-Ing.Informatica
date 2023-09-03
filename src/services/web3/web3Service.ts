@@ -40,7 +40,7 @@ class Web3Service {
       this.web3 = new Web3(URL);
       this.certificateContract = this.getCertificateContract();
     } else {
-      throw new Error('No existe URL para conectar con blockchain.  ' + URL);
+      throw new Error(`No existe URL para conectar con blockchain. ${URL}`);
     }
   }
 
