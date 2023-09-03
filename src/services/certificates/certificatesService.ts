@@ -351,7 +351,7 @@ export const CertificateService = {
           style: ['small']
         },
         {
-          qr: `http://192.168.0.11:4200/validate/${encoded}`,
+          qr: `${process.env.CLIENT_URL}/validate/${encoded}`,
           version: 15,
           fit: 200,
           margin: [0, 15]
