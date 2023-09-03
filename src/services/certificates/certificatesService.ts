@@ -292,7 +292,8 @@ export const CertificateService = {
         ceritificateBlockchainId: transaction.certificateBlockchainId
       })
     ); // encodedWord Array object
-    const encoded = CryptoJS.enc.Base64.stringify(documentEndoded); // string: 'NzUzMjI1NDE='
+    const encoded = CryptoJS.enc.Base64.stringify(documentEndoded);
+    // string: 'NzUzMjI1NDE='
 
     const docDefinition: TDocumentDefinitions = {
       pageSize: {
