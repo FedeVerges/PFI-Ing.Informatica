@@ -80,12 +80,6 @@ class Web3Service {
       (await this.certificateContract!.methods.getCertificatesByStudentId(
         id
       ).call()) as CertificateEth[];
-
-    // certificates.map((c) => {
-    //   c.createdAtDesc = dayjs(c.createdAt * 1000).format('DD/MM/YYYY HH:mm');
-    //   c.updatedAtDesc = dayjs(c.updatedAt * 1000).format('DD/MM/YYYY HH:mm');
-    // });
-
     return certificates;
   }
 

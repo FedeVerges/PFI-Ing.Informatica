@@ -1,8 +1,6 @@
 import { Person } from '../../models/person';
-import { User } from '../../models/user';
-import { QueryInterface } from 'sequelize/types';
 import { Student } from 'models/student';
-
+/* 
 export const users = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.bulkInsert('Users', [
@@ -29,7 +27,7 @@ export const users = {
       }
     ]);
   }
-};
+}; */
 
 export const userData = [
   {
@@ -46,7 +44,7 @@ export const userData = [
     }
   },
   {
-    name: 'TEST',
+    name: 'Fede',
     password: '1234',
     email: 'fedeverges@gmail.com',
     createdAt: new Date(),
@@ -95,23 +93,12 @@ export const personsData: Partial<Person>[] = [
     students: [
       {
         universityName: 'Universidad Nacional de San Luis',
-        academicUnit: 'Facultad de ciencias fisico matemáticas y naturales',
-        degreeProgramName: 'Ingeniería en informática',
+        academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',
+        degreeProgramName: 'Ingeniería en Informática',
         degreeProgramCurriculum: '16-05',
         ministerialOrdinance: '',
         blockchainId: '412217783028516',
         registrationNumber: 3028516,
-        superiorCouncilOrdinance: '12312312312',
-        directiveCouncilOrdinance: '123123123'
-      },
-      {
-        universityName: 'Universidad Nacional de San Luis',
-        academicUnit: 'Facultad de ciencias fisico matemáticas y naturales',
-        degreeProgramName: 'Ingeniería en Alientos',
-        degreeProgramCurriculum: '16-10',
-        ministerialOrdinance: '',
-        blockchainId: '412217783028520',
-        registrationNumber: 3028520,
         superiorCouncilOrdinance: '12312312312',
         directiveCouncilOrdinance: '123123123'
       }
@@ -125,8 +112,8 @@ export const personsData: Partial<Person>[] = [
     students: [
       {
         universityName: 'Universidad Nacional de San Luis',
-        academicUnit: 'Facultad de ciencias fisico matemáticas y naturales',
-        degreeProgramName: 'Ingeniería en informática',
+        academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',
+        degreeProgramName: 'Ingeniería en Informática',
         degreeProgramCurriculum: '16-05',
         ministerialOrdinance: '',
         blockchainId: '412217773028517',
@@ -144,8 +131,8 @@ export const personsData: Partial<Person>[] = [
     students: [
       {
         universityName: 'Universidad Nacional de San Luis',
-        academicUnit: 'Facultad de ciencias fisico matemáticas y naturales',
-        degreeProgramName: 'Ingeniería en Alientos',
+        academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',
+        degreeProgramName: 'Ingeniería en Electrónica',
         degreeProgramCurriculum: '16-10',
         ministerialOrdinance: '',
         blockchainId: '360464543028518',

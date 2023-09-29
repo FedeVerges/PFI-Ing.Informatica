@@ -9,8 +9,6 @@ import { Certificate } from '../../models/certificate';
 import { BlockchainTransaction } from '../../models/blockchainTransaction';
 import { TransactionReceipt, SignedTransaction } from 'web3-core';
 import { StudentService } from '../student/studentService';
-import { Student } from '../../models/student';
-import { Person } from '../../models/person';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es'; // import locale
 import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
@@ -94,6 +92,17 @@ export const CertificateService = {
     const student = await StudentService.getStudentById(
       certificateData.student.id
     );
+
+    //TODO: hacer get a la blockchain para obtener los titulos.
+    /**
+     * Control de idempotencia propio.
+     * El get a la blockchain trae CertificateEth. Validar esos CertificateETH contra el que vas a enviar.
+     * Controlar que las obleas no sean las mismas.
+     *
+     * Idempotencia general: No debe poder crearse un certificado con el mismo numero de oblea.
+     *
+     * Solucion 1: Usar el numero de oblea como id de certificado en vez de un secuencial.
+     */
     if (!student) throw new Error('No existe el estudiante');
 
     let signed: SignedTransaction;
