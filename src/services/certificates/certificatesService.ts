@@ -112,9 +112,9 @@ export const CertificateService = {
       try {
         ethCertificate = fromDto(certificateData);
         signed = await web3Service.createSignCreateTransaction(ethCertificate);
-      } catch (ex) {
+      } catch (ex: any) {
         console.error(ex);
-        throw new Error('Ha ocurrido un error al conectarse con la red');
+        throw new Error(ex.message);
       }
 
       const currentDateStr = dayjs(new Date()).toString();
@@ -157,12 +157,20 @@ export const CertificateService = {
           .sendTransaction(signed)
           .then(
             async ([resultCertificate, receipt]) =>
-              await this.updateStateTransaction(
+              await this.updateSuccessTransaction(
                 transactionResponse,
                 resultCertificate,
                 receipt
               )
-          );
+          )
+          .catch(async (error) => {
+            // Manejo de errores
+            console.error(
+              'La transaccion no ha podido ser completada. :',
+              error
+            );
+            await this.updateErrorTransaction(transactionResponse);
+          });
       } else {
         throw new Error('Ha ocurrido un error al crear la firma');
       }
@@ -177,7 +185,7 @@ export const CertificateService = {
     }
   },
 
-  async updateStateTransaction(
+  async updateSuccessTransaction(
     transactionResponse: BlockchainTransaction,
     resultCertificate: Partial<CertificateEth> | null,
     receipt: TransactionReceipt
@@ -190,6 +198,26 @@ export const CertificateService = {
       blockHash: receipt.blockHash,
       from: receipt.from,
       gasUsed: receipt.gasUsed,
+      dateModified: dayjs(new Date()).toString()
+    });
+    const notification: NotificationDto = {
+      type: 'TRANSACTION',
+      transactionHash: ret.transactionHash,
+      status: ret.status
+    };
+    notificationService.sendNotification(1, notification);
+  },
+
+  // TODO: Unificar estos metodos.
+  async updateErrorTransaction(transactionResponse: BlockchainTransaction) {
+    // Con el resultado de la transaccion, actualizamos la transaccion y el certificado.
+    const ret = await transactionResponse.update({
+      status: TRANSACTION_STATUS.ERROR,
+      ceritificateBlockchainId: 0,
+      blockNumber: 0,
+      blockHash: '',
+      from: '',
+      gasUsed: 0,
       dateModified: dayjs(new Date()).toString()
     });
     const notification: NotificationDto = {
@@ -233,7 +261,7 @@ export const CertificateService = {
         .sendTransaction(signed)
         .then(
           async ([resultCertificate, receipt]) =>
-            await this.updateStateTransaction(
+            await this.updateSuccessTransaction(
               transactionResponse,
               resultCertificate,
               receipt
