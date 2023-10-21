@@ -1,5 +1,4 @@
 import { CertificateEth } from 'models/blockchain/certificateEth';
-import { CertificateDto } from './certificateDto';
 
 export interface BlockchainTransactionDto {
   transactionHash?: string;

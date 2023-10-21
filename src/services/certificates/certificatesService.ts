@@ -1,11 +1,9 @@
-import { CertificateDto } from '../../dto/certificateDto';
 import { TransactionDto } from '../../dto/transactionDto';
 import { web3Service } from '../../services/web3/web3Service';
 import {
   CertificateEth,
   fromDto
 } from '../../models/blockchain/certificateEth';
-import { Certificate } from '../../models/certificate';
 import { BlockchainTransaction } from '../../models/blockchainTransaction';
 import { TransactionReceipt, SignedTransaction } from 'web3-core';
 import { StudentService } from '../student/studentService';
@@ -18,7 +16,6 @@ import { pdfService } from '../../services/pdf/pdfService';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PdfDto } from 'dto/pdfDto';
 import * as CryptoJS from 'crypto-js';
-import { CERTIFICATE_STATUS } from '../../enum/certificateStatus';
 import { TRANSACTION_STATUS } from '../../enum/transactionStatus';
 import { img } from '../../assets/img/logo_crop_64';
 import { background } from '../../assets/img/certificate_background';
@@ -85,104 +82,71 @@ export const CertificateService = {
    * @returns
    */
   async createCertificate(
-    certificateData: CertificateDto
+    certificateData: CertificateEth
   ): Promise<TransactionDto> {
-    // VALIDACIONES: IDEMPOTENCIA: 2 Certificados iguales al mismo estudiante. -> Obtener los certificados por estudiante (primero local y luego en blockchain)
-    // const student = await StudentService.getStudentById(certificateData.student.id);
     const student = await StudentService.getStudentById(
       certificateData.student.id
     );
 
-    //TODO: hacer get a la blockchain para obtener los titulos.
-    /**
-     * Control de idempotencia propio.
-     * El get a la blockchain trae CertificateEth. Validar esos CertificateETH contra el que vas a enviar.
-     * Controlar que las obleas no sean las mismas.
-     *
-     * Idempotencia general: No debe poder crearse un certificado con el mismo numero de oblea.
-     *
-     * Solucion 1: Usar el numero de oblea como id de certificado en vez de un secuencial.
-     */
     if (!student) throw new Error('No existe el estudiante');
 
     let signed: SignedTransaction;
     let ethCertificate: CertificateEth;
-    if (this.validateCertificates(student.certificates, certificateData)) {
-      // Creamos la transaccion
-      try {
-        ethCertificate = fromDto(certificateData);
-        signed = await web3Service.createSignCreateTransaction(ethCertificate);
-      } catch (ex: any) {
-        console.error(ex);
-        throw new Error(ex.message);
-      }
-
-      const currentDateStr = dayjs(new Date()).toString();
-      // TODO: Eliminar. Ya no se guardan certificados en la base.
-      // Una vez validada la firma. Creo el certificado en la base.
-      const newCertificate = new Certificate({
-        degreeType: certificateData.degreeType,
-        degreeName: certificateData.degreeName,
-        ministerialOrdinance: certificateData.student.ministerialOrdinance,
-        dateCreated: currentDateStr,
-        dateModified: currentDateStr,
-        waferNumber: certificateData.waferNumber,
-        studentId: student.id,
-        student,
-        status: CERTIFICATE_STATUS.PENDING
-      });
-      await newCertificate.save();
-
-      // Creo la transaccion en la base.
-      if (signed) {
-        /**
-         * Todo: desacoplar logica de guardado de transaccion.
-         */
-        const transaction: BlockchainTransaction = new BlockchainTransaction({
-          transactionHash: signed.transactionHash,
-          methodName: 'CREATE',
-          studentName: `${student.person.name} ${student.person.lastname}`,
-          status: TRANSACTION_STATUS.PENDING,
-          dateCreated: new Date(),
-          dateModified: new Date()
-        });
-        const transactionResponse = await transaction.save();
-        /**
-         * Envio a publicar la transaccion.
-         *
-         * Mandar a publicar la trnasaccion de manera asincrona.
-         */
-        //
-        web3Service
-          .sendTransaction(signed)
-          .then(
-            async ([resultCertificate, receipt]) =>
-              await this.updateSuccessTransaction(
-                transactionResponse,
-                resultCertificate,
-                receipt
-              )
-          )
-          .catch(async (error) => {
-            // Manejo de errores
-            console.error(
-              'La transaccion no ha podido ser completada. :',
-              error
-            );
-            await this.updateErrorTransaction(transactionResponse);
-          });
-      } else {
-        throw new Error('Ha ocurrido un error al crear la firma');
-      }
-      //Mientras tranto, se informa al usuario la publicacion de la transaccion y el estado (Pendiente).
-      return {
-        receipt: {},
-        certificate: certificateData,
-        status: TRANSACTION_STATUS.PENDING
-      } as TransactionDto;
-    } else {
-      throw new Error(' Ya existe un certificado con el mismo nombre.');
+    // Creamos la transaccion
+    try {
+      // ethCertificate = fromDto(certificateData);
+      signed = await web3Service.createSignCreateTransaction(certificateData);
+    } catch (ex: any) {
+      console.error(ex);
+      throw new Error(ex.message);
     }
+
+    /**
+     * Creo la transaccion y la cargo en el sistema.
+     */
+    if (signed) {
+      /**
+       * Todo: desacoplar logica de guardado de transaccion.
+       */
+      const transaction: BlockchainTransaction = new BlockchainTransaction({
+        transactionHash: signed.transactionHash,
+        methodName: 'CREATE',
+        studentName: `${student.person.name} ${student.person.lastname}`,
+        status: TRANSACTION_STATUS.PENDING,
+        dateCreated: new Date(),
+        dateModified: new Date()
+      });
+      const transactionResponse = await transaction.save();
+      /**
+       * Envio a publicar la transaccion.
+       *
+       * Mandar a publicar la trnasaccion de manera asincrona.
+       */
+      //
+      web3Service
+        .sendTransaction(signed)
+        .then(
+          async ([resultCertificate, receipt]) =>
+            await this.updateSuccessTransaction(
+              transactionResponse,
+              resultCertificate,
+              receipt
+            )
+        )
+        .catch(async (error) => {
+          // Manejo de errores
+          console.error('La transaccion no ha podido ser completada. :', error);
+          await this.updateErrorTransaction(transactionResponse);
+        });
+    } else {
+      throw new Error('Ha ocurrido un error al crear la firma');
+    }
+    //Mientras tranto, se informa al usuario la publicacion de la transaccion y el estado (Pendiente).
+    return {
+      receipt: {},
+      certificate: certificateData,
+      status: TRANSACTION_STATUS.PENDING
+    } as TransactionDto;
   },
 
   async updateSuccessTransaction(
@@ -293,8 +257,9 @@ export const CertificateService = {
    * No pueden existir dos certificados iguales.
    * @param certfificates Lista de certificados del estudiante
    * @param newCertificate Nuevo certificado a crear.
+   * @deprecated
    */
-  validateCertificates(
+  /* validateCertificates(
     certfificates: Certificate[] | undefined,
     newCertificate: CertificateDto
   ): boolean {
@@ -312,7 +277,7 @@ export const CertificateService = {
       ret = true;
     }
     return ret;
-  },
+  }, */
 
   async createCertificatePdf(id: number): Promise<PdfDto | null> {
     const transaction = await CertificateService.getCertificateById(Number(id));
@@ -361,31 +326,37 @@ export const CertificateService = {
           text: `Universidad Nacional de San Luis `,
           style: ['title']
         },
-
         {
           text: [
             {
-              text: `Se le concede a `
-            },
-            {
-              text: ` ${transaction.studentName} `,
+              text: `   ${transaction.studentName} `,
               bold: true
             },
             {
-              text: ` el título profesional de `
+              text: `  DU: ${transaction.certificate?.student.docNumber} `,
+              bold: true
             },
-            // {
-            //   text: ` ${transaction.certificate?.student.degreeProgramName} `,
-            //   bold: true
-            // },
             {
-              text: `considerando que ha cumplido con los estudios correspondientes y satisfecho todos los requisitos necesarios`
+              text: ` ha terminado los estudios correspondientes a la carrera `
+            },
+            {
+              text: ` ${transaction.certificate?.universityDegree.degreeProgramName} `,
+              bold: true
             }
           ],
-          marginBottom: 20
+          marginBottom: 10
         },
         {
-          text: `Escaneá este codigo QR para verficar la valides de este documento.`,
+          text: `Por tanto, de acuerdo con lo que establecen las disposiciones vigentes, se le ha expedido el título de ${transaction.certificate?.universityDegree.degreeProgramName}`,
+          marginBottom: 10
+        },
+        {
+          text: `Certificado el día: ${transaction.dateCreated}`,
+          style: ['textMuted'],
+          margin: [0, 15]
+        },
+        {
+          text: `Escanear este codigo QR para verificar la validez del documento.`,
           style: ['small']
         },
         {

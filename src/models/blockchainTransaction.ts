@@ -127,6 +127,7 @@ export class BlockchainTransaction extends Model {
         student: {
           id: certificateData.student.id,
           name: certificateData.student.name,
+          docType: certificateData.student.docType,
           lastname: certificateData.student.lastname,
           docNumber: certificateData.student.docNumber,
           sex: certificateData.student.sex,
@@ -138,13 +139,7 @@ export class BlockchainTransaction extends Model {
           degreeProgramName: certificateData.universityDegree.degreeProgramName,
           degreeProgramCurriculum:
             certificateData.universityDegree.degreeProgramCurriculum,
-          degreeType: certificateData.universityDegree.degreeType,
-          superiorCouncilOrdinance:
-            certificateData.universityDegree.superiorCouncilOrdinance,
-          directiveCouncilOrdinance:
-            certificateData.universityDegree.directiveCouncilOrdinance,
-          ministerialOrdinance:
-            certificateData.universityDegree.ministerialOrdinance
+          degreeType: certificateData.universityDegree.degreeType
         },
         waferNumber: certificateData.waferNumber,
         createdAt: certificateData.createdAt,

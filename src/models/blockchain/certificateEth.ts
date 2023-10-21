@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import { PersonDto } from 'dto/personDto';
 import { CERTIFICATE_STATUS } from '../../enum/certificateStatus';
-import { BlockchainTransactionDto } from '../../dto/blockchainTransactionDto';
 import { CertificateDto } from '../../dto/certificateDto';
 import { StudentDto } from '../../dto/studentDto';
 import { StudentEth } from './studentEth';
@@ -25,6 +24,7 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
   const student: StudentEth = {
     id: certificate.student.blockchainId,
     docNumber: certificate.student.person.docNumber,
+    docType: certificate.student.person.docType,
     name: certificate.student.person.name,
     lastname: certificate.student.person.lastname,
     sex: certificate.student.person.sex,
@@ -35,12 +35,7 @@ export function fromDto(certificate: CertificateDto): CertificateEth {
     academicUnit: certificate.student.academicUnit,
     degreeProgramName: certificate.degreeName || '',
     degreeProgramCurriculum: certificate.student.degreeProgramCurriculum,
-    degreeType: certificate.degreeType,
-    superiorCouncilOrdinance:
-      certificate.student.superiorCouncilOrdinance || '',
-    directiveCouncilOrdinance:
-      certificate.student.directiveCouncilOrdinance || '',
-    ministerialOrdinance: certificate.student.ministerialOrdinance || ''
+    degreeType: certificate.degreeType
   };
   const certificateEth: CertificateEth = {
     id: 0,
@@ -70,13 +65,9 @@ export function toDto(certificate: CertificateEth): CertificateDto {
     degreeProgramName: certificate.universityDegree.degreeProgramName,
     degreeProgramCurriculum:
       certificate.universityDegree.degreeProgramCurriculum,
-    superiorCouncilOrdinance:
-      certificate.universityDegree.superiorCouncilOrdinance,
-    directiveCouncilOrdinance:
-      certificate.universityDegree.directiveCouncilOrdinance,
-    ministerialOrdinance: certificate.universityDegree.ministerialOrdinance,
     blockchainId: certificate.student.id,
-    registrationNumber: certificate.student.registrationNumber
+    registrationNumber: certificate.student.registrationNumber,
+    degreeType: ''
   };
   const ret: CertificateDto = {
     id: 0,

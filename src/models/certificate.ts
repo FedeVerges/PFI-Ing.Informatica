@@ -17,7 +17,8 @@ dayjs.locale('es');
 })
 /**
  * @Deprecated
- * Antes guardaba los datos en copia con los de la blockchain, pero ahora esta todo alli.
+ * 06/2023
+ * Se decidió persistir los datos en blockchain por completo. Por lo que no se guardan certificados en la bd.
  */
 export class Certificate extends Model {
   @Column({
@@ -73,34 +74,34 @@ export class Certificate extends Model {
   })
   status!: string;
 
-  static toDtoList(certificates: Certificate[]): CertificateDto[] {
-    return certificates.map((c) => {
-      return {
-        id: c.id,
-        student: Student.toDto(c.student),
-        degreeType: c.degreeType,
-        degreeName: c.degreeName,
-        ministerialOrdinance: c.student.ministerialOrdinance,
-        waferNumber: c.waferNumber,
-        dateCreated: dayjs(c.dateCreated).format(
-          'DD/MM/YYYY HH:mm HH:mm HH:mm'
-        ),
-        dateModified: dayjs(c.dateModified).format('DD/MM/YYYY HH:mm'),
-        status: c.status
-      } as CertificateDto;
-    });
-  }
-  static toDto(certificate: Certificate): CertificateDto {
-    return {
-      id: certificate.id,
-      student: Student.toDto(certificate.student),
-      degreeType: certificate.degreeType,
-      degreeName: certificate.degreeName,
-      ministerialOrdinance: certificate.student.ministerialOrdinance,
-      waferNumber: certificate.waferNumber,
-      dateCreated: dayjs(certificate.dateCreated).format('DD/MM/YYYY HH:mm'),
-      dateModified: dayjs(certificate.dateModified).format('DD/MM/YYYY HH:mm'),
-      status: certificate.status
-    } as CertificateDto;
-  }
+  // static toDtoList(certificates: Certificate[]): CertificateDto[] {
+  //   return certificates.map((c) => {
+  //     return {
+  //       id: c.id,
+  //       student: Student.toDto(c.student),
+  //       degreeType: c.degreeType,
+  //       degreeName: c.degreeName,
+  //       ministerialOrdinance: c.student.ministerialOrdinance,
+  //       waferNumber: c.waferNumber,
+  //       dateCreated: dayjs(c.dateCreated).format(
+  //         'DD/MM/YYYY HH:mm HH:mm HH:mm'
+  //       ),
+  //       dateModified: dayjs(c.dateModified).format('DD/MM/YYYY HH:mm'),
+  //       status: c.status
+  //     } as CertificateDto;
+  //   });
+  // }
+  // static toDto(certificate: Certificate): CertificateDto {
+  //   return {
+  //     id: certificate.id,
+  //     student: Student.toDto(certificate.student),
+  //     degreeType: certificate.degreeType,
+  //     degreeName: certificate.degreeName,
+  //     ministerialOrdinance: certificate.student.ministerialOrdinance,
+  //     waferNumber: certificate.waferNumber,
+  //     dateCreated: dayjs(certificate.dateCreated).format('DD/MM/YYYY HH:mm'),
+  //     dateModified: dayjs(certificate.dateModified).format('DD/MM/YYYY HH:mm'),
+  //     status: certificate.status
+  //   } as CertificateDto;
+  // }
 }

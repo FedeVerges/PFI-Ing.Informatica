@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { getErrorMessage } from '../utils/manageError';
-import { CertificateDto } from '../dto/certificateDto';
 import { CertificateService } from '../services/certificates/certificatesService';
 import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
+import { CertificateEth } from 'models/blockchain/certificateEth';
 
 export const certificateController = {
   async create(req: Request, res: Response) {
@@ -11,7 +11,7 @@ export const certificateController = {
       validateFields(req.body);
       // Todo: Crear Dto a partir del req.body y ahi verificar los datos.
       const transactionRes = await CertificateService.createCertificate(
-        req.body as CertificateDto
+        req.body
       );
       // const newCertificate = await CertificateService.createCertificate(req.body as CertificateDto);
       res.status(200).json(transactionRes);
@@ -93,29 +93,29 @@ export const certificateController = {
   // }
 };
 
-function validateFields(certificate: CertificateDto) {
+function validateFields(certificate: CertificateEth) {
   if (!certificate.student) {
     throw new Error('Debe seleccionar una facultad');
   }
-  if (!certificate.degreeName) {
+  if (!certificate.universityDegree) {
+    throw new Error('Debe seleccionar una facultad');
+  }
+  if (!certificate.waferNumber) {
+    throw new Error('Debe ingresar el numero de oblea');
+  }
+  if (!certificate.universityDegree.degreeProgramName) {
     throw new Error('Debe ingresar el nombre del titulo');
   }
-  if (!certificate.student.universityName) {
-    throw new Error('Debe seleccionar una facultad');
-  }
-  if (!certificate.degreeName) {
-    throw new Error('Debe seleccionar una facultad');
-  }
-  if (!certificate.student.degreeProgramCurriculum) {
+  if (!certificate.universityDegree.universityName) {
     throw new Error('Debe seleccionar una facultad');
   }
   if (!certificate.student) {
     throw new Error('Debe ingresar los datos del estudiante');
   }
-  if (!certificate.student.person.name) {
+  if (!certificate.student.name) {
     throw new Error('Debe seleccionar una institucion');
   }
-  if (!certificate.student.person.docNumber) {
+  if (!certificate.student.docNumber) {
     throw new Error('Debe el numero de documento del estudiante');
   }
   if (!certificate.student.registrationNumber) {
