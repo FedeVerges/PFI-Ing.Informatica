@@ -3,6 +3,7 @@ export interface StudentEth {
   name: string;
   lastname: string;
   docNumber: string;
+  docType: string;
   sex: string;
   registrationNumber: number;
 }

@@ -4,5 +4,6 @@ export interface PersonDto {
   lastname: string;
   fullname?: string;
   docNumber: string;
+  docType: string;
   sex: string;
 }

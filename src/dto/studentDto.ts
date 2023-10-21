@@ -9,8 +9,6 @@ export interface StudentDto {
   universityName: string;
   academicUnit: string; // Facultad
   degreeProgramName: string; // Nombre de la carrera
+  degreeType: string; // Tipo de carrera.
   degreeProgramCurriculum: string; // Plan de estudios.
-  superiorCouncilOrdinance?: string; // Ordenanza consejo superior.
-  directiveCouncilOrdinance?: string; // Ordenanza consejo superior.
-  ministerialOrdinance?: string; // Ordenanza ministerial
 }
