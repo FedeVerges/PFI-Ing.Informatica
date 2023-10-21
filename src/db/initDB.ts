@@ -3,10 +3,11 @@ import { Permission } from '../models/permission';
 import { Role } from '../models/role';
 import { permissionsSeedData } from './seeders/permisos';
 import { roleData } from './seeders/roles';
-import { personsData, userData } from './seeders/user';
+import { degrees, personsData, userData } from './seeders/user';
 import { Person } from '../models/person';
 import { User } from '../models/user';
 import { Student } from '../models/student';
+import { Degree } from '../models/degree';
 
 export const initializer = {
   async seedRoles() {
@@ -93,26 +94,63 @@ export const initializer = {
   },
   async seedStudents() {
     try {
-      await Promise.all(
+      /* await Promise.all(
+        degrees.map(async (degree) => {
+          const newDegree = new Degree({
+            id: degree.id,
+            name: degree.name,
+            academicUnit: degree.academicUnit,
+            type: degree.type,
+            planId: degree.planId,
+            university: degree.university
+          });
+
+          await newDegree.save();
+        })
+      ); */
+
+      /* await Promise.all(
         personsData.map(async (person) => {
+          // const role = await Degree.findOne({
+          //   where: { name: user.role.name }
+          // });
+
           const newPerson = new Person(
             {
               name: person.name,
               lastname: person.lastname,
               docNumber: person.docNumber,
+              docType: person.docType,
               sex: person.sex,
               students: person.students
             },
             {
-              include: [{ model: Student, required: true }]
+              include: [
+                {
+                  model: Student,
+                  required: true
+                }
+              ]
             }
           );
-          return await newPerson.save();
+          await newPerson.save();
         })
-      );
-      console.info('User seeded 🍺');
+      ); */
+
+      await Degree.bulkCreate(degrees);
+
+      await Person.bulkCreate(personsData, {
+        include: [
+          {
+            model: Student,
+            required: true,
+            as: 'students'
+          }
+        ]
+      });
+      console.info('Persons seeded 🍺');
     } catch (error) {
-      console.error('Users seeder failed.');
+      console.error('Personsseeder failed.');
       console.error(error);
       console.error('-------------------------------');
     }

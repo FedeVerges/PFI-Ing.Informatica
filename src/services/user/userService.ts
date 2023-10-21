@@ -7,6 +7,7 @@ import { Role } from '../../models/role';
 import { CONSTANT_CONFIG } from '../../constants/constanConfig';
 import { Person } from '../../models/person';
 import { Student } from '../../models/student';
+import { Degree } from '../../models/degree';
 
 export const SECRET_KEY: Secret = 'HOLIS';
 
@@ -22,13 +23,24 @@ export const UserService = {
       include: [
         {
           model: Person,
-          required: true,
+          as: 'person',
           include: [
             {
               model: Student,
-              required: true
+              as: 'students',
+              include: [
+                {
+                  model: Degree,
+                  as: 'degree'
+                }
+              ]
             }
           ]
+        },
+        {
+          model: Role,
+          required: true,
+          as: 'role'
         }
       ]
     });
@@ -91,7 +103,10 @@ export const UserService = {
       where: { name: CONSTANT_CONFIG.ROLE_STUDENT_CODE }
     });
 
-    const user = await User.findOne({ where: { personId: dto.person.id } });
+    const user = await User.findOne({
+      where: { personId: dto.person.id },
+      include: { model: Person, required: true, as: 'person' }
+    });
 
     if (user) throw new Error('Existe un usuario asociado a la persona.');
 

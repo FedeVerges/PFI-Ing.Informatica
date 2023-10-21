@@ -46,6 +46,12 @@ export class Person extends Model {
     type: DataType.STRING,
     allowNull: false
   })
+  docType!: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
   sex!: string;
 
   @HasMany(() => Student)
@@ -63,7 +69,8 @@ export class Person extends Model {
         lastname: p.lastname,
         fullname: `${p.name} ${p.lastname}`,
         docNumber: p.docNumber,
-        sex: p.sex
+        sex: p.sex,
+        docType: p.docType
       };
     } else {
       throw new Error('No existe la persona.');
@@ -80,7 +87,7 @@ export class Person extends Model {
         fullname: `${p.name} ${p.lastname}`,
         docNumber: p.docNumber,
         sex: p.sex,
-        students: Student.toDtoList(p.students || []),
+        students: Student.toDtoList(p.students || [])
       };
     } else {
       throw new Error('No existe la persona.');

@@ -16,14 +16,6 @@ import bcrypt from 'bcrypt';
 import { UserDto } from 'dto/userDto';
 import { Person } from './person';
 import { Role } from './role';
-@DefaultScope(() => ({
-  include: [Person, Role]
-}))
-@Scopes(() => ({
-  full: {
-    include: [Person, Role]
-  }
-}))
 @Table({
   timestamps: false,
   tableName: 'user'

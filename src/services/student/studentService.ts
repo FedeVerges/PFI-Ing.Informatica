@@ -1,5 +1,4 @@
 import { UserDto } from 'dto/userDto';
-import { User } from 'models/user';
 import { StudentDto } from '../../dto/studentDto';
 import { Person } from '../../models/person';
 import { Student } from '../../models/student';
@@ -82,7 +81,7 @@ export const StudentService = {
         // Busco por el mismo numero de estudiante y blockchainId.
         const filteredStudents = person.students.filter(
           (s) =>
-            s.degreeProgramCurriculum === studentData.degreeProgramCurriculum ||
+            s.degree.name === studentData.degreeProgramCurriculum ||
             s.blockchainId === blockchainId
         );
 
@@ -97,9 +96,6 @@ export const StudentService = {
             degreeProgramCurriculum: studentData.degreeProgramCurriculum,
             degreeProgramName: studentData.degreeProgramName,
             universityName: studentData.universityName,
-            ministerialOrdinance: studentData.ministerialOrdinance,
-            superiorCouncilOrdinance: studentData.superiorCouncilOrdinance,
-            directiveCouncilOrdinance: studentData.directiveCouncilOrdinance,
             blockchainId: blockchainId
           });
           await newStudent.save();
@@ -115,9 +111,6 @@ export const StudentService = {
           degreeProgramCurriculum: studentData.degreeProgramCurriculum,
           degreeProgramName: studentData.degreeProgramName,
           universityName: studentData.universityName,
-          ministerialOrdinance: studentData.ministerialOrdinance,
-          superiorCouncilOrdinance: studentData.superiorCouncilOrdinance,
-          directiveCouncilOrdinance: studentData.directiveCouncilOrdinance,
           blockchainId: blockchainId
         });
         newStudent.person = person;
@@ -149,9 +142,6 @@ export const StudentService = {
           degreeProgramCurriculum: studentData.degreeProgramCurriculum,
           degreeProgramName: studentData.degreeProgramName,
           universityName: studentData.universityName,
-          ministerialOrdinance: studentData.ministerialOrdinance,
-          superiorCouncilOrdinance: studentData.superiorCouncilOrdinance,
-          directiveCouncilOrdinance: studentData.directiveCouncilOrdinance,
           blockchainId: blockchainId
         },
         {

@@ -4,16 +4,15 @@ import {
   Column,
   DataType,
   ForeignKey,
-  HasMany,
   BelongsTo,
-  DefaultScope
+  DefaultScope,
+  HasMany,
+  HasOne
 } from 'sequelize-typescript';
-import { Certificate } from './certificate';
 import { Person } from './person';
 import { StudentDto } from '../dto/studentDto';
-@DefaultScope(() => ({
-  include: [Person]
-}))
+import { Degree } from './degree';
+
 @Table({
   timestamps: false,
   tableName: 'student'
@@ -37,50 +36,7 @@ export class Student extends Model {
     type: DataType.INTEGER,
     allowNull: false
   })
-  registrationNumber!: number;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false
-  })
-  universityName!: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false
-  })
-  academicUnit!: string; // Facultad
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false
-  })
-  degreeProgramName!: string; // Nombre de la carrera
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false
-  })
-  degreeProgramCurriculum!: string; // Plan de estudios
-
-  @Column({
-    type: DataType.STRING
-  })
-  ministerialOrdinance!: string; // Ordenanza ministerial
-
-  @Column({
-    type: DataType.STRING
-  })
-  superiorCouncilOrdinance!: string; // Ordenanza consejo superior.
-
-  @Column({
-    type: DataType.STRING
-  })
-  directiveCouncilOrdinance!: string;
-
-  // RELACIONES
-  @HasMany(() => Certificate, 'studentId')
-  certificates: Certificate[] | undefined;
+  registrationNumber!: number; // id de registro a la carrera. Unico.
 
   @ForeignKey(() => Person)
   @Column({
@@ -91,14 +47,22 @@ export class Student extends Model {
   @BelongsTo(() => Person, 'personId')
   person!: Person;
 
+  @BelongsTo(() => Degree, 'degreeId')
+  degree!: Degree;
+
+  @ForeignKey(() => Degree)
+  @Column({
+    type: DataType.INTEGER
+  })
+  degreeId!: number;
+
   static toDto(student: Student): StudentDto {
     return {
       id: student.id,
-      universityName: student.universityName,
-      academicUnit: student.academicUnit,
-      degreeProgramCurriculum: student.degreeProgramCurriculum,
-      degreeProgramName: student.degreeProgramName,
-      person: Person.toDto(student.person),
+      universityName: student.degree.university,
+      academicUnit: student.degree.academicUnit,
+      degreeProgramCurriculum: student.degree.planId,
+      degreeProgramName: student.degree.name,
       blockchainId: Number(student.blockchainId),
       registrationNumber: student.registrationNumber
     } as StudentDto;
