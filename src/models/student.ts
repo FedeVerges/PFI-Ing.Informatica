@@ -64,7 +64,9 @@ export class Student extends Model {
       degreeProgramCurriculum: student.degree.planId,
       degreeProgramName: student.degree.name,
       blockchainId: Number(student.blockchainId),
-      registrationNumber: student.registrationNumber
+      degreeType: student.degree.type,
+      registrationNumber: student.registrationNumber,
+      person: student.person ? Person.toDto(student.person) : null
     } as StudentDto;
   }
 

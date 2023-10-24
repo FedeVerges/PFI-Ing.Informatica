@@ -1,6 +1,5 @@
 import { PersonDto } from './personDto';
 
-//TODO: Verificar de eliminar.
 export interface StudentDto {
   id: number;
   blockchainId: number;

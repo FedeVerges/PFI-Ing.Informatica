@@ -3,6 +3,7 @@ import { StudentDto } from '../../dto/studentDto';
 import { Person } from '../../models/person';
 import { Student } from '../../models/student';
 import { UserService } from '../../services/user/userService';
+import { Degree } from '../../models/degree';
 
 export const StudentService = {
   async getStudentById(id: number) {
@@ -10,8 +11,8 @@ export const StudentService = {
       throw new Error('El identificador es invalido.');
     }
     const foundStudent = await Student.findOne({
-      where: { id },
-      include: Person
+      where: { blockchainId: new String(id) },
+      include: [Person, Degree]
     });
     if (foundStudent && foundStudent.id) {
       return foundStudent;
@@ -35,8 +36,12 @@ export const StudentService = {
     if (docNumber.length < 8) {
       throw new Error('El dni es incorrecto');
     }
+
     const foundStudents = await Student.findAll({
-      include: { model: Person, where: { docNumber }, required: true }
+      include: [
+        { model: Person, where: { docNumber }, required: true },
+        { model: Degree, required: true }
+      ]
     });
     return foundStudents;
   },

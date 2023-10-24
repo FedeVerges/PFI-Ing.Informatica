@@ -106,6 +106,9 @@ function validateFields(certificate: CertificateEth) {
   if (!certificate.universityDegree.degreeProgramName) {
     throw new Error('Debe ingresar el nombre del titulo');
   }
+  if (!certificate.universityDegree.degreeType) {
+    throw new Error('No se encuentra el tipo del titulo');
+  }
   if (!certificate.universityDegree.universityName) {
     throw new Error('Debe seleccionar una facultad');
   }

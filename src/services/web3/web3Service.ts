@@ -11,7 +11,6 @@ import { CertificateEth } from '../../models/blockchain/certificateEth';
 import { notificationService } from '../../services/notifications/notificationService';
 import { NotificationDto } from '../../dto/notificationDto';
 import { NOTIFICATION_TYPES } from '../../enum/notificationTypes';
-import { StudentEth } from 'models/blockchain/studentEth';
 import dayjs from 'dayjs';
 
 const URL = process.env.NETWORK_URL!;
