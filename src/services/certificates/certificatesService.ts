@@ -85,7 +85,7 @@ export const CertificateService = {
     certificateData: CertificateEth
   ): Promise<TransactionDto> {
     const student = await StudentService.getStudentById(
-      certificateData.student.id
+      certificateData.student.id.toString()
     );
 
     if (!student) throw new Error('No existe el estudiante');

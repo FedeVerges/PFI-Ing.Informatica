@@ -21,7 +21,8 @@ export class Degree extends Model {
     type: DataType.INTEGER,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
+    defaultValue: 20
   })
   id!: number;
 

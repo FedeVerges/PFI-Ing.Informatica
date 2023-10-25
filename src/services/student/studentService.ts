@@ -6,12 +6,12 @@ import { UserService } from '../../services/user/userService';
 import { Degree } from '../../models/degree';
 
 export const StudentService = {
-  async getStudentById(id: number) {
+  async getStudentById(id: string) {
     if (!id) {
       throw new Error('El identificador es invalido.');
     }
     const foundStudent = await Student.findOne({
-      where: { blockchainId: new String(id) },
+      where: { blockchainId: id },
       include: [Person, Degree]
     });
     if (foundStudent && foundStudent.id) {
@@ -77,8 +77,28 @@ export const StudentService = {
     // busco a la persona.
     const findedPerson = await Person.findOne({
       where: { docNumber: studentData.person.docNumber },
-      include: Student
+      include: [{ model: Student, include: [{ model: Degree }] }]
     });
+
+    let degree: Degree | null = await Degree.findOne({
+      where: {
+        name: studentData.degreeProgramName,
+        academicUnit: studentData.academicUnit,
+        type: studentData.degreeType,
+        planId: studentData.degreeProgramCurriculum
+      }
+    });
+    // Si no existe, creo uno nuevo
+    if (!degree) {
+      degree = new Degree({
+        name: studentData.degreeProgramName,
+        academicUnit: studentData.academicUnit,
+        type: studentData.degreeType,
+        planId: studentData.degreeProgramCurriculum,
+        university: studentData.universityName
+      } as Degree);
+      degree = await degree.save();
+    }
 
     if (findedPerson) {
       person = findedPerson;
@@ -86,8 +106,9 @@ export const StudentService = {
         // Busco por el mismo numero de estudiante y blockchainId.
         const filteredStudents = person.students.filter(
           (s) =>
-            s.degree.name === studentData.degreeProgramCurriculum ||
-            s.blockchainId === blockchainId
+            s.degree &&
+            (s.degree.name === studentData.degreeProgramName ||
+              s.blockchainId === blockchainId)
         );
 
         // Si no hay coincidencias. Lo agrego.
@@ -97,12 +118,9 @@ export const StudentService = {
             createdAt: new Date(),
             updatedAt: new Date(),
             registrationNumber: studentData.registrationNumber,
-            academicUnit: studentData.academicUnit,
-            degreeProgramCurriculum: studentData.degreeProgramCurriculum,
-            degreeProgramName: studentData.degreeProgramName,
-            universityName: studentData.universityName,
+            degreeId: degree.id,
             blockchainId: blockchainId
-          });
+          } as Student);
           await newStudent.save();
         } else {
           throw new Error('El estudiante ya existe.');
@@ -112,12 +130,9 @@ export const StudentService = {
           createdAt: new Date(),
           updatedAt: new Date(),
           registrationNumber: studentData.registrationNumber,
-          academicUnit: studentData.academicUnit,
-          degreeProgramCurriculum: studentData.degreeProgramCurriculum,
-          degreeProgramName: studentData.degreeProgramName,
-          universityName: studentData.universityName,
+          degreeId: degree.id,
           blockchainId: blockchainId
-        });
+        } as Student);
         newStudent.person = person;
         await newStudent.save();
 
@@ -137,20 +152,18 @@ export const StudentService = {
           person: {
             name: studentData.person.name,
             lastname: studentData.person.lastname,
+            docType: studentData.person.docType,
             sex: studentData.person.sex,
             docNumber: studentData.person.docNumber
-          },
+          } as Person,
           createdAt: new Date(),
           updatedAt: new Date(),
           registrationNumber: studentData.registrationNumber,
-          academicUnit: studentData.academicUnit,
-          degreeProgramCurriculum: studentData.degreeProgramCurriculum,
-          degreeProgramName: studentData.degreeProgramName,
-          universityName: studentData.universityName,
+          degree: degree,
           blockchainId: blockchainId
-        },
+        } as Student,
         {
-          include: [{ model: Person, required: true }]
+          include: [{ model: Person, required: true }, { model: Degree }]
         }
       );
       await newStudent.save();
@@ -165,6 +178,6 @@ export const StudentService = {
 
       await UserService.signUser(userDto);
     }
-    return await this.getStudentById(newStudent.id);
+    return await this.getStudentById(newStudent.blockchainId);
   }
 };
