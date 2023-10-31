@@ -35,6 +35,13 @@ router.post(`${studentUrlBase}/new`, studentController.create);
 router.get(`${studentUrlBase}/all`, studentController.getAll);
 router.get(`${studentUrlBase}/:docNumber`, studentController.getByDocNumber);
 
+// Personas.
+const personUrlBase = '/person';
+router.get(
+  `${personUrlBase}/:docNumber`,
+  studentController.getPersonByDocNumber
+);
+
 //Transacciones
 const transactionUrlBase = '/transaction';
 router.get(

@@ -86,6 +86,7 @@ export class Person extends Model {
         lastname: p.lastname,
         fullname: `${p.name} ${p.lastname}`,
         docNumber: p.docNumber,
+        docType: p.docType,
         sex: p.sex,
         students: Student.toDtoList(p.students || [])
       };
@@ -93,5 +94,13 @@ export class Person extends Model {
       throw new Error('No existe la persona.');
     }
     return person;
+  }
+
+  static toDtoListWithStudents(persons: Person[]): PersonWithStudentsDto[] {
+    let ret: PersonWithStudentsDto[] = [];
+    if (persons && persons.length > 0) {
+      ret = persons.map((person) => this.toDtoWithStudents(person));
+    }
+    return ret;
   }
 }

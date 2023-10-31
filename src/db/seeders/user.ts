@@ -153,7 +153,6 @@ export const personsData: Partial<Person>[] = [
 
 export const degrees: Partial<Degree>[] = [
   {
-    id: 1,
     type: 'POSGRADO',
     university: 'Universidad Nacional de San Luis',
     academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',
@@ -161,7 +160,6 @@ export const degrees: Partial<Degree>[] = [
     planId: '16-10'
   } as Degree,
   {
-    id: 2,
     type: 'GRADO',
     university: 'Universidad Nacional de San Luis',
     academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',

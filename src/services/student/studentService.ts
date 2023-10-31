@@ -68,7 +68,6 @@ export const StudentService = {
   async deleteStudent(docNumber: string) {},
 
   async createStudent(studentData: StudentDto) {
-    // todo: Agregar controles
     let person: Person;
     let newStudent: Student;
     const blockchainId: string = String(
@@ -76,7 +75,10 @@ export const StudentService = {
     );
     // busco a la persona.
     const findedPerson = await Person.findOne({
-      where: { docNumber: studentData.person.docNumber },
+      where: {
+        docNumber: studentData.person.docNumber,
+        docType: studentData.person.docType
+      },
       include: [{ model: Student, include: [{ model: Degree }] }]
     });
 
@@ -101,18 +103,37 @@ export const StudentService = {
     }
 
     if (findedPerson) {
-      person = findedPerson;
-      if (person.students && person.students.length > 0) {
-        // Busco por el mismo numero de estudiante y blockchainId.
-        const filteredStudents = person.students.filter(
-          (s) =>
-            s.degree &&
-            (s.degree.name === studentData.degreeProgramName ||
-              s.blockchainId === blockchainId)
-        );
+      // Valido datos de la persona.
+      if (
+        findedPerson.name === studentData.person.name &&
+        findedPerson.lastname === studentData.person.lastname &&
+        findedPerson.sex === studentData.person.sex
+      ) {
+        person = findedPerson;
+        if (person.students && person.students.length > 0) {
+          // Busco por el mismo numero de estudiante y blockchainId.
+          const filteredStudents = person.students.filter(
+            (s) =>
+              s.degree &&
+              (s.degree.name === studentData.degreeProgramName ||
+                s.blockchainId === blockchainId)
+          );
 
-        // Si no hay coincidencias. Lo agrego.
-        if (!filteredStudents || filteredStudents.length < 1) {
+          // Si no hay coincidencias. Lo agrego.
+          if (!filteredStudents || filteredStudents.length < 1) {
+            newStudent = new Student({
+              personId: person.id,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              registrationNumber: studentData.registrationNumber,
+              degreeId: degree.id,
+              blockchainId: blockchainId
+            } as Student);
+            await newStudent.save();
+          } else {
+            throw new Error('El estudiante ya existe.');
+          }
+        } else {
           newStudent = new Student({
             personId: person.id,
             createdAt: new Date(),
@@ -121,30 +142,20 @@ export const StudentService = {
             degreeId: degree.id,
             blockchainId: blockchainId
           } as Student);
-          await newStudent.save();
-        } else {
-          throw new Error('El estudiante ya existe.');
+          newStudent = await newStudent.save();
+
+          // Creo usuario temporal.
+          const userDto: UserDto = {
+            name: newStudent.person.docNumber,
+            // password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
+            password: '1234',
+            person: Person.toDtoWithStudents(newStudent.person)
+          };
+
+          await UserService.signUser(userDto);
         }
       } else {
-        newStudent = new Student({
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          registrationNumber: studentData.registrationNumber,
-          degreeId: degree.id,
-          blockchainId: blockchainId
-        } as Student);
-        newStudent.person = person;
-        await newStudent.save();
-
-        // Creo usuario temporal.
-        const userDto: UserDto = {
-          name: newStudent.person.docNumber,
-          // password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
-          password: '1234',
-          person: Person.toDtoWithStudents(newStudent.person)
-        };
-
-        await UserService.signUser(userDto);
+        throw new Error('La persona ya existe. ');
       }
     } else {
       newStudent = new Student(
@@ -159,11 +170,11 @@ export const StudentService = {
           createdAt: new Date(),
           updatedAt: new Date(),
           registrationNumber: studentData.registrationNumber,
-          degree: degree,
+          degreeId: degree.id,
           blockchainId: blockchainId
         } as Student,
         {
-          include: [{ model: Person, required: true }, { model: Degree }]
+          include: [{ model: Person, required: true }]
         }
       );
       await newStudent.save();

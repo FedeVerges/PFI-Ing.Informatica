@@ -1,17 +1,14 @@
 import { Request, Response } from 'express';
-import { CertificateService } from '../services/certificates/certificatesService';
 import { getErrorMessage } from '../utils/manageError';
-import { web3Service } from '../services/web3/web3Service';
 import { StudentService } from '../services/student/studentService';
 import { StudentDto } from '../dto/studentDto';
 import { Student } from '../models/student';
+import { Person } from '../models/person';
+import { Degree } from '../models/degree';
 
 export const studentController = {
   async create(req: Request, res: Response) {
     try {
-      //TODO: Funcion para validar permisos.
-      //TODO: Crear Dto a partir del req.body y ahi verificar los datos.
-      //TODO: verificar que idempotencia del estudiante.
       const student = await StudentService.createStudent(
         req.body as StudentDto
       );
@@ -38,6 +35,24 @@ export const studentController = {
         studentDocNumber
       );
       res.status(200).json(Student.toDtoList(students));
+    } catch (error) {
+      res.setHeader('Content-Type', 'application/json');
+      res.status(409).json(getErrorMessage(error));
+    }
+  },
+  async getPersonByDocNumber(req: Request, res: Response) {
+    try {
+      const doc = req.params.docNumber;
+      // busco a la persona.
+      const findedPerson = await Person.findAll({
+        where: { docNumber: doc },
+        include: [{ model: Student, include: [{ model: Degree }] }]
+      });
+      if (findedPerson) {
+        res.status(200).json(Person.toDtoListWithStudents(findedPerson));
+      } else {
+        throw new Error('La persona no existe.');
+      }
     } catch (error) {
       res.setHeader('Content-Type', 'application/json');
       res.status(409).json(getErrorMessage(error));
