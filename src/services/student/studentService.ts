@@ -98,7 +98,7 @@ export const StudentService = {
         type: studentData.degreeType,
         planId: studentData.degreeProgramCurriculum,
         university: studentData.universityName
-      } as Degree);
+      });
       degree = await degree.save();
     }
 
@@ -128,7 +128,7 @@ export const StudentService = {
               registrationNumber: studentData.registrationNumber,
               degreeId: degree.id,
               blockchainId: blockchainId
-            } as Student);
+            });
             await newStudent.save();
           } else {
             throw new Error('El estudiante ya existe.');
@@ -141,7 +141,7 @@ export const StudentService = {
             registrationNumber: studentData.registrationNumber,
             degreeId: degree.id,
             blockchainId: blockchainId
-          } as Student);
+          });
           newStudent = await newStudent.save();
 
           // Creo usuario temporal.
@@ -172,7 +172,7 @@ export const StudentService = {
           registrationNumber: studentData.registrationNumber,
           degreeId: degree.id,
           blockchainId: blockchainId
-        } as Student,
+        },
         {
           include: [{ model: Person, required: true }]
         }
