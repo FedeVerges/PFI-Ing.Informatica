@@ -2,23 +2,19 @@ import { strict } from 'assert';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es'; // import locale
 import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
-import { TRANSACTION_STATUS } from 'enum/transactionStatus';
 import {
   Table,
   Model,
   Column,
   DataType,
   ForeignKey,
-  BelongsTo,
-  DefaultScope,
-  Scopes
+  BelongsTo
 } from 'sequelize-typescript';
-import { Certificate } from './certificate';
-import { Person } from './person';
-import { Student } from './student';
 import { CertificateEth } from './blockchain/certificateEth';
+import { Student } from './student';
 dayjs.locale('es');
 
+//TODO: asociar con estudiante. Poner Id del estudiante
 @Table({
   timestamps: false,
   tableName: 'transaction'
@@ -105,6 +101,15 @@ export class BlockchainTransaction extends Model {
   })
   dateModified?: Date;
 
+  /*  @ForeignKey(() => Student)
+  @Column({
+    type: DataType.INTEGER
+  })
+  studentId!: number;
+
+  @BelongsTo(() => Student, 'studentId')
+  student!: Student;
+ */
   // @BelongsTo(() => Certificate, 'ceritificateId')
   // certificate!: Certificate;
 

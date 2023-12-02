@@ -31,8 +31,10 @@ export const studentController = {
   async getByDocNumber(req: Request, res: Response) {
     try {
       const studentDocNumber = req.params.docNumber;
+      const hasCertificate = req.params.hasCertificate === 'true';
       const students = await StudentService.getStudentByDocNumber(
-        studentDocNumber
+        studentDocNumber,
+        hasCertificate
       );
       res.status(200).json(Student.toDtoList(students));
     } catch (error) {

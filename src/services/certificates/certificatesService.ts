@@ -85,7 +85,7 @@ export const CertificateService = {
     certificateData: CertificateEth
   ): Promise<TransactionDto> {
     const student = await StudentService.getStudentById(
-      certificateData.student.id.toString()
+      certificateData.student.registrationNumber
     );
 
     if (!student) throw new Error('No existe el estudiante');
@@ -125,14 +125,28 @@ export const CertificateService = {
       //
       web3Service
         .sendTransaction(signed)
-        .then(
-          async ([resultCertificate, receipt]) =>
-            await this.updateSuccessTransaction(
-              transactionResponse,
-              resultCertificate,
-              receipt
-            )
-        )
+        .then(async ([resultCertificate, receipt]) => {
+          await this.updateSuccessTransaction(
+            transactionResponse,
+            resultCertificate,
+            receipt
+          );
+          if (
+            certificateData &&
+            certificateData.student &&
+            certificateData.universityDegree
+          ) {
+            await StudentService.updateStudentBlockchainId(
+              certificateData.student.id.toString(),
+              certificateData.student.docNumber,
+              certificateData.universityDegree.degreeProgramName
+            );
+          } else {
+            console.error(
+              'Certificado sin Datos. Estudiante sin BlockchainID.'
+            );
+          }
+        })
         .catch(async (error) => {
           // Manejo de errores
           console.error('La transaccion no ha podido ser completada. :', error);

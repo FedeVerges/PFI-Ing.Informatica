@@ -162,6 +162,9 @@ class Web3Service {
     if (privateKey) {
       const account: Account =
         this.web3.eth.accounts.privateKeyToAccount(privateKey);
+      certificate.student.id = Number(
+        certificate.student.docNumber + certificate.student.registrationNumber
+      );
       if (account) {
         // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
         const transaction =

@@ -3,6 +3,8 @@ import { getErrorMessage } from '../utils/manageError';
 import { CertificateService } from '../services/certificates/certificatesService';
 import { BlockchainTransactionDto } from 'dto/blockchainTransactionDto';
 import { CertificateEth } from 'models/blockchain/certificateEth';
+import { StudentService } from '../services/student/studentService';
+import { TRANSACTION_STATUS } from '../enum/transactionStatus';
 
 export const certificateController = {
   async create(req: Request, res: Response) {

@@ -33,7 +33,10 @@ router.get(
 const studentUrlBase = '/student';
 router.post(`${studentUrlBase}/new`, studentController.create);
 router.get(`${studentUrlBase}/all`, studentController.getAll);
-router.get(`${studentUrlBase}/:docNumber`, studentController.getByDocNumber);
+router.get(
+  `${studentUrlBase}/:docNumber/hascertificate/:hasCertificate?`,
+  studentController.getByDocNumber
+);
 
 // Personas.
 const personUrlBase = '/person';

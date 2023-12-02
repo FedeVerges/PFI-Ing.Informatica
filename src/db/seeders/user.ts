@@ -102,7 +102,6 @@ export const personsData: Partial<Person>[] = [
           planId: '16-10'
         }, */
         degreeId: 1,
-        blockchainId: '412217783028516',
         registrationNumber: 3028516
       }
     ] as Student[]
@@ -123,7 +122,6 @@ export const personsData: Partial<Person>[] = [
           planId: '16-05'
         } as Degree, */
         degreeId: 2,
-        blockchainId: '412217773028517',
         registrationNumber: 3028517
       }
     ] as Student[]
@@ -144,7 +142,6 @@ export const personsData: Partial<Person>[] = [
           planId: '16-10'
         } as Degree, */
         degreeId: 1,
-        blockchainId: '360464543028518',
         registrationNumber: 3028518
       }
     ] as Student[]

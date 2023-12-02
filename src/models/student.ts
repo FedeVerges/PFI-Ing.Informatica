@@ -12,6 +12,7 @@ import {
 import { Person } from './person';
 import { StudentDto } from '../dto/studentDto';
 import { Degree } from './degree';
+import { BlockchainTransaction } from './blockchainTransaction';
 
 @Table({
   timestamps: false,
@@ -27,10 +28,9 @@ export class Student extends Model {
   id!: number;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false
+    type: DataType.STRING
   })
-  blockchainId!: string; // idBlockchain.
+  blockchainId?: string; // idBlockchain.
 
   @Column({
     type: DataType.INTEGER,
@@ -55,6 +55,9 @@ export class Student extends Model {
     type: DataType.INTEGER
   })
   degreeId!: number;
+  /* 
+  @HasMany(() => BlockchainTransaction)
+  certificates: BlockchainTransaction[] | undefined; */
 
   static toDto(student: Student): StudentDto {
     return {
@@ -63,7 +66,7 @@ export class Student extends Model {
       academicUnit: student.degree.academicUnit,
       degreeProgramCurriculum: student.degree.planId,
       degreeProgramName: student.degree.name,
-      blockchainId: Number(student.blockchainId),
+      blockchainId: student.blockchainId ? Number(student.blockchainId) : null,
       degreeType: student.degree.type,
       registrationNumber: student.registrationNumber,
       person: student.person ? Person.toDto(student.person) : null
