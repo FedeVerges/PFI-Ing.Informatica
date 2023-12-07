@@ -16,7 +16,7 @@ services:
       DB_PORT: 5432
       DB_NAME: SVT_20220706
       PORT: 8080
-      INIT_DB: true
+      INIT_DB: false
       NETWORK_URL: https://sepolia.infura.io/v3/04be9cd572fa4376a643b4b78aaa7498
       PRIVATE_KEY: 1c2c74609685e5d8b303e877afccd68ccf3e15d28a61cefb2d587b502d1c0264
       CONTRACT_ADDRESS: '0xEf3165d7B27521a3E3c727D8fE85499d3bd8721A'
