@@ -38,6 +38,7 @@ export const studentController = {
       );
       res.status(200).json(Student.toDtoList(students));
     } catch (error) {
+      console.error(error);
       res.setHeader('Content-Type', 'application/json');
       res.status(409).json(getErrorMessage(error));
     }

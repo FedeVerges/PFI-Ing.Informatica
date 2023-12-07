@@ -4,6 +4,7 @@ import { Person } from '../../models/person';
 import { Student } from '../../models/student';
 import { UserService } from '../../services/user/userService';
 import { Degree } from '../../models/degree';
+import { Op } from 'sequelize';
 
 export const StudentService = {
   async getStudentById(id: number) {
@@ -44,13 +45,13 @@ export const StudentService = {
         ]
       });
     } else {
-      // Consultar auqellos estudiante que tengan titulos asociados.
-      /* foundStudents = await Student.findAll({
+      foundStudents = await Student.findAll({
+        where: { blockchainId: { [Op.is]: null } },
         include: [
           { model: Person, where: { docNumber }, required: true },
-          { model: Degree, required: true },
+          { model: Degree, required: true }
         ]
-      }); */
+      });
     }
 
     return foundStudents;
