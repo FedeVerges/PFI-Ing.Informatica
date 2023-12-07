@@ -35,7 +35,7 @@ services:
       POSTGRES_PASSWORD: 41221778
       POSTGRES_DB: SVT_20220706
     volumes:
-      - db-data:/var/lib/pgsql/data
+      - db-data:/var/lib/postgresql/data
 
 volumes:
   db-data:
