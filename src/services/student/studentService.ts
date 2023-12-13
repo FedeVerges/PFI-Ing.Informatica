@@ -205,7 +205,7 @@ export const StudentService = {
 
       // Creo usuario temporal.
       const userDto: UserDto = {
-        name: newStudent.person.docNumber,
+        name: String(newStudent.registrationNumber),
         // password: `${newStudent.person.lastname}${newStudent.person.docNumber}`,
         password: '1234',
         person: Person.toDtoWithStudents(newStudent.person)
