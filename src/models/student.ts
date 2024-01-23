@@ -59,6 +59,20 @@ export class Student extends Model {
   @HasMany(() => BlockchainTransaction)
   certificates: BlockchainTransaction[] | undefined; */
 
+  toDto(st: Student, p: Person, d: Degree): StudentDto {
+    return {
+      id: st.id,
+      universityName: d.university,
+      academicUnit: d.academicUnit,
+      degreeProgramCurriculum: d.planId,
+      degreeProgramName: d.name,
+      blockchainId: st.blockchainId ? Number(st.blockchainId) : null,
+      degreeType: d.type,
+      registrationNumber: st.registrationNumber,
+      person: p ? Person.toDto(p) : null
+    } as StudentDto;
+  }
+
   static toDto(student: Student): StudentDto {
     return {
       id: student.id,
