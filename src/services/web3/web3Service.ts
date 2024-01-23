@@ -15,8 +15,6 @@ import dayjs from 'dayjs';
 
 const URL = process.env.NETWORK_URL!;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
-
-// const contractArtifact = require('../../../../blockchain/certificateContract/build/contracts/Certificates.json');
 const contractArtifact = require('../../../contracts/Certificates.json');
 
 class Web3Service {
@@ -166,7 +164,7 @@ class Web3Service {
         certificate.student.docNumber + certificate.student.registrationNumber
       );
       if (account) {
-        // Creo la transaccion con el metodo a ejecutar del smart-contract con su data.
+        // Creo la transaccion con el metodo a ejecutar del smart-contract.
         const transaction =
           this.certificateContract!.methods.createCertificate(certificate);
 
