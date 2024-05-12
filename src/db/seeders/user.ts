@@ -38,113 +38,60 @@ export const userData = [
     createdAt: new Date(),
     updatedAt: new Date(),
     person: {
-      docNumber: '41221778'
+      docNumber: '12345678'
     },
     role: {
       name: 'ADMIN'
     }
-  },
-  {
-    name: 'Fede',
-    password: '1234',
-    email: 'fedeverges@gmail.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    person: {
-      docNumber: '41221778'
-    },
-    role: {
-      name: 'STUDENT'
-    }
-  },
-  {
-    name: 'test-estudiante',
-    password: '1234',
-    email: 'fedeverges@gmail.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    person: {
-      docNumber: '41221777'
-    },
-    role: {
-      name: 'STUDENT'
-    }
-  },
-  {
-    name: 'juani',
-    password: '1234',
-    email: 'fedeverges@gmail.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    person: {
-      docNumber: '36046454'
-    },
-    role: {
-      name: 'STUDENT'
-    }
   }
+  // {
+  //   name: 'Fede',
+  //   password: '1234',
+  //   email: 'fedeverges@gmail.com',
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  //   person: {
+  //     docNumber: '41221778'
+  //   },
+  //   role: {
+  //     name: 'STUDENT'
+  //   }
+  // },
+  // {
+  //   name: 'test-estudiante',
+  //   password: '1234',
+  //   email: 'fedeverges@gmail.com',
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  //   person: {
+  //     docNumber: '41221777'
+  //   },
+  //   role: {
+  //     name: 'STUDENT'
+  //   }
+  // },
+  // {
+  //   name: 'juani',
+  //   password: '1234',
+  //   email: 'fedeverges@gmail.com',
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  //   person: {
+  //     docNumber: '36046454'
+  //   },
+  //   role: {
+  //     name: 'STUDENT'
+  //   }
+  // }
 ];
 
 export const personsData: Partial<Person>[] = [
   {
-    name: 'Federico',
-    lastname: 'Verges',
-    docNumber: '41221778',
+    name: 'Admin',
+    lastname: 'Admin',
+    docNumber: '12345678',
     docType: 'DNI',
-    sex: 'Masculino',
-    students: [
-      {
-        /* degree: {
-          type: 'POSGRADO',
-          university: 'Universidad Nacional de San Luis',
-          academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',
-          name: 'Ingeniería en Electrónica',
-          planId: '16-10'
-        }, */
-        degreeId: 1,
-        registrationNumber: 3028516
-      }
-    ] as Student[]
-  },
-  {
-    name: 'Francisco',
-    lastname: 'Vargas',
-    docNumber: '41221777',
-    docType: 'DNI',
-    sex: 'Masculino',
-    students: [
-      {
-        /* degree: {
-          type: 'GRADO',
-          university: 'Universidad Nacional de San Luis',
-          academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',
-          name: 'Ingeniería en Informática',
-          planId: '16-05'
-        } as Degree, */
-        degreeId: 2,
-        registrationNumber: 3028517
-      }
-    ] as Student[]
-  },
-  {
-    name: 'Juan Ignacio',
-    lastname: 'Verges',
-    docNumber: '36046454',
-    docType: 'DNI',
-    sex: 'Masculino',
-    students: [
-      {
-        /* degree: {
-          type: 'POSGRADO',
-          university: 'Universidad Nacional de San Luis',
-          academicUnit: 'Facultad de Ciencias Físico Matemáticas y Naturales',
-          name: 'Ingeniería en Electrónica',
-          planId: '16-10'
-        } as Degree, */
-        degreeId: 1,
-        registrationNumber: 3028518
-      }
-    ] as Student[]
+    sex: 'Masculino'
   }
 ];
 

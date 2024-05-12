@@ -92,9 +92,33 @@ export const initializer = {
       }
     });
   },
+
+  async seedPersons() {
+    try {
+      await Promise.all(
+        personsData.map(async (person) => {
+          const newPerson = new Person({
+            name: person.name,
+            lastname: person.lastname,
+            docNumber: person.docNumber,
+            docType: person.docType,
+            sex: person.sex,
+            students: person.students
+          });
+          await newPerson.save();
+        })
+      );
+      console.info('Persons seeded 🍺');
+    } catch (error) {
+      console.error('Personsseeder failed.');
+      console.error(error);
+      console.error('-------------------------------');
+    }
+  },
+  // Eliminar.
   async seedStudents() {
     try {
-      /* await Promise.all(
+      await Promise.all(
         degrees.map(async (degree) => {
           const newDegree = new Degree({
             id: degree.id,
@@ -107,9 +131,8 @@ export const initializer = {
 
           await newDegree.save();
         })
-      ); */
-
-      /* await Promise.all(
+      );
+      await Promise.all(
         personsData.map(async (person) => {
           // const role = await Degree.findOne({
           //   where: { name: user.role.name }
@@ -135,10 +158,8 @@ export const initializer = {
           );
           await newPerson.save();
         })
-      ); */
-
+      );
       await Degree.bulkCreate(degrees);
-
       await Person.bulkCreate(personsData, {
         include: [
           {
